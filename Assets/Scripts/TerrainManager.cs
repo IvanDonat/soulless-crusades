@@ -35,7 +35,7 @@ public class TerrainManager : MonoBehaviour {
         {
             for (int j = 0; j < width; j++)
             {
-                heights[i, j] = Mathf.Sin(Time.time + j/12f)/2 + 0.5f;
+                heights[i, j] = Mathf.Sin(Time.time + j / 12f) / 2 + 0.5f;//Mathf.PerlinNoise(i+0.1f, j+0.1f);//Mathf.Sin(Time.time + j/12f)/2 + 0.5f;
             }
         }
 

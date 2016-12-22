@@ -25,8 +25,6 @@ public class PlayerMovement : MonoBehaviour {
     {
         if (Input.GetMouseButtonDown(1))
         {
-            // @TODO spawn particles at click pos
-
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (terrain.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
@@ -52,6 +50,10 @@ public class PlayerMovement : MonoBehaviour {
             force.Normalize();
 
             rbody.AddForce(force * 30, ForceMode.Acceleration);
+        }
+        else if (distToTarget < 0.1f)
+        {
+            rbody.velocity = new Vector3(0f, 0f, 0f);
         }
     }
 
