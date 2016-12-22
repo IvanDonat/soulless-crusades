@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
     private float defaultFriction = 3f; // friction drops when hit by spell
+    private float moveForce = 30f;
 
     private Rigidbody rbody;
     private Vector3 targetPosition;
@@ -48,12 +49,13 @@ public class PlayerMovement : MonoBehaviour {
         { // apply force towards target
             Vector3 force = targetPosition - transform.position;
             force.Normalize();
-
-            rbody.AddForce(force * 30, ForceMode.Acceleration);
+            rbody.AddForce(force * moveForce, ForceMode.Acceleration);
         }
-        else if (distToTarget < 0.1f)
+        else if (distToTarget < 1f)
         {
-            rbody.velocity = new Vector3(0f, 0f, 0f);
+            Vector3 force = targetPosition - transform.position;
+            force.Normalize();
+            rbody.drag = defaultFriction * 2;
         }
     }
 
