@@ -22,15 +22,7 @@ public class MenuCamera : MonoBehaviour {
 
     void Start()
     {
-        TransitionTo(canvasLobby);
-    }
-
-    public void TransitionTo(Transform t)
-    {
-        inTransition = true;
-        currStage = TransitionStage.FIRST;
-
-        targetPosition = t.position;
+        //TransitionTo(canvasLobby);
     }
 
     void Update() {
@@ -48,8 +40,8 @@ public class MenuCamera : MonoBehaviour {
 
             if (currStage == TransitionStage.SECOND) 
             {
-                Vector3 posToGo = new Vector3(Mathf.Lerp(transform.position.x, targetPosition.x, Time.deltaTime * 10),
-                    Mathf.Lerp(transform.position.y, targetPosition.y, Time.deltaTime * 10),
+                Vector3 posToGo = new Vector3(Mathf.Lerp(transform.position.x, targetPosition.x, Time.deltaTime * 6),
+                    Mathf.Lerp(transform.position.y, targetPosition.y, Time.deltaTime * 6),
                     transform.position.z);
 
                 transform.position = posToGo;
@@ -69,5 +61,30 @@ public class MenuCamera : MonoBehaviour {
                     inTransition = false;
             }
         }
+    }
+
+    public void TransitionTo(Transform t)
+    {
+        inTransition = true;
+        currStage = TransitionStage.FIRST;
+
+        targetPosition = t.position;
+    }
+
+
+    // methods for use by buttons
+    public void TransitionToMainMenu()
+    {
+        TransitionTo(canvasMenu);
+    }
+
+    public void TransitionToLobby()
+    {
+        TransitionTo(canvasLobby);
+    }
+
+    public void TransitionToCreateRoom()
+    {
+        TransitionTo(canvasCreateRoom);
     }
 }
