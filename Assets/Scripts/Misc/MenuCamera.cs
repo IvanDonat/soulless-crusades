@@ -14,6 +14,10 @@ public class MenuCamera : MonoBehaviour {
     private bool inTransition = false;
     private Vector3 targetPosition;
 
+    private float stageFirstSmoothTime = .2f;
+    private float stageSecondSmoothTime = .3f;
+    private float xVelocity, yVelocity, zVelocity;
+
     public Transform canvasMenu;
     public Transform canvasLobby;
     public Transform canvasCreateRoom;
@@ -31,33 +35,32 @@ public class MenuCamera : MonoBehaviour {
             if (currStage == TransitionStage.FIRST) 
             {
                 Vector3 posToGo = new Vector3(transform.position.x, transform.position.y,
-                    Mathf.Lerp(transform.position.z, offsetFromCanvas.z * 2, Time.deltaTime));
+                    Mathf.SmoothDamp(transform.position.z, offsetFromCanvas.z * 2, ref zVelocity, stageFirstSmoothTime));
 
                 transform.position = posToGo;
-                if (transform.position.z < (offsetFromCanvas * 1.5f).z)
+                if (transform.position.z < (offsetFromCanvas * 1.8f).z)
                     currStage = TransitionStage.SECOND;
             }
 
             if (currStage == TransitionStage.SECOND) 
             {
-                Vector3 posToGo = new Vector3(Mathf.Lerp(transform.position.x, targetPosition.x, Time.deltaTime * 6),
-                    Mathf.Lerp(transform.position.y, targetPosition.y, Time.deltaTime * 6),
+                Vector3 posToGo = new Vector3(Mathf.SmoothDamp(transform.position.x, targetPosition.x, ref xVelocity, stageSecondSmoothTime),
+                    Mathf.SmoothDamp(transform.position.y, targetPosition.y, ref yVelocity, stageSecondSmoothTime),
                     transform.position.z);
 
                 transform.position = posToGo;
 
-                if (Mathf.Abs(transform.position.x - targetPosition.x) < 3 && Mathf.Abs(transform.position.y - targetPosition.y) < 3)
+                if (Mathf.Abs(transform.position.x - targetPosition.x) < .6f && Mathf.Abs(transform.position.y - targetPosition.y) < .6f)
                     currStage = TransitionStage.THIRD;
             }
 
             if (currStage == TransitionStage.THIRD)
             {
-                Vector3 posToGo = new Vector3(transform.position.x, transform.position.y,
-                    Mathf.Lerp(transform.position.z, offsetFromCanvas.z, Time.deltaTime * 2));
+                Vector3 posToGo = Vector3.Lerp(transform.position, targetPosition + offsetFromCanvas, Time.deltaTime * 5);
 
                 transform.position = posToGo;
 
-                if (Mathf.Abs(transform.position.z - targetPosition.z) < 2)
+                if (Mathf.Abs(transform.position.z - targetPosition.z) < 2f)
                     inTransition = false;
             }
         }
