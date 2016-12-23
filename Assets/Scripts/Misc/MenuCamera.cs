@@ -17,6 +17,7 @@ public class MenuCamera : MonoBehaviour {
     private float stageSecondSmoothTime = .15f;
     private float xVelocity, yVelocity, zVelocity;
 
+    public Transform canvasLoadingGame;
     public Transform canvasMenu;
     public Transform canvasLobby;
     public Transform canvasCreateRoom;
@@ -88,5 +89,12 @@ public class MenuCamera : MonoBehaviour {
     public void TransitionToCreateRoom()
     {
         TransitionTo(canvasCreateRoom);
+    }
+
+    //Tehnicki nam ne treba trenutno al ajmo rec da noob ima potato net i DC se u menu,
+    //a moglo bi i kasnije bit korisno za ostale disconecte ovisi kako budemo to
+    public void TransitionToLoadingGame()
+    {
+        TransitionTo(canvasLoadingGame);
     }
 }
