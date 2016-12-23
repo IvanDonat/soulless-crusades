@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class GameCamera : MonoBehaviour {
     private Transform myPlayer;
-    Vector3 offset = new Vector3(0, 15, -25);
+    Vector3 offset = new Vector3(0, 25, -25);
 
     private float speed = 10f;
     private float mouseDeadzone = 0.05f;
 
-    private float minX = -10f, maxX = 10f, minZ = -10f, maxZ = 10f;
+    public float minX = -10f, maxX = 10f, minZ = -10f, maxZ = 10f;
 
     void Start()
     {

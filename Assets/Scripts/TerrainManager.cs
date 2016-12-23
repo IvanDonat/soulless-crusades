@@ -26,20 +26,24 @@ public class TerrainManager : MonoBehaviour {
         width = data.heightmapWidth;
         height = data.heightmapHeight;
         heights = data.GetHeights(0, 0, width, height);
-    }
 
-    void Update()
-    {
-        // temporary
+
+
+        // TEMPORARY
         for (int i = 0; i < height; i++)
         {
             for (int j = 0; j < width; j++)
             {
-                heights[i, j] = Mathf.Sin(Time.time + j / 12f) / 2 + 0.5f;//Mathf.PerlinNoise(i+0.1f, j+0.1f);//Mathf.Sin(Time.time + j/12f)/2 + 0.5f;
+                heights[i, j] = 1 - Mathf.Sqrt((i - height / 2) * (i - height / 2) + (j - width / 2) * (j - width / 2)) / 70;
             }
         }
 
         ReloadTerrain();
+    }
+
+    void Update()
+    {
+
     }
 
     void ReloadTerrain()

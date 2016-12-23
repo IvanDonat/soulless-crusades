@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
-    private float defaultFriction = 3f; // friction drops when hit by spell
-    private float moveForce = 30f;
+    private float defaultFriction = 5f; // friction drops when hit by spell
+    private float frictionRecoveryFactor = 0.2f;
+    private float moveForce = 40f;
 
     private Rigidbody rbody;
     private Vector3 targetPosition;
 
+    private bool isStunned = false;
+
     private Transform terrain;
 
     public Transform prefabParticlesOnClick;
+
 
     void Start()
     {
@@ -31,7 +35,6 @@ public class PlayerMovement : MonoBehaviour {
             if (terrain.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
             {
                 SetTargetPosition(hit.point);
-
                 GameObject.Instantiate(prefabParticlesOnClick, hit.point + Vector3.up * 0.1f, Quaternion.identity);
             }
         }
@@ -40,27 +43,37 @@ public class PlayerMovement : MonoBehaviour {
 
     void FixedUpdate()
     {
-        rbody.drag = Mathf.Lerp(rbody.drag, defaultFriction, Time.time);
+        rbody.drag = Mathf.Lerp(rbody.drag, defaultFriction, frictionRecoveryFactor);
 
         targetPosition.y = transform.position.y; // top-down doesn't matter
         float distToTarget = (targetPosition - transform.position).magnitude;
 
-        if (distToTarget > 0.5f)
-        { // apply force towards target
-            Vector3 force = targetPosition - transform.position;
-            force.Normalize();
-            rbody.AddForce(force * moveForce, ForceMode.Acceleration);
-        }
-        else if (distToTarget < 1f)
+        if (!isStunned)
         {
             Vector3 force = targetPosition - transform.position;
             force.Normalize();
-            rbody.drag = defaultFriction * 2;
+
+            if (distToTarget < 1f)
+                force *= distToTarget;
+
+            rbody.AddForce(force * moveForce, ForceMode.Acceleration);
         }
     }
 
     public void SetTargetPosition(Vector3 pos)
     {
         targetPosition = pos;
+    }
+
+    public void Stun(float time)
+    {
+        isStunned = true;
+        StartCoroutine("Unstun", time);
+    }
+
+    private IEnumerator Unstun(float time)
+    {
+        yield return new WaitForSeconds(time);
+        isStunned = false;
     }
 }
