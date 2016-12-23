@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 98ea31984761b9f4080cb06632583330
+timeCreated: 1482502207
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Trajan Pro
+  fontNames:
+  - Trajan Pro
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 62a667eb5c5b74945af0515c9e166efd, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
