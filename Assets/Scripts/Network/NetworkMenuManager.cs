@@ -18,13 +18,15 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         PhotonNetwork.automaticallySyncScene = autoSyncScene;
     }
 
-    void Start () {
+    void Start()
+    {
         Connect();
-	}
-	
-	void Update () {
-		
-	}
+    }
+
+    void Update()
+    {
+        
+    }
 
     public void Connect()
     {
