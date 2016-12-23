@@ -9,8 +9,15 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     public bool autoJoinLobby = true;
     public bool autoSyncScene = true;
 
-    public Text labelVersion, labelError, labelStatus;
+    public Text labelVersion, labelError, labelStatus, labelPlayerInt, labelRoomName,
+                labelPlayerNumber;
     public GameObject loadingPanel, errorPanel;
+
+    //Default room options
+    private string roomName = "";
+    private byte numberOfPlayers = 2;
+    private bool isPrivate = false;
+    //private mapa
 
     private const string strConnecting      = "CONNECTING TO SERVER...";
     private const string strConnected       = "CONNECTED!";
@@ -55,7 +62,38 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     public void Exit()
     {
         Application.Quit();
-    } 
+    }
+
+    public void OnSliderChangeValue (Slider slider)
+    {
+        labelPlayerInt.text = slider.value.ToString();
+        numberOfPlayers = (byte) slider.value;
+    }
+
+    public void OnPrivateChangeValue (Toggle toggle)
+    {
+        if (toggle.isOn)
+            isPrivate = true;
+        else
+            isPrivate = false;
+    }
+
+    public void OnRoomNameChangeValue (InputField inputField)
+    {
+        roomName = inputField.text;
+    }
+
+    public void CreateRoom()
+    {
+        PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = numberOfPlayers, IsVisible = isPrivate}, null);
+    }
+
+    public override void OnJoinedRoom()
+    {
+        Camera.main.GetComponent<MenuCamera>().TransitionToLobby();
+        labelRoomName.text = PhotonNetwork.room.Name;
+        labelPlayerNumber.text += " " + PhotonNetwork.room.PlayerCount;
+    }
 
     public override void OnConnectedToMaster()
     {
