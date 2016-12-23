@@ -8,6 +8,9 @@ public class LavaScript : MonoBehaviour {
     private int width, height;
     float[,] heights;
 
+    private float terrainUpdateInterval = 1 / 30f;
+    private float lastUpdatedTimeStamp;
+
     void Awake()
     {
         terrain = GetComponent<Terrain>();
@@ -20,7 +23,15 @@ public class LavaScript : MonoBehaviour {
 
     void Update()
     {
-        // temporary
+        if (Time.time - lastUpdatedTimeStamp > terrainUpdateInterval)
+        {
+            Recalculate();
+            lastUpdatedTimeStamp = Time.time;
+        }
+    }
+
+    private void Recalculate()
+    {
         for (int i = 0; i < height; i++)
         {
             for (int j = 0; j < width; j++)
