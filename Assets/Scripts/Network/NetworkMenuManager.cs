@@ -72,10 +72,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
 
     public void OnPrivateChangeValue (Toggle toggle)
     {
-        if (toggle.isOn)
-            isPrivate = true;
-        else
-            isPrivate = false;
+        isPrivate = toggle.isOn;
     }
 
     public void OnRoomNameChangeValue (InputField inputField)
