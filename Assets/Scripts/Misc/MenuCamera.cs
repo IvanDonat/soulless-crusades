@@ -14,8 +14,7 @@ public class MenuCamera : MonoBehaviour {
     private bool inTransition = false;
     private Vector3 targetPosition;
 
-    private float stageFirstSmoothTime = .2f;
-    private float stageSecondSmoothTime = .3f;
+    private float stageSecondSmoothTime = .15f;
     private float xVelocity, yVelocity, zVelocity;
 
     public Transform canvasMenu;
@@ -35,7 +34,7 @@ public class MenuCamera : MonoBehaviour {
             if (currStage == TransitionStage.FIRST) 
             {
                 Vector3 posToGo = new Vector3(transform.position.x, transform.position.y,
-                    Mathf.SmoothDamp(transform.position.z, offsetFromCanvas.z * 2, ref zVelocity, stageFirstSmoothTime));
+                    Mathf.Lerp(transform.position.z, offsetFromCanvas.z * 2, Time.deltaTime * 5));
 
                 transform.position = posToGo;
                 if (transform.position.z < (offsetFromCanvas * 1.8f).z)
