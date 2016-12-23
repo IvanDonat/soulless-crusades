@@ -14,13 +14,10 @@ public class SetPlayerName : MonoBehaviour
         string defaultName = ""; //ovdje mozemo napravit ako oces tipa guest + random(0,9999)
         inputField = GetComponent<InputField>();
 
-        if (inputField != null)
+        if (PlayerPrefs.HasKey(playerNamePrefKey))
         {
-            if (PlayerPrefs.HasKey(playerNamePrefKey))
-            {
-                defaultName = PlayerPrefs.GetString(playerNamePrefKey);
-                inputField.text = defaultName;
-            }
+            defaultName = PlayerPrefs.GetString(playerNamePrefKey);
+            inputField.text = defaultName;
         }
 
         PhotonNetwork.playerName = defaultName;
