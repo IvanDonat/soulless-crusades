@@ -9,8 +9,13 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     public bool autoJoinLobby = true;
     public bool autoSyncScene = true;
 
-    public Text labelVersion, labelError;
+    public Text labelVersion, labelError, labelStatus;
     public GameObject loadingPanel, errorPanel;
+
+    private const string strConnecting      = "CONNECTING TO SERVER...";
+    private const string strConnected       = "CONNECTED!";
+    private const string strFailedToConnect = "SOULLESS CRUSADES FAILED TO ESTABLISH A CONNECTION TO SERVER!";
+    private const string strDisconnected    = "SOULLESS CRUSADES DISCONNECTED FROM SERVER!";
 
     void Awake()
     {
@@ -37,11 +42,13 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         {
             Debug.Log("Client already connected, transitioning to menu...");
             Camera.main.GetComponent<MenuCamera>().TransitionToMainMenu();
+            labelStatus.text = strConnected;
         }
         else
         {
             Debug.Log("Connecting...");
             PhotonNetwork.ConnectUsingSettings(gameVersion);
+            labelStatus.text = strConnecting;
         }
     }
 
@@ -54,19 +61,20 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToMainMenu();
         labelVersion.text = "Development build v" + gameVersion;
+        labelStatus.text = strConnected;
     }
 
     public override void OnFailedToConnectToPhoton(DisconnectCause cause)
     {
         Debug.Log("Disconnected because " + cause.ToString());
-        labelError.text = "SOULLESS CRUSADES FAILED TO ESTABLISH A CONNECTION TO THE SERVER!";
+        labelError.text = strFailedToConnect;
         loadingPanel.SetActive(false);
         errorPanel.SetActive(true);
     }
 
     public override void OnDisconnectedFromPhoton()
     {
-        labelError.text = "SOULESS CRUSADES DISCONNECTED FROM THE SERVER!";
+        labelError.text = strDisconnected;
         loadingPanel.SetActive(false);
         errorPanel.SetActive(true);
         Camera.main.GetComponent<MenuCamera>().TransitionToLoadingGame();
