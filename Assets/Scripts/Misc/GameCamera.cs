@@ -18,6 +18,9 @@ public class GameCamera : MonoBehaviour {
 
     void LateUpdate()
     {
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        Camera.main.fieldOfView = Mathf.Clamp(Camera.main.fieldOfView - scroll * 20, 35, 70);
+
         // mousePos is a vector from 0 to 1 for each axis
         Vector2 mousePos = Input.mousePosition;
         mousePos.x /= Screen.width;
