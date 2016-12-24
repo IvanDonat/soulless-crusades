@@ -13,7 +13,7 @@ public class LavaScript : MonoBehaviour {
 
     void LateUpdate()
     {
-        offset += (Vector2.up + Vector2.right) * Time.deltaTime / 150f;
+        offset = Vector2.up/2f + (Vector2.up + Vector2.right) * Mathf.Sin(Time.time / 2f) / 75f;
 
         rend.material.SetTextureOffset("_MainTex", offset);
         rend.material.SetTextureOffset("_BumpMap", offset);
