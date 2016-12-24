@@ -13,12 +13,11 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     private float roomRefreshTimer;
 
     public Text labelVersion, labelError, labelStatus, labelPlayerInt, labelRoomName,
-                labelPlayerNumber;
+                labelPlayerNumber, maxPlayers;
     public InputField roomInputField;
     public Toggle privateToggle;
     public Slider playerNumberSlider;
-    public GameObject selectedRoomPrefab;
-    public GameObject loadingPanel, errorPanel;
+    public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab;
 
     //Default room options
     private string roomName = "";
@@ -127,12 +126,59 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToLobby();
         labelRoomName.text = PhotonNetwork.room.Name;
-        labelPlayerNumber.text += " " + PhotonNetwork.room.PlayerCount;
+        maxPlayers.text = "Max Players: " + PhotonNetwork.room.MaxPlayers;
+        labelPlayerNumber.text = "Current player number: " + PhotonNetwork.room.PlayerCount;
+        Transform parent = GameObject.Find("Player List Parent").transform;
+        if (PhotonNetwork.isMasterClient)
+        {
+            AddPlayerListItem(PhotonNetwork.player.NickName, parent);
+        }
+        else
+        {
+            foreach (PhotonPlayer p in PhotonNetwork.playerList)
+                AddPlayerListItem(p.NickName, parent);
+        }
+    }
+
+    public override void OnPhotonPlayerConnected(PhotonPlayer other)
+    {
+        labelPlayerNumber.text = "Current player number: " + PhotonNetwork.room.PlayerCount;
+        Transform parent = GameObject.Find("Player List Parent").transform;
+        AddPlayerListItem(other.NickName, parent);
+    }
+
+    public override void OnPhotonPlayerDisconnected(PhotonPlayer other)
+    {
+        labelPlayerNumber.text = "Current player number: " + PhotonNetwork.room.PlayerCount;
+        Transform parent = GameObject.Find("Player List Parent").transform;
+
+        foreach (RectTransform t in parent.GetComponentInChildren<RectTransform> ())
+        {
+            if (t.gameObject.name.Split(' ')[1] == other.NickName)
+                Destroy(t.gameObject);
+        }
+
+        labelPlayerNumber.text = "Current player number: " + PhotonNetwork.room.PlayerCount;
+    }
+
+    private void AddPlayerListItem(string playerName, Transform parent)
+    {
+        GameObject go = Instantiate(listedPlayerPrefab, parent) as GameObject;
+        go.name = "PlayerListItem " + playerName;
+        go.GetComponentInChildren<Text>().text = playerName;
     }
 
     public override void OnLeftRoom()
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToMainMenu();
+
+        Transform parent = GameObject.Find("Player List Parent").transform;
+
+        foreach (RectTransform t in parent.GetComponentInChildren<RectTransform>())
+        {
+            if (t.transform != parent.transform)
+                Destroy(t.gameObject);
+        }
     }
 
     public override void OnConnectedToMaster()
