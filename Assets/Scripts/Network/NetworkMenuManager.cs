@@ -48,6 +48,8 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         roomRefreshTimer -= Time.deltaTime;
         if (roomRefreshTimer <= 0f)
         {
+            Transform parent = GameObject.Find("Room List").transform;
+
             foreach (GameObject t in GameObject.FindGameObjectsWithTag("Remove"))
             {
                 Destroy(t);
@@ -55,7 +57,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
 
             foreach (RoomInfo ri in PhotonNetwork.GetRoomList())
             {
-                GameObject go = Instantiate(selectedRoomPrefab, GameObject.Find("Room List").transform) as GameObject;
+                GameObject go = Instantiate(selectedRoomPrefab, parent) as GameObject;
                 go.name = "RoomListItem " + ri.Name;
                 go.GetComponentInChildren<Text>().text = string.Format("  {0}   {1}/{2}", ri.Name, ri.PlayerCount, ri.MaxPlayers);
                 go.GetComponent<Button>().onClick.AddListener(() => { JoinRoom(); });
@@ -111,7 +113,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
 
     public void CreateRoom()
     {
-        PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = numberOfPlayers, IsVisible = isPrivate }, null);
+        PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = numberOfPlayers, IsVisible = !isPrivate }, null);
         playerNumberSlider.value = 2;
         privateToggle.isOn = false;
         roomInputField.text = "";
