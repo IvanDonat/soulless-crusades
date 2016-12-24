@@ -23,8 +23,6 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     //Default room options
     private string roomName = "";
     private byte numberOfPlayers = 2;
-    private bool isPrivate = false;
-    //private mapa
 
     private const string strConnecting = "CONNECTING TO SERVER...";
     private const string strConnected = "CONNECTED!";
@@ -48,20 +46,25 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         roomRefreshTimer -= Time.deltaTime;
         if (roomRefreshTimer <= 0f)
         {
-            Transform parent = GameObject.Find("Room List").transform;
+            Transform parent = GameObject.Find("Room List Parent").transform;
 
-            foreach (GameObject t in GameObject.FindGameObjectsWithTag("Remove"))
+            foreach (RectTransform t in parent.GetComponentsInChildren<RectTransform>())
             {
-                Destroy(t);
+                if(t.transform != parent.transform)
+                    Destroy(t.gameObject);
             }
 
             foreach (RoomInfo ri in PhotonNetwork.GetRoomList())
             {
                 GameObject go = Instantiate(selectedRoomPrefab, parent) as GameObject;
                 go.name = "RoomListItem " + ri.Name;
-                go.GetComponentInChildren<Text>().text = string.Format("  {0}   {1}/{2}", ri.Name, ri.PlayerCount, ri.MaxPlayers);
+
+                go.transform.FindChild("RoomNameText").GetComponent<Text>().text = string.Format(ri.Name);
+                go.transform.FindChild("RoomPlayersText").GetComponent<Text>().text = string.Format(ri.PlayerCount + "/" + ri.MaxPlayers);
+
                 go.GetComponent<Button>().onClick.AddListener(() => { JoinRoom(); });
             }
+
             roomRefreshTimer = roomRefreshInterval;
         }
     }
@@ -101,11 +104,6 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         numberOfPlayers = (byte)slider.value;
     }
 
-    public void OnPrivateChangeValue(Toggle toggle)
-    {
-        isPrivate = toggle.isOn;
-    }
-
     public void OnRoomNameChangeValue(InputField inputField)
     {
         roomName = inputField.text;
@@ -113,7 +111,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
 
     public void CreateRoom()
     {
-        PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = numberOfPlayers, IsVisible = !isPrivate }, null);
+        PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = numberOfPlayers, IsVisible = !privateToggle.isOn }, null);
         playerNumberSlider.value = 2;
         privateToggle.isOn = false;
         roomInputField.text = "";
@@ -143,6 +141,12 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         labelVersion.text = "Development build v" + gameVersion;
         labelStatus.text = strConnected;
         PhotonNetwork.JoinLobby();
+    }
+
+    public override void OnJoinedLobby()
+    {
+        // refresh now
+        roomRefreshTimer = -1f;
     }
 
     public override void OnFailedToConnectToPhoton(DisconnectCause cause)
