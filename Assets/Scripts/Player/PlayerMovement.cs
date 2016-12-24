@@ -16,29 +16,33 @@ public class PlayerMovement : MonoBehaviour {
     private float moveForce = 40f;
 
     private Rigidbody rbody;
-    public Animation anim;
-    private Vector3 targetPosition;
+    private PlayerScript playerScript;
 
+    public Animation anim;
+
+    private Vector3 targetPosition;
     private PlayerState state = PlayerState.IDLE;
     private bool hasMovementOrder = false;
+    private IEnumerator uncastCoroutine;
 
     private Transform terrain;
 
     public Transform prefabParticlesOnClick;
 
-
-    void Start()
+    void Awake()
     {
         rbody = GetComponent<Rigidbody>();
         rbody.freezeRotation = true;
         rbody.drag = defaultFriction;
+
+        playerScript = transform.GetComponent<PlayerScript>();
 
         terrain = GameObject.FindGameObjectWithTag("Terrain").transform;
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(1) && state != PlayerState.CASTING)
+        if (Input.GetMouseButtonDown(1) && state != PlayerState.CASTING && state != PlayerState.STUNNED)
         {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -51,6 +55,12 @@ public class PlayerMovement : MonoBehaviour {
             }
         }
 
+        if (Input.GetMouseButtonDown(1) && state == PlayerState.CASTING)
+        {
+            playerScript.CancelCast();
+            state = PlayerState.IDLE;
+        }
+
         if (hasMovementOrder && DistanceToTarget() > 1f)
         {
             Quaternion targetRot = Quaternion.LookRotation(targetPosition - transform.position, Vector3.up);;
@@ -58,9 +68,7 @@ public class PlayerMovement : MonoBehaviour {
         }
 
         if (DistanceToTarget() < 1f && state == PlayerState.WALKING)
-        {
             state = PlayerState.IDLE;
-        }
 
         if (state == PlayerState.IDLE)
             anim.CrossFade("free", 0.5f);
@@ -115,7 +123,9 @@ public class PlayerMovement : MonoBehaviour {
         transform.rotation = Quaternion.LookRotation(aimPos - transform.position, Vector3.up);
 
         state = PlayerState.CASTING;
-        StartCoroutine("Uncast", time);
+
+        uncastCoroutine = Uncast(time);
+        StartCoroutine(uncastCoroutine);
     }
 
     private IEnumerator Unstun(float time)
@@ -128,5 +138,22 @@ public class PlayerMovement : MonoBehaviour {
     {
         yield return new WaitForSeconds(time);
         state = PlayerState.IDLE;
+    }
+
+    public void CancelCast()
+    {
+        if(uncastCoroutine != null)
+            StopCoroutine(uncastCoroutine);
+        state = PlayerState.IDLE;
+    }
+
+    public void SetState(PlayerState st)
+    {
+        this.state = st;
+    }
+
+    public PlayerState GetState()
+    {
+        return state;
     }
 }

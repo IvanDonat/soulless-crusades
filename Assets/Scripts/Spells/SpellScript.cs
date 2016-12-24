@@ -6,6 +6,8 @@ public class SpellScript : MonoBehaviour {
     public float speed = 3f;
     public float damage = 20;
     public float castTime = 0.3f;
+    public float castInterval = 1f;
+
 
     // @TODO 
 
@@ -46,4 +48,5 @@ public class SpellScript : MonoBehaviour {
     {
         return castTime;
     }
+
 }
