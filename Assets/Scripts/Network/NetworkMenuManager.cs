@@ -17,11 +17,15 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     public InputField roomInputField;
     public Toggle privateToggle;
     public Slider playerNumberSlider;
+    public Button kickPlayer;
     public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab;
 
     //Default room options
     private string roomName = "";
     private byte numberOfPlayers = 2;
+
+    //Private lobby vars
+    private PhotonPlayer selectedPlayer;
 
     private const string strConnecting = "CONNECTING TO SERVER...";
     private const string strConnected = "CONNECTED!";
@@ -122,6 +126,27 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         PhotonNetwork.JoinRoom(roomName);
     }
 
+    public void SelectPlayer()
+    {
+        kickPlayer.interactable = true;
+        foreach (PhotonPlayer p in PhotonNetwork.playerList)
+            if (p.NickName == EventSystem.current.currentSelectedGameObject.GetComponentInParent<Toggle>().gameObject.name.Split(' ')[1])
+                selectedPlayer = p;
+    }
+
+    public void KickPlayer()
+    {
+        Debug.Log(selectedPlayer.NickName);
+        PhotonView photonView = PhotonView.Get(this);
+        photonView.RPC("RpcKick", selectedPlayer);
+    }
+
+    [PunRPC]
+    private void RpcKick()
+    {
+        LeaveRoom();
+    }
+
     public override void OnJoinedRoom()
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToLobby();
@@ -132,6 +157,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         if (PhotonNetwork.isMasterClient)
         {
             AddPlayerListItem(PhotonNetwork.player.NickName, parent);
+            kickPlayer.onClick.AddListener(() => { KickPlayer(); });
         }
         else
         {
@@ -166,6 +192,12 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         GameObject go = Instantiate(listedPlayerPrefab, parent) as GameObject;
         go.name = "PlayerListItem " + playerName;
         go.GetComponentInChildren<Text>().text = playerName;
+
+        if (PhotonNetwork.isMasterClient)
+        {
+            go.GetComponentInChildren<Button>().interactable = true;
+            go.GetComponentInChildren<Button>().onClick.AddListener(() => { SelectPlayer(); });
+        }
     }
 
     public override void OnLeftRoom()
