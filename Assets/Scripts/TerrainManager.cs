@@ -61,7 +61,7 @@ public class TerrainManager : MonoBehaviour {
         {
             for (int j = 0; j < height; j++)
             {
-                heights[i, j] = 0;
+                heights[i, j] = 1;
             }
         }
 
