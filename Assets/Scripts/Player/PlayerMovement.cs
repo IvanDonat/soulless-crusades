@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour {
     private float moveForce = 40f;
 
     private Rigidbody rbody;
+    public Animation anim;
     private Vector3 targetPosition;
 
     private bool isStunned = false;
@@ -39,25 +40,38 @@ public class PlayerMovement : MonoBehaviour {
             }
         }
 
+        if (DistanceToTarget() > 1f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(targetPosition - transform.position, Vector3.up);;
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 5f);
+
+
+            anim.CrossFade("walk", 0.5f);
+        }
+        else anim.CrossFade("free", 0.5f);
     }
 
     void FixedUpdate()
     {
         rbody.drag = Mathf.Lerp(rbody.drag, defaultFriction, frictionRecoveryFactor);
 
-        targetPosition.y = transform.position.y; // top-down doesn't matter
-        float distToTarget = (targetPosition - transform.position).magnitude;
 
         if (!isStunned)
         {
             Vector3 force = targetPosition - transform.position;
             force.Normalize();
 
-            if (distToTarget < 1f)
-                force *= distToTarget;
+            if (DistanceToTarget() < 1f)
+                force *= DistanceToTarget();
 
             rbody.AddForce(force * moveForce, ForceMode.Acceleration);
         }
+    }
+
+    public float DistanceToTarget()
+    {
+        targetPosition.y = transform.position.y; // top-down doesn't matter
+        return (targetPosition - transform.position).magnitude;
     }
 
     public void SetTargetPosition(Vector3 pos)
