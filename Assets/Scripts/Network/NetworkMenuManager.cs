@@ -3,6 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+struct Ready
+{
+    PhotonPlayer player;
+    GameObject toggle;
+
+    public Ready(PhotonPlayer p, GameObject b)
+    {
+        player = p;
+        toggle = b;
+    }
+
+    public int GetId()
+    {
+        return player.ID;
+    }
+
+    public void Toggle(bool t)
+    {
+        toggle.GetComponent<Toggle>().isOn = t;
+    }
+}
 
 public class NetworkMenuManager : Photon.PunBehaviour {
 
@@ -15,7 +36,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     public Text labelVersion, labelError, labelStatus, labelPlayerInt, labelRoomName,
                 labelPlayerNumber, maxPlayers;
     public InputField roomInputField;
-    public Toggle privateToggle;
+    public Toggle privateToggle, readyToggle;
     public Slider playerNumberSlider;
     public Button kickPlayer;
     public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab;
@@ -26,6 +47,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
 
     //Private lobby vars
     private PhotonPlayer selectedPlayer;
+    List<Ready> listReady = new List<Ready>();
 
     private const string strConnecting = "CONNECTING TO SERVER...";
     private const string strConnected = "CONNECTED!";
@@ -56,7 +78,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
 
             foreach (RectTransform t in parent.GetComponentsInChildren<RectTransform>())
             {
-                if(t.transform != parent.transform)
+                if (t.transform != parent.transform)
                     Destroy(t.gameObject);
             }
 
@@ -148,6 +170,25 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         LeaveRoom();
     }
 
+    public void OnReadyChangedValue(Toggle ready)
+    {
+        PhotonView photonView = PhotonView.Get(this);
+        photonView.RPC("UpdateReady", PhotonTargets.All, PhotonNetwork.player.ID, ready.isOn);
+    }
+
+    [PunRPC]
+    private void UpdateReady(int id, bool isReady)
+    {
+        foreach(Ready r in listReady)
+        {
+            if (r.GetId() == id)
+            {
+                r.Toggle(isReady);
+                break;
+            }
+        }
+    }
+
     public override void OnJoinedRoom()
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToLobby();
@@ -185,6 +226,15 @@ public class NetworkMenuManager : Photon.PunBehaviour {
                 Destroy(t.gameObject);
         }
 
+        foreach (Ready r in listReady)
+        {
+            if (r.GetId() == other.ID)
+            {
+                listReady.Remove(r);
+                break;
+            }
+        }
+
         labelPlayerNumber.text = "Current player number: " + PhotonNetwork.room.PlayerCount;
     }
 
@@ -202,6 +252,9 @@ public class NetworkMenuManager : Photon.PunBehaviour {
             go.GetComponentInChildren<Button>().interactable = true;
             go.GetComponentInChildren<Button>().onClick.AddListener(() => { SelectPlayer(); });
         }
+
+        Ready ready = new Ready(PhotonNetwork.player, go);
+        listReady.Add(ready);
     }
 
     public override void OnLeftRoom()
@@ -215,6 +268,9 @@ public class NetworkMenuManager : Photon.PunBehaviour {
             if (t.transform != parent.transform)
                 Destroy(t.gameObject);
         }
+
+        readyToggle.isOn = false;
+        listReady.Clear();
     }
 
     public override void OnConnectedToMaster()
