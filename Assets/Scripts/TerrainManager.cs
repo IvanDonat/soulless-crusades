@@ -17,6 +17,7 @@ public class TerrainManager : MonoBehaviour {
     private TerrainData data;
     private int width, height;
     float[,] heights;
+    private float timePassedSinceTerrainUpdate = -1f;
 
     void Awake()
     {
@@ -26,41 +27,47 @@ public class TerrainManager : MonoBehaviour {
         width = data.heightmapWidth;
         height = data.heightmapHeight;
         heights = data.GetHeights(0, 0, width, height);
+    }
 
+    void Update()
+    {
+        timePassedSinceTerrainUpdate -= Time.deltaTime;
+        if (timePassedSinceTerrainUpdate < 0)
+        {
+            SetTerrainToCircle(100f - Time.time);
+            timePassedSinceTerrainUpdate = 1 / 10f;
+        }
+    }
 
-        float terrainStartDescentDist = 60;
-        float terrainEndDescentDist = 70;
+    public void SetTerrainToCircle(float radius)
+    {
+        float terrainStartDescentDist = radius;
+        float descentLength = 5;
 
         for (int i = 0; i < height; i++)
         {
             for (int j = 0; j < width; j++)
             {
-                float height = 0;
-
+                float h = 0;
 
                 float offsetX = Mathf.Abs(i - width / 2);
                 float offsetY = Mathf.Abs(j - height / 2);
                 float dist = Mathf.Sqrt(offsetX * offsetX + offsetY * offsetY);
 
-                if (dist <= terrainStartDescentDist)
-                    height = 1;
-                else if (dist >= terrainEndDescentDist)
-                    height = 0;
+                if (dist < terrainStartDescentDist)
+                    h = 1;
+                else if (dist >= terrainStartDescentDist + descentLength)
+                    h = 0;
                 else
                 {
-                    height = Mathf.Lerp(1, 0, (dist - terrainStartDescentDist) / (terrainEndDescentDist - dist));
+                    h = Mathf.Lerp(1, 0, (dist - terrainStartDescentDist) / (dist - terrainStartDescentDist + descentLength));
                 }
 
-                heights[i, j] = height;
+                heights[i, j] = h;
             }
         }
 
         ReloadTerrain();
-    }
-
-    void Update()
-    {
-
     }
 
     void ReloadTerrain()
