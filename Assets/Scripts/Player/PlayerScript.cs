@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerScript : Photon.PunBehaviour {
+    private NetworkGameManager gameManager;
     private PlayerMovement movementScript;
     private Transform terrain;
 
@@ -18,13 +19,10 @@ public class PlayerScript : Photon.PunBehaviour {
     private float lastCastedTimestamp;
     private IEnumerator castCoroutine;
 
-    // GUI
-    private GameObject aliveUI;
-    //public Canvas deadUI; upon deciding spectator UI layout
     private Slider healthBar;
     private Text healthBarNum;
 
-    void Awake()
+    void Start()
     {
         if(!photonView.isMine)
             Destroy(this); // remove this component if not mine
@@ -33,12 +31,14 @@ public class PlayerScript : Photon.PunBehaviour {
         terrain = GameObject.FindGameObjectWithTag("Terrain").transform;
         SetSpell(currentSpellPrefab);
 
+        gameManager = GameObject.FindWithTag("GameController").GetComponent<NetworkGameManager>();
+
         healthBar = GameObject.Find("Health Bar").GetComponent<Slider>();
         health = maxHealth;
 
         healthBarNum = healthBar.GetComponentInChildren<Text>();
 
-        aliveUI = GameObject.Find("Game GUI");
+        gameManager.GetSpectatorUI().SetActive(false);
     }
 
     void Update()
@@ -71,6 +71,8 @@ public class PlayerScript : Photon.PunBehaviour {
         healthBar.value = Mathf.Lerp(healthBar.value, health / maxHealth, Time.deltaTime * 5f);
         healthBarNum.text = (Convert.ToInt32(healthBar.value * 100)).ToString().Aggregate(string.Empty, (c, i) => c + i + ' ') 
             + "/ " + maxHealth.ToString().Aggregate(string.Empty, (c, i) => c + i + ' ');
+        if (healthBar.value < 1 / 100f)
+            Die();
     }
 
     private IEnumerator CastWithDelay(float time, Vector3 aimPos, Vector3 aimDir)
@@ -92,13 +94,17 @@ public class PlayerScript : Photon.PunBehaviour {
     {
         health -= dmg;
         CancelCast();
-        movementScript.Stun(dmg / 5f);
+        movementScript.Stun(dmg / 20f);
+    }
 
-        if (health <= 0)
-        {
-            PhotonNetwork.Destroy(this.photonView);
-            aliveUI.SetActive(false);
-        }
+    private void Die()
+    {
+        gameManager.GetPlayingUI().SetActive(false);
+        gameManager.GetSpectatorUI().SetActive(true);
+
+        gameManager.GetComponent<PhotonView>().RPC("OnPlayerDeath", PhotonTargets.All, photonView.viewID);
+
+        PhotonNetwork.Destroy(this.photonView);
     }
 
     public void CancelCast()

@@ -10,6 +10,10 @@ public class NetworkGameManager : MonoBehaviour {
     public Text gameTimeText;
     private float gameTime = 0;
 
+    public GameObject sharedUI;
+    public GameObject playingUI;
+    public GameObject spectatorUI;
+
     void Start()
     {
         PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(Random.Range(-15f, 15f), 1, Random.Range(-15f, 15f)), Quaternion.identity, 0);
@@ -30,6 +34,16 @@ public class NetworkGameManager : MonoBehaviour {
         }
     }
 
+    public GameObject GetPlayingUI()
+    {
+        return playingUI;
+    }
+
+    public GameObject GetSpectatorUI()
+    {
+        return spectatorUI;
+    }
+
     [PunRPC]
     public void DestroySpell(int id)
     {
@@ -41,6 +55,12 @@ public class NetworkGameManager : MonoBehaviour {
                 break;
             }
         }
+    }
+
+    [PunRPC]
+    public void OnPlayerDeath(int playerID)
+    { // is called for everyone by dying player
+
     }
 
     void OnGUI()

@@ -31,6 +31,11 @@ public class PlayerMovement : Photon.PunBehaviour {
 
     public Transform prefabParticlesOnClick;
 
+    // networking
+    private Vector3 syncPosition;
+    private Vector3 syncVelocity;
+    private Quaternion syncRotation;
+
     void Awake()
     {
         rbody = GetComponent<Rigidbody>();
@@ -55,8 +60,8 @@ public class PlayerMovement : Photon.PunBehaviour {
 
         if (!photonView.isMine)
         {
-            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 5f);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+            transform.position = Vector3.Lerp(transform.position, syncPosition, Time.deltaTime * 2f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, syncRotation, Time.deltaTime * 5f);
             return;
         }
 
@@ -189,9 +194,11 @@ public class PlayerMovement : Photon.PunBehaviour {
             Quaternion syncRot = (Quaternion) stream.ReceiveNext();
             PlayerState syncState = (PlayerState) stream.ReceiveNext();
 
-            targetPosition = syncPos;
-            rbody.velocity = syncVel;
-            targetRotation = syncRot;
+            syncPosition = syncPos;
+            syncVelocity = syncVel;
+            syncRotation = syncRot;
+
+            transform.position = syncPos;
             state = syncState;
         }
     }
