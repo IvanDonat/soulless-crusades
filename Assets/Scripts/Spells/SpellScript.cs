@@ -35,7 +35,6 @@ public class SpellScript : Photon.PunBehaviour {
             else if (c.tag == "Spell")
             {
                 gameManager.GetComponent<PhotonView>().RPC("DestroySpell", c.GetComponent<PhotonView>().owner, c.GetComponent<PhotonView>().viewID);
-                c.GetComponent<Renderer>().enabled = false; // locally fake that it has already disappeared
             }
 
             PhotonNetwork.Destroy(gameObject);
