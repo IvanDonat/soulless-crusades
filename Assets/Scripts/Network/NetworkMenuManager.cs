@@ -173,7 +173,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     public void OnReadyChangedValue(Toggle ready)
     {
         PhotonView photonView = PhotonView.Get(this);
-        photonView.RPC("UpdateReady", PhotonTargets.All, PhotonNetwork.player.ID, ready.isOn);
+        photonView.RPC("UpdateReady", PhotonTargets.AllBuffered, PhotonNetwork.player.ID, ready.isOn);
     }
 
     [PunRPC]
