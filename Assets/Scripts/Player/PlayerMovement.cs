@@ -10,7 +10,7 @@ public enum PlayerState
     STUNNED
 }
 
-public class PlayerMovement : MonoBehaviour {
+public class PlayerMovement : Photon.PunBehaviour {
     private float defaultFriction = 5f; // friction drops when hit by spell
     private float frictionRecoveryFactor = 0.2f;
     private float moveForce = 40f;
@@ -21,6 +21,7 @@ public class PlayerMovement : MonoBehaviour {
     public Animation anim;
 
     private Vector3 targetPosition;
+    private Quaternion targetRotation;
     private PlayerState state = PlayerState.IDLE;
     private bool hasMovementOrder = false;
     private IEnumerator uncastCoroutine;
@@ -42,6 +43,22 @@ public class PlayerMovement : MonoBehaviour {
 
     void Update()
     {
+        if (state == PlayerState.IDLE)
+            anim.CrossFade("free", 0.5f);
+        if (state == PlayerState.WALKING)
+            anim.CrossFade("walk", 0.5f);
+        if (state == PlayerState.CASTING)
+            anim.CrossFade("attack", 0.5f);
+        if (state == PlayerState.STUNNED)
+            anim.CrossFade("free", 0.5f);
+
+        if (!photonView.isMine)
+        {
+            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 5f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+            return;
+        }
+
         if (Input.GetMouseButtonDown(1) && state != PlayerState.CASTING && state != PlayerState.STUNNED)
         {
             RaycastHit hit;
@@ -63,25 +80,19 @@ public class PlayerMovement : MonoBehaviour {
 
         if (hasMovementOrder && DistanceToTarget() > 1f)
         {
-            Quaternion targetRot = Quaternion.LookRotation(targetPosition - transform.position, Vector3.up);;
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 5f);
+            targetRotation = Quaternion.LookRotation(targetPosition - transform.position, Vector3.up);;
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
         }
 
         if (DistanceToTarget() < 1f && state == PlayerState.WALKING)
             state = PlayerState.IDLE;
-
-        if (state == PlayerState.IDLE)
-            anim.CrossFade("free", 0.5f);
-        if (state == PlayerState.WALKING)
-            anim.CrossFade("walk", 0.5f);
-        if (state == PlayerState.CASTING)
-            anim.CrossFade("attack", 0.5f);
-        if (state == PlayerState.STUNNED)
-            anim.CrossFade("free", 0.5f);
     }
 
     void FixedUpdate()
     {
+        if (!photonView.isMine)
+            return;
+
         rbody.drag = Mathf.Lerp(rbody.drag, defaultFriction, frictionRecoveryFactor);
 
         if (hasMovementOrder)
@@ -155,5 +166,29 @@ public class PlayerMovement : MonoBehaviour {
     public PlayerState GetState()
     {
         return state;
+    }
+
+
+    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.isWriting)
+        {
+            stream.SendNext(transform.position);
+            stream.SendNext(rbody.velocity);
+            stream.SendNext(transform.rotation);
+            stream.SendNext(state);
+        }
+        else
+        {
+            Vector3 syncPos = (Vector3) stream.ReceiveNext();
+            Vector3 syncVel = (Vector3) stream.ReceiveNext();
+            Quaternion syncRot = (Quaternion) stream.ReceiveNext();
+            PlayerState syncState = (PlayerState) stream.ReceiveNext();
+
+            targetPosition = syncPos;
+            rbody.velocity = syncVel;
+            targetRotation = syncRot;
+            state = syncState;
+        }
     }
 }

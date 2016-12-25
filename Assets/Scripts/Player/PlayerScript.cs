@@ -17,7 +17,7 @@ public class PlayerScript : MonoBehaviour {
     private IEnumerator castCoroutine;
 
     // GUI
-    public Slider healthBar;
+    private Slider healthBar;
 
     void Awake()
     {
@@ -25,6 +25,7 @@ public class PlayerScript : MonoBehaviour {
         terrain = GameObject.FindGameObjectWithTag("Terrain").transform;
         SetSpell(currentSpellPrefab);
 
+        healthBar = GameObject.Find("Health Bar").GetComponent<Slider>();
         health = maxHealth;
     }
 
