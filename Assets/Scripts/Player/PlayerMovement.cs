@@ -168,7 +168,6 @@ public class PlayerMovement : Photon.PunBehaviour {
         return state;
     }
 
-
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.isWriting)

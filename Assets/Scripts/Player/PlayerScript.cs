@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerScript : MonoBehaviour {
+public class PlayerScript : Photon.PunBehaviour {
     private PlayerMovement movementScript;
     private Transform terrain;
 
@@ -31,6 +31,9 @@ public class PlayerScript : MonoBehaviour {
 
     void Update()
     {
+        if (!photonView.isMine)
+            return;
+
         if (Input.GetMouseButtonDown(0) && Time.time - lastCastedTimestamp >= currentSpellScript.castInterval && movementScript.GetState() != PlayerState.CASTING)
         {
             RaycastHit hit;
@@ -52,14 +55,16 @@ public class PlayerScript : MonoBehaviour {
             }
         }
 
-        healthBar.value = Mathf.Lerp(healthBar.value, health / maxHealth, Time.deltaTime * 5f);
+        healthBar.value = health / maxHealth;
     }
 
     private IEnumerator CastWithDelay(float time, Vector3 aimPos, Vector3 aimDir)
     {
         yield return new WaitForSeconds(time);
         lastCastedTimestamp = Time.time;
-        Instantiate(currentSpellPrefab, transform.position + aimDir*2, Quaternion.LookRotation(aimDir, Vector3.up));
+
+        GameObject spell = PhotonNetwork.Instantiate("Spells/" + currentSpellPrefab.name, transform.position + aimDir*2, Quaternion.LookRotation(aimDir, Vector3.up), 0) as GameObject;
+        spell.GetComponent<SpellScript>().SetRPCView(photonView);
     }
 
     public void SetSpell(Transform spell)
@@ -68,17 +73,18 @@ public class PlayerScript : MonoBehaviour {
         currentSpellScript = spell.GetComponent<SpellScript>();
     }
 
+    [PunRPC]
     public void TakeDamage(float dmg)
     {
         health -= dmg;
         CancelCast();
         movementScript.Stun(dmg / 5f);
-
     }
 
     public void CancelCast()
     {
-        StopCoroutine(castCoroutine);
+        if(castCoroutine != null)
+            StopCoroutine(castCoroutine);
         movementScript.CancelCast();
     }
 }
