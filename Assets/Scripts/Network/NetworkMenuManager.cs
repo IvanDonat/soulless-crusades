@@ -253,7 +253,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
             go.GetComponentInChildren<Button>().onClick.AddListener(() => { SelectPlayer(); });
         }
 
-        Ready ready = new Ready(PhotonNetwork.player, go);
+        Ready ready = new Ready(player, go);
         listReady.Add(ready);
     }
 
