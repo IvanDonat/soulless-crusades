@@ -63,6 +63,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     {
         PhotonNetwork.autoJoinLobby = autoJoinLobby;
         PhotonNetwork.automaticallySyncScene = autoSyncScene;
+        PhotonNetwork.sendRateOnSerialize = 20;
 
         PhotonNetwork.networkingPeer.DebugOut = ExitGames.Client.Photon.DebugLevel.WARNING;
         PhotonNetwork.logLevel = PhotonLogLevel.ErrorsOnly;
