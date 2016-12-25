@@ -12,7 +12,7 @@ public class NetworkGameManager : MonoBehaviour {
 
     void Start()
     {
-        PhotonNetwork.Instantiate(playerPrefab.name, Vector3.up * 2, Quaternion.identity, 0);
+        PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(Random.Range(-15f, 15f), 1, Random.Range(-15f, 15f)), Quaternion.identity, 0);
     }
 
     void Update()
