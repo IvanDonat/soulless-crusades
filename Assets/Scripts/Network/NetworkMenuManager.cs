@@ -40,11 +40,11 @@ public class NetworkMenuManager : Photon.PunBehaviour {
 
     public Text labelVersion, labelError, labelStatus, labelPlayerInt, labelRoomName,
                 labelPlayerNumber, maxPlayers;
-    public InputField roomInputField;
+    public InputField roomInputField, chatInput;
     public Toggle privateToggle, readyToggle;
     public Slider playerNumberSlider;
     public Button kickPlayer, startGame;
-    public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab;
+    public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab;
 
     //Default room options
     private string roomName = "";
@@ -100,6 +100,14 @@ public class NetworkMenuManager : Photon.PunBehaviour {
             }
 
             roomRefreshTimer = roomRefreshInterval;
+        }
+
+        if (Input.GetKey(KeyCode.Return))
+        {
+            PhotonView photonView = PhotonView.Get(this);
+            photonView.RPC("RpcSendText", PhotonTargets.All, PhotonNetwork.player.NickName, chatInput.text);
+            chatInput.text = "";
+            chatInput.ActivateInputField();
         }
     }
 
@@ -163,16 +171,27 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         selectedPlayer = EventSystem.current.currentSelectedGameObject.transform.parent.GetComponent<PhotonPlayerContainer>().Get();
     }
 
+    public void StartGame()
+    {
+        PhotonNetwork.LoadLevel(1);
+    }
+
+    [PunRPC]
+    public void RpcSendText(string nick, string msg)
+    {
+        if (msg != "")
+        {
+            Transform parent = GameObject.Find("Message List Parent").transform;
+            GameObject go = Instantiate(chatMsgPrefab, parent);
+            go.GetComponentInChildren<Text>().text = string.Format("{0}: {1}", nick, msg);
+        }
+    }
+
     public void KickPlayer()
     {
         Debug.Log(selectedPlayer.NickName);
         PhotonView photonView = PhotonView.Get(this);
         photonView.RPC("RpcKick", selectedPlayer);
-    }
-
-    public void StartGame()
-    {
-        PhotonNetwork.LoadLevel(1);
     }
 
     [PunRPC]
@@ -293,6 +312,14 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         foreach (RectTransform t in parent.GetComponentInChildren<RectTransform>())
         {
             if (t.transform != parent.transform)
+                Destroy(t.gameObject);
+        }
+
+        Transform parentChat = GameObject.Find("Message List Parent").transform;
+
+        foreach (RectTransform t in parentChat.GetComponentInChildren<RectTransform>())
+        {
+            if (t.transform != parentChat.transform)
                 Destroy(t.gameObject);
         }
 
