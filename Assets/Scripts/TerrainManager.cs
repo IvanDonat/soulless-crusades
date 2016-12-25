@@ -34,7 +34,7 @@ public class TerrainManager : MonoBehaviour {
         timePassedSinceTerrainUpdate -= Time.deltaTime;
         if (timePassedSinceTerrainUpdate < 0)
         {
-            SetTerrainToCircle(100f - Time.time);
+            SetTerrainToCircle(75f);
 
             ReloadTerrain();
 
