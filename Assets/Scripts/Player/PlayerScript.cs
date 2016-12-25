@@ -19,6 +19,8 @@ public class PlayerScript : Photon.PunBehaviour {
     private IEnumerator castCoroutine;
 
     // GUI
+    private GameObject aliveUI;
+    //public Canvas deadUI; upon deciding spectator UI layout
     private Slider healthBar;
     private Text healthBarNum;
 
@@ -35,6 +37,8 @@ public class PlayerScript : Photon.PunBehaviour {
         health = maxHealth;
 
         healthBarNum = healthBar.GetComponentInChildren<Text>();
+
+        aliveUI = GameObject.Find("Game GUI");
     }
 
     void Update()
@@ -89,6 +93,12 @@ public class PlayerScript : Photon.PunBehaviour {
         health -= dmg;
         CancelCast();
         movementScript.Stun(dmg / 5f);
+
+        if (health <= 0)
+        {
+            PhotonNetwork.Destroy(this.photonView);
+            aliveUI.SetActive(false);
+        }
     }
 
     public void CancelCast()
