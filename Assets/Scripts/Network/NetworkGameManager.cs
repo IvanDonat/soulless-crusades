@@ -23,6 +23,19 @@ public class NetworkGameManager : MonoBehaviour {
         gameTimeText.text = minutes.ToString("D2") + ":" + seconds.ToString("D2");
     }
 
+    [PunRPC]
+    public void DestroySpell(int id)
+    {
+        foreach (GameObject sp in GameObject.FindGameObjectsWithTag("Spell"))
+        {
+            if (sp.GetComponent<PhotonView>().viewID == id)
+            {
+                PhotonNetwork.Destroy(sp);
+                break;
+            }
+        }
+    }
+
     void OnGUI()
     {
         if(PhotonNetwork.connected)

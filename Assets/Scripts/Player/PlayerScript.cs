@@ -21,6 +21,9 @@ public class PlayerScript : Photon.PunBehaviour {
 
     void Awake()
     {
+        if(!photonView.isMine)
+            Destroy(this); // remove this component if not mine
+
         movementScript = transform.GetComponent<PlayerMovement>();
         terrain = GameObject.FindGameObjectWithTag("Terrain").transform;
         SetSpell(currentSpellPrefab);
@@ -34,7 +37,8 @@ public class PlayerScript : Photon.PunBehaviour {
         if (!photonView.isMine)
             return;
 
-        if (Input.GetMouseButtonDown(0) && Time.time - lastCastedTimestamp >= currentSpellScript.castInterval && movementScript.GetState() != PlayerState.CASTING)
+        if (Input.GetMouseButtonDown(0) && Time.time - lastCastedTimestamp >= currentSpellScript.castInterval 
+            && movementScript.GetState() != PlayerState.CASTING && movementScript.GetState() != PlayerState.STUNNED)
         {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -55,7 +59,7 @@ public class PlayerScript : Photon.PunBehaviour {
             }
         }
 
-        healthBar.value = health / maxHealth;
+        healthBar.value = Mathf.Lerp(healthBar.value, health / maxHealth, Time.deltaTime * 5f);
     }
 
     private IEnumerator CastWithDelay(float time, Vector3 aimPos, Vector3 aimDir)
@@ -63,8 +67,7 @@ public class PlayerScript : Photon.PunBehaviour {
         yield return new WaitForSeconds(time);
         lastCastedTimestamp = Time.time;
 
-        GameObject spell = PhotonNetwork.Instantiate("Spells/" + currentSpellPrefab.name, transform.position + aimDir*2, Quaternion.LookRotation(aimDir, Vector3.up), 0) as GameObject;
-        spell.GetComponent<SpellScript>().SetRPCView(photonView);
+        PhotonNetwork.Instantiate("Spells/" + currentSpellPrefab.name, transform.position + aimDir*2, Quaternion.LookRotation(aimDir, Vector3.up), 0);
     }
 
     public void SetSpell(Transform spell)
