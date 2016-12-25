@@ -44,6 +44,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     public Toggle privateToggle, readyToggle;
     public Slider playerNumberSlider;
     public Button kickPlayer, startGame;
+    public Scrollbar chatScroll;
     public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab;
 
     //Default room options
@@ -185,6 +186,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
             GameObject go = Instantiate(chatMsgPrefab, parent);
             go.GetComponentInChildren<Text>().text = string.Format("{0}: {1}", nick, msg);
         }
+        chatScroll.value = 0f;
     }
 
     public void KickPlayer()
