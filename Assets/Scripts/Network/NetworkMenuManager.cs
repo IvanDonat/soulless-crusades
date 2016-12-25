@@ -193,6 +193,8 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         GameObject go = Instantiate(listedPlayerPrefab, parent) as GameObject;
         go.name = "PlayerListItem " + player.NickName;
         go.GetComponentInChildren<Text>().text = player.NickName;
+        if(player.IsMasterClient)
+            go.GetComponentInChildren<Text>().color = Color.Lerp(go.GetComponentInChildren<Text>().color, Color.red, 0.3f);
         go.GetComponent<PhotonPlayerContainer>().Set(player);
 
         if (PhotonNetwork.isMasterClient)
@@ -243,5 +245,11 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         loadingPanel.SetActive(false);
         errorPanel.SetActive(true);
         Camera.main.GetComponent<MenuCamera>().TransitionToLoadingGame();
+    }
+
+    void OnGUI()
+    {
+        if(PhotonNetwork.connected)
+            GUILayout.Label(PhotonNetwork.connectionState + "\n" + PhotonNetwork.GetPing() + " ms");
     }
 }

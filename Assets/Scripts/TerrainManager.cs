@@ -28,13 +28,30 @@ public class TerrainManager : MonoBehaviour {
         heights = data.GetHeights(0, 0, width, height);
 
 
+        float terrainStartDescentDist = 60;
+        float terrainEndDescentDist = 70;
 
-        // TEMPORARY
         for (int i = 0; i < height; i++)
         {
             for (int j = 0; j < width; j++)
             {
-                heights[i, j] = 1 - Mathf.Sqrt((i - height / 2) * (i - height / 2) + (j - width / 2) * (j - width / 2)) / 70;
+                float height = 0;
+
+
+                float offsetX = Mathf.Abs(i - width / 2);
+                float offsetY = Mathf.Abs(j - height / 2);
+                float dist = Mathf.Sqrt(offsetX * offsetX + offsetY * offsetY);
+
+                if (dist <= terrainStartDescentDist)
+                    height = 1;
+                else if (dist >= terrainEndDescentDist)
+                    height = 0;
+                else
+                {
+                    height = Mathf.Lerp(1, 0, (dist - terrainStartDescentDist) / (terrainEndDescentDist - dist));
+                }
+
+                heights[i, j] = height;
             }
         }
 
