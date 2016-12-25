@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerScript : MonoBehaviour {
     private PlayerMovement movementScript;
     private Transform terrain;
 
-    private float health = 100;
+    private float maxHealth = 100;
+    private float health;
 
     // currently supports one spell, @TODO multiple spells support
     public Transform currentSpellPrefab;
@@ -14,11 +16,16 @@ public class PlayerScript : MonoBehaviour {
     private float lastCastedTimestamp;
     private IEnumerator castCoroutine;
 
+    // GUI
+    public Slider healthBar;
+
     void Awake()
     {
         movementScript = transform.GetComponent<PlayerMovement>();
         terrain = GameObject.FindGameObjectWithTag("Terrain").transform;
         SetSpell(currentSpellPrefab);
+
+        health = maxHealth;
     }
 
     void Update()
@@ -30,9 +37,10 @@ public class PlayerScript : MonoBehaviour {
             if (terrain.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
             {
                 Vector3 aimPos = hit.point;
-                Vector3 spawnPos = transform.position;
-                aimPos.y = spawnPos.y;
-                Vector3 aimDir = (aimPos - transform.position * 1.2f).normalized;
+                aimPos.y = transform.position.y;
+
+                Vector3 aimDir = aimPos - transform.position;
+                aimDir.Normalize();
 
                 if(castCoroutine != null)
                     CancelCast();
@@ -42,6 +50,8 @@ public class PlayerScript : MonoBehaviour {
                 movementScript.CastSpell(currentSpellScript.GetCastTime(), aimPos);
             }
         }
+
+        healthBar.value = Mathf.Lerp(healthBar.value, health / maxHealth, Time.deltaTime * 5f);
     }
 
     private IEnumerator CastWithDelay(float time, Vector3 aimPos, Vector3 aimDir)
@@ -62,6 +72,7 @@ public class PlayerScript : MonoBehaviour {
         health -= dmg;
         CancelCast();
         movementScript.Stun(dmg / 5f);
+
     }
 
     public void CancelCast()

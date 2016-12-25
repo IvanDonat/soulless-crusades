@@ -16,7 +16,7 @@ public class TerrainManager : MonoBehaviour {
     private Terrain terrain;
     private TerrainData data;
     private int width, height;
-    float[,] heights;
+    private float[,] heights;
     private float timePassedSinceTerrainUpdate = -1f;
 
     void Awake()
@@ -35,9 +35,36 @@ public class TerrainManager : MonoBehaviour {
         if (timePassedSinceTerrainUpdate < 0)
         {
             SetTerrainToCircle(100f - Time.time);
+
+            ReloadTerrain();
+
             timePassedSinceTerrainUpdate = 1 / 10f;
         }
     }
+
+    void ReloadTerrain()
+    {
+        data.SetHeights(0, 0, heights);
+    }
+
+    void OnApplicationQuit()
+    { // inside unity editor, reset terrain
+        int width = data.heightmapWidth;
+        int height = data.heightmapHeight;
+        float[,] heights = data.GetHeights(0, 0, width, height);
+
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                heights[i, j] = 1;
+            }
+        }
+
+        data.SetHeights(0, 0, heights);
+    }
+
+
 
     public void SetTerrainToCircle(float radius)
     {
@@ -66,30 +93,5 @@ public class TerrainManager : MonoBehaviour {
                 heights[i, j] = h;
             }
         }
-
-        ReloadTerrain();
     }
-
-    void ReloadTerrain()
-    {
-        data.SetHeights(0, 0, heights);
-    }
-
-    void OnApplicationQuit()
-    { // inside unity editor, reset terrain
-        int width = data.heightmapWidth;
-        int height = data.heightmapHeight;
-        float[,] heights = data.GetHeights(0, 0, width, height);
-
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-                heights[i, j] = 1;
-            }
-        }
-
-        data.SetHeights(0, 0, heights);
-    }
-
 }
