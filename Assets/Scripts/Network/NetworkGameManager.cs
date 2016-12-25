@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class NetworkGameManager : MonoBehaviour {
@@ -18,9 +19,15 @@ public class NetworkGameManager : MonoBehaviour {
     {
         gameTime += Time.deltaTime;
 
-        int minutes = (int) gameTime / 60;
-        int seconds = (int) gameTime % 60;
+        int minutes = (int)gameTime / 60;
+        int seconds = (int)gameTime % 60;
         gameTimeText.text = minutes.ToString("D2") + ":" + seconds.ToString("D2");
+
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            PhotonNetwork.LeaveRoom();
+            SceneManager.LoadScene(0);
+        }
     }
 
     [PunRPC]
