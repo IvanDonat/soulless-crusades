@@ -36,6 +36,9 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     {
         PhotonNetwork.autoJoinLobby = autoJoinLobby;
         PhotonNetwork.automaticallySyncScene = autoSyncScene;
+
+        PhotonNetwork.networkingPeer.DebugOut = ExitGames.Client.Photon.DebugLevel.WARNING;
+        PhotonNetwork.logLevel = PhotonLogLevel.ErrorsOnly;
     }
 
     void Start()
@@ -122,16 +125,14 @@ public class NetworkMenuManager : Photon.PunBehaviour {
 
     public void JoinRoom()
     {
-        string roomName = EventSystem.current.currentSelectedGameObject.name.Split(' ')[1];
+        string roomName = EventSystem.current.currentSelectedGameObject.name.Substring("RoomListItem ".Length);
         PhotonNetwork.JoinRoom(roomName);
     }
 
     public void SelectPlayer()
     {
         kickPlayer.interactable = true;
-        foreach (PhotonPlayer p in PhotonNetwork.playerList)
-            if (p.NickName == EventSystem.current.currentSelectedGameObject.GetComponentInParent<Toggle>().gameObject.name.Split(' ')[1])
-                selectedPlayer = p;
+        selectedPlayer = EventSystem.current.currentSelectedGameObject.transform.parent.GetComponent<PhotonPlayerContainer>().Get();
     }
 
     public void KickPlayer()
@@ -156,13 +157,13 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         Transform parent = GameObject.Find("Player List Parent").transform;
         if (PhotonNetwork.isMasterClient)
         {
-            AddPlayerListItem(PhotonNetwork.player.NickName, parent);
+            AddPlayerListItem(PhotonNetwork.player, parent);
             kickPlayer.onClick.AddListener(() => { KickPlayer(); });
         }
         else
         {
             foreach (PhotonPlayer p in PhotonNetwork.playerList)
-                AddPlayerListItem(p.NickName, parent);
+                AddPlayerListItem(p, parent);
         }
     }
 
@@ -170,7 +171,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     {
         labelPlayerNumber.text = "Current player number: " + PhotonNetwork.room.PlayerCount;
         Transform parent = GameObject.Find("Player List Parent").transform;
-        AddPlayerListItem(other.NickName, parent);
+        AddPlayerListItem(other, parent);
     }
 
     public override void OnPhotonPlayerDisconnected(PhotonPlayer other)
@@ -180,18 +181,19 @@ public class NetworkMenuManager : Photon.PunBehaviour {
 
         foreach (RectTransform t in parent.GetComponentInChildren<RectTransform> ())
         {
-            if (t.gameObject.name.Split(' ')[1] == other.NickName)
+            if (t.gameObject.GetComponent<PhotonPlayerContainer>().Get().NickName == other.NickName)
                 Destroy(t.gameObject);
         }
 
         labelPlayerNumber.text = "Current player number: " + PhotonNetwork.room.PlayerCount;
     }
 
-    private void AddPlayerListItem(string playerName, Transform parent)
+    private void AddPlayerListItem(PhotonPlayer player, Transform parent)
     {
         GameObject go = Instantiate(listedPlayerPrefab, parent) as GameObject;
-        go.name = "PlayerListItem " + playerName;
-        go.GetComponentInChildren<Text>().text = playerName;
+        go.name = "PlayerListItem " + player.NickName;
+        go.GetComponentInChildren<Text>().text = player.NickName;
+        go.GetComponent<PhotonPlayerContainer>().Set(player);
 
         if (PhotonNetwork.isMasterClient)
         {
