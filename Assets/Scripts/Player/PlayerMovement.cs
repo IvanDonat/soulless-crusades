@@ -25,6 +25,7 @@ public class PlayerMovement : Photon.PunBehaviour {
     private PlayerState state = PlayerState.IDLE;
     private bool hasMovementOrder = false;
     private IEnumerator uncastCoroutine;
+    private IEnumerator unstunCoroutine;
 
     private Transform terrain;
 
@@ -120,10 +121,14 @@ public class PlayerMovement : Photon.PunBehaviour {
 
     public void Stun(float time)
     {
+        if (unstunCoroutine != null)
+            StopCoroutine(unstunCoroutine);
+
         hasMovementOrder = false;
 
         state = PlayerState.STUNNED;
-        StartCoroutine("Unstun", time);
+        unstunCoroutine = Unstun(time);
+        StartCoroutine(unstunCoroutine);
     }
 
     public void CastSpell(float time, Vector3 aimPos)
