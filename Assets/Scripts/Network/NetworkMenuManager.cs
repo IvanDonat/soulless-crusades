@@ -6,9 +6,9 @@ using UnityEngine.UI;
 struct Ready
 {
     PhotonPlayer player;
-    GameObject toggle;
+    Toggle toggle;
 
-    public Ready(PhotonPlayer p, GameObject b)
+    public Ready(PhotonPlayer p, Toggle b)
     {
         player = p;
         toggle = b;
@@ -19,9 +19,14 @@ struct Ready
         return player.ID;
     }
 
+    public bool GetToggle()
+    {
+        return toggle.isOn;
+    }
+
     public void Toggle(bool t)
     {
-        toggle.GetComponent<Toggle>().isOn = t;
+        toggle.isOn = t;
     }
 }
 
@@ -38,7 +43,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     public InputField roomInputField;
     public Toggle privateToggle, readyToggle;
     public Slider playerNumberSlider;
-    public Button kickPlayer;
+    public Button kickPlayer, startGame;
     public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab;
 
     //Default room options
@@ -164,6 +169,11 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         photonView.RPC("RpcKick", selectedPlayer);
     }
 
+    public void StartGame()
+    {
+        PhotonNetwork.LoadLevel(1);
+    }
+
     [PunRPC]
     private void RpcKick()
     {
@@ -187,6 +197,21 @@ public class NetworkMenuManager : Photon.PunBehaviour {
                 break;
             }
         }
+
+        if (PhotonNetwork.isMasterClient)
+        {
+            int readyCount = 0;
+            foreach (Ready r in listReady)
+            {
+                if (r.GetToggle() == true)
+                    readyCount++;
+            }
+
+            if (readyCount >= 2)
+                startGame.interactable = true;
+            else
+                startGame.interactable = false;
+        }
     }
 
     public override void OnJoinedRoom()
@@ -198,6 +223,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         Transform parent = GameObject.Find("Player List Parent").transform;
         if (PhotonNetwork.isMasterClient)
         {
+            startGame.gameObject.SetActive(true);
             AddPlayerListItem(PhotonNetwork.player, parent);
             kickPlayer.onClick.AddListener(() => { KickPlayer(); });
         }
@@ -253,7 +279,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
             go.GetComponentInChildren<Button>().onClick.AddListener(() => { SelectPlayer(); });
         }
 
-        Ready ready = new Ready(player, go);
+        Ready ready = new Ready(player, go.GetComponentInChildren<Toggle> ());
         listReady.Add(ready);
     }
 
