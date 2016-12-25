@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +20,7 @@ public class PlayerScript : Photon.PunBehaviour {
 
     // GUI
     private Slider healthBar;
+    private Text healthBarNum;
 
     void Awake()
     {
@@ -30,6 +33,8 @@ public class PlayerScript : Photon.PunBehaviour {
 
         healthBar = GameObject.Find("Health Bar").GetComponent<Slider>();
         health = maxHealth;
+
+        healthBarNum = healthBar.GetComponentInChildren<Text>();
     }
 
     void Update()
@@ -60,6 +65,8 @@ public class PlayerScript : Photon.PunBehaviour {
         }
 
         healthBar.value = Mathf.Lerp(healthBar.value, health / maxHealth, Time.deltaTime * 5f);
+        healthBarNum.text = (Convert.ToInt32(healthBar.value * 100)).ToString().Aggregate(string.Empty, (c, i) => c + i + ' ') 
+            + "/ " + maxHealth.ToString().Aggregate(string.Empty, (c, i) => c + i + ' ');
     }
 
     private IEnumerator CastWithDelay(float time, Vector3 aimPos, Vector3 aimDir)

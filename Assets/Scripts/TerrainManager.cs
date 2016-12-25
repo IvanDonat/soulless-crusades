@@ -69,7 +69,7 @@ public class TerrainManager : MonoBehaviour {
     public void SetTerrainToCircle(float radius)
     {
         float terrainStartDescentDist = radius;
-        float descentLength = 5;
+        float descentLength = 10;
 
         for (int i = 0; i < height; i++)
         {

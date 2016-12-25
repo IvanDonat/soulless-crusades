@@ -46,6 +46,6 @@ public class NetworkGameManager : MonoBehaviour {
     void OnGUI()
     {
         if(PhotonNetwork.connected)
-            GUILayout.Label(PhotonNetwork.connectionState + "\n" + PhotonNetwork.GetPing() + " ms");
+            GUILayout.Label(PhotonNetwork.connectionState + " " + PhotonNetwork.GetPing() + " ms");
     }
 }
