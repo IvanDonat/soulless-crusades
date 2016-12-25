@@ -303,6 +303,11 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         Camera.main.GetComponent<MenuCamera>().TransitionToLoadingGame();
     }
 
+    public override void OnMasterClientSwitched(PhotonPlayer newMasterClient)
+    {
+        LeaveRoom();
+    }
+
     void OnGUI()
     {
         if(PhotonNetwork.connected)
