@@ -11,6 +11,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
 
     private Button[] spellSelectButtons = new Button[maxSpells];
     private Text[] spellSelectCooldownText = new Text[maxSpells];
+    private Text[] spellSelectNameText = new Text[maxSpells];
 
     private string[] spellName = new string[maxSpells];
     private float[] spellCooldown = new float[maxSpells];
@@ -22,15 +23,22 @@ public partial class PlayerScript : Photon.PunBehaviour {
         {
             spellSelectButtons[i] = GameObject.Find("Spell" + i.ToString()).GetComponent<Button>();
             spellSelectCooldownText[i] = spellSelectButtons[i].transform.FindChild("Cooldown").GetComponent<Text>();
+            spellSelectNameText[i] = spellSelectButtons[i].transform.FindChild("Text").GetComponent<Text>();
             spellSelectButtons[i].onClick.AddListener( () => {SpellButtonClicked();} );
         }
+
+
+        // TEMPORARY
+        spellName[0] = "Fireball";
     }
 
-    void UpdateSpellCooldowns()
+    void UpdateSpells()
     {
         for (int i = 0; i < maxSpells; i++)
         {
             spellCooldown[i] -= Time.deltaTime;
+
+            spellSelectNameText[i].text = spellName[i];
 
             if (spellCooldown[i] <= 0)
             {
@@ -51,17 +59,6 @@ public partial class PlayerScript : Photon.PunBehaviour {
         if (spellName[index] != "" && spellCooldown[index] <= 0)
         {
             SetSpell(spellName[index]);
-        }
-
-        indexSpellSelected = index;
-
-        if (index == 0 && spellCooldown[index] <= 0)
-        {
-            SetSpell("Spell Fireball");
-        }
-        else
-        {
-            SetSpell(null);
         }
     }
 }
