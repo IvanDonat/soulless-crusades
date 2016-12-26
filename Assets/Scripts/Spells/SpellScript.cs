@@ -27,7 +27,7 @@ public class SpellScript : Photon.PunBehaviour {
         {
             if (c.tag == "Player" && !c.GetComponent<PhotonView>().isMine)
             {
-                c.GetComponent<PhotonView>().RPC("TakeDamage", c.GetComponent<PhotonView>().owner, damage);
+                c.GetComponent<PhotonView>().RPC("TakeDamage", c.GetComponent<PhotonView>().owner, photonView.owner, damage);
             }
             else if (c.tag == "Player" && c.GetComponent<PhotonView>().isMine)
             {

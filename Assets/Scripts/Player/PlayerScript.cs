@@ -13,6 +13,7 @@ public class PlayerScript : Photon.PunBehaviour {
 
     private float maxHealth = 100;
     private float health;
+    private PhotonPlayer lastDamageDealer;
 
     // currently supports one spell, @TODO multiple spells support
     public Transform currentSpellPrefab;
@@ -22,6 +23,7 @@ public class PlayerScript : Photon.PunBehaviour {
 
     private Slider healthBar;
     private Text healthBarNum;
+
 
     void Start()
     {
@@ -94,15 +96,25 @@ public class PlayerScript : Photon.PunBehaviour {
     }
 
     [PunRPC]
-    public void TakeDamage(float dmg)
+    public void TakeDamage(PhotonPlayer dmgDealer, float dmg)
     {
         health -= dmg;
         CancelCast();
         movementScript.Stun(dmg / 20f);
+
+        if (dmgDealer != null)
+        { // null in case of lava
+            lastDamageDealer = dmgDealer;
+        }
     }
 
     private void Die()
     {
+        if (lastDamageDealer != null)
+        {
+            gameManager.GetComponent<PhotonView>().RPC("GotKill", lastDamageDealer, photonView.owner);
+        }
+
         gameManager.GetPlayingUI().SetActive(false);
         gameManager.GetSpectatorUI().SetActive(true);
 

@@ -14,6 +14,9 @@ public class NetworkGameManager : MonoBehaviour {
     public GameObject playingUI;
     public GameObject spectatorUI;
 
+    // stats
+    private int kills = 0;
+
     void Start()
     {
         PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(Random.Range(-15f, 15f), 1, Random.Range(-15f, 15f)), Quaternion.identity, 0);
@@ -61,6 +64,14 @@ public class NetworkGameManager : MonoBehaviour {
     public void OnPlayerDeath(int playerID)
     { // is called for everyone by dying player
 
+    }
+
+    [PunRPC]
+    public void GotKill(PhotonPlayer victim)
+    {
+        print("You killed: " + victim.NickName);
+        kills++;
+        PhotonNetwork.player.SetScore(kills);
     }
 
     void OnGUI()

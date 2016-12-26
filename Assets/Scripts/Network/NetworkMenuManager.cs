@@ -95,16 +95,16 @@ public class NetworkMenuManager : Photon.PunBehaviour {
             bool allReady = true;
             foreach (PhotonPlayer p in PhotonNetwork.playerList)
             {
-                if ((bool) p.CustomProperties["ready"] == true)
-                {
-                    readyCount++;
-                }
-                else
-                {
-                    allReady = false;
-                }
+                bool isReady = false; // treba biti ovako jer property može bit null
+                if(p.CustomProperties["ready"] != null)
+                    isReady = (bool) p.CustomProperties["ready"];
 
-                readyCheckmarks[p].isOn = (bool) p.CustomProperties["ready"];
+                if (isReady)
+                    readyCount++;
+                else
+                    allReady = false;
+
+                readyCheckmarks[p].isOn = isReady;
             }
 
             if (allReady && readyCount >= 1)
