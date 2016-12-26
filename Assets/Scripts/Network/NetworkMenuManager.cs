@@ -121,13 +121,11 @@ public class NetworkMenuManager : Photon.PunBehaviour {
 
         if (PhotonNetwork.connected)
         {
-            Debug.Log("Client already connected, transitioning to menu...");
             Camera.main.GetComponent<MenuCamera>().TransitionToMainMenu();
             labelStatus.text = strConnected;
         }
         else
         {
-            Debug.Log("Connecting...");
             PhotonNetwork.ConnectUsingSettings(gameVersion);
             labelStatus.text = strConnecting;
         }
@@ -207,7 +205,6 @@ public class NetworkMenuManager : Photon.PunBehaviour {
 
     public void KickPlayer()
     {
-        Debug.Log(selectedPlayer.NickName);
         PhotonView photonView = PhotonView.Get(this);
         photonView.RPC("RpcKick", selectedPlayer);
     }
@@ -330,7 +327,6 @@ public class NetworkMenuManager : Photon.PunBehaviour {
 
     public override void OnFailedToConnectToPhoton(DisconnectCause cause)
     {
-        Debug.Log("Disconnected because " + cause.ToString());
         labelError.text = strFailedToConnect;
         loadingPanel.SetActive(false);
         errorPanel.SetActive(true);
