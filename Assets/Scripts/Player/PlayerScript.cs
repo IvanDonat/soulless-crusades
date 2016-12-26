@@ -18,7 +18,6 @@ public partial class PlayerScript : Photon.PunBehaviour {
     // currently supports one spell, @TODO multiple spells support
     private string currentSpellName;
     private SpellScript currentSpellScript;
-    private float lastCastedTimestamp;
     private IEnumerator castCoroutine;
 
     private Slider healthBar;
@@ -51,14 +50,20 @@ public partial class PlayerScript : Photon.PunBehaviour {
         if (!photonView.isMine)
             return;
 
+        UpdateSpellCooldowns();
+
+        healthBar.value = Mathf.Lerp(healthBar.value, health / maxHealth, Time.deltaTime * 5f);
+        healthBarNum.text = (Convert.ToInt32(healthBar.value * 100)).ToString().Aggregate(string.Empty, (c, i) => c + i + ' ') 
+            + "/ " + maxHealth.ToString().Aggregate(string.Empty, (c, i) => c + i + ' ');
+        if (healthBar.value < 1 / 100f)
+            Die();
+
         if (EventSystem.current.IsPointerOverGameObject())
             return;
 
-        if (currentSpellName != null && Input.GetMouseButtonDown(0) && Time.time - lastCastedTimestamp >= currentSpellScript.castInterval 
+        if (currentSpellName != null && Input.GetMouseButtonDown(0) && spellCooldown[indexSpellSelected] <= 0
             && movementScript.GetState() != PlayerState.CASTING && movementScript.GetState() != PlayerState.STUNNED)
         {
-
-
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (terrain.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
@@ -71,7 +76,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
 
                 if(castCoroutine != null)
                     CancelCast();
-                castCoroutine = CastWithDelay(currentSpellName, currentSpellScript.GetCastTime(), aimPos, aimDir);
+                castCoroutine = CastWithDelay(currentSpellName, indexSpellSelected, currentSpellScript.GetCooldown(), currentSpellScript.GetCastTime(), aimPos, aimDir);
                 StartCoroutine(castCoroutine);
 
                 movementScript.CastSpell(currentSpellScript.GetCastTime(), aimPos);
@@ -79,19 +84,12 @@ public partial class PlayerScript : Photon.PunBehaviour {
                 SetSpell(null);
             }
         }
-
-        healthBar.value = Mathf.Lerp(healthBar.value, health / maxHealth, Time.deltaTime * 5f);
-        healthBarNum.text = (Convert.ToInt32(healthBar.value * 100)).ToString().Aggregate(string.Empty, (c, i) => c + i + ' ') 
-            + "/ " + maxHealth.ToString().Aggregate(string.Empty, (c, i) => c + i + ' ');
-        if (healthBar.value < 1 / 100f)
-            Die();
     }
 
-    private IEnumerator CastWithDelay(string spell, float time, Vector3 aimPos, Vector3 aimDir)
+    private IEnumerator CastWithDelay(string spell, int spellIndex, float cooldown, float time, Vector3 aimPos, Vector3 aimDir)
     {
         yield return new WaitForSeconds(time);
-        lastCastedTimestamp = Time.time;
-
+        spellCooldown[indexSpellSelected] = cooldown;
         PhotonNetwork.Instantiate("Spells/" + spell, transform.position + aimDir*2, Quaternion.LookRotation(aimDir, Vector3.up), 0);
     }
 

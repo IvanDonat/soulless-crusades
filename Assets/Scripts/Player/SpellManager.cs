@@ -10,6 +10,8 @@ public partial class PlayerScript : Photon.PunBehaviour {
     private const int maxSpells = 6;
     private Button[] spellSelectButtons = new Button[maxSpells];
     private string[] spellName = new string[maxSpells];
+    private float[] spellCooldown = new float[maxSpells];
+    private int indexSpellSelected;
 
     void LinkSpellButtons()
     {
@@ -20,16 +22,26 @@ public partial class PlayerScript : Photon.PunBehaviour {
         }
     }
 
+    void UpdateSpellCooldowns()
+    {
+        for (int i = 0; i < maxSpells; i++)
+        {
+            spellCooldown[i] -= Time.deltaTime;
+        }
+    }
+
     private void SpellButtonClicked()
     {
         int index = int.Parse(EventSystem.current.currentSelectedGameObject.name.Substring("Spell".Length));
 
-        if (spellName[index] != "")
+        if (spellName[index] != "" && spellCooldown[index] <= 0)
         {
             SetSpell(spellName[index]);
         }
 
-        if (index == 0)
+        indexSpellSelected = index;
+
+        if (index == 0 && spellCooldown[index] <= 0)
         {
             SetSpell("Spell Fireball");
         }

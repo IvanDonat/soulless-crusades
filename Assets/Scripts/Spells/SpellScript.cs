@@ -56,4 +56,9 @@ public class SpellScript : Photon.PunBehaviour {
     {
         return castTime;
     }
+
+    public float GetCooldown()
+    {
+        return castInterval;
+    }
 }
