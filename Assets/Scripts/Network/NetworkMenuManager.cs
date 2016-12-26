@@ -174,6 +174,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
 
     public void StartGame()
     {
+        PhotonNetwork.room.IsVisible = false;
         PhotonNetwork.LoadLevel(1);
     }
 
@@ -236,7 +237,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
                     readyCount++;
             }
 
-            if (readyCount >= 2)
+            if (readyCount >= 1) //for testing
                 startGame.interactable = true;
             else
                 startGame.interactable = false;
