@@ -11,8 +11,7 @@ public enum PlayerState
     STUNNED
 }
 
-public class PlayerMovement : Photon.PunBehaviour
-{
+public class PlayerMovement : Photon.PunBehaviour {
     private float defaultFriction = 5f; // friction drops when hit by spell
     private float moveForce = 40f;
 
@@ -62,8 +61,7 @@ public class PlayerMovement : Photon.PunBehaviour
 
         if (!photonView.isMine)
         {
-            //transform.position = Vector3.Lerp(transform.position, syncPosition, Time.deltaTime * 10f);
-            rbody.velocity = syncVelocity;
+            transform.position = Vector3.Lerp(transform.position, syncPosition, Time.deltaTime * 10f);
             transform.rotation = Quaternion.Slerp(transform.rotation, syncRotation, Time.deltaTime * 5f);
             return;
         }
@@ -92,7 +90,7 @@ public class PlayerMovement : Photon.PunBehaviour
 
         if (hasMovementOrder && DistanceToTarget() > 1f)
         {
-            targetRotation = Quaternion.LookRotation(targetPosition - transform.position, Vector3.up); ;
+            targetRotation = Quaternion.LookRotation(targetPosition - transform.position, Vector3.up);;
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
         }
 
@@ -104,7 +102,7 @@ public class PlayerMovement : Photon.PunBehaviour
     {
         if (!photonView.isMine)
             return;
-
+        
         if (hasMovementOrder)
         {
             Vector3 force = targetPosition - transform.position;
@@ -183,7 +181,7 @@ public class PlayerMovement : Photon.PunBehaviour
 
     public void CancelCast()
     {
-        if (uncastCoroutine != null)
+        if(uncastCoroutine != null)
             StopCoroutine(uncastCoroutine);
         state = PlayerState.IDLE;
     }
@@ -214,16 +212,16 @@ public class PlayerMovement : Photon.PunBehaviour
         }
         else
         {
-            Vector3 syncPos = (Vector3)stream.ReceiveNext();
-            Vector3 syncVel = (Vector3)stream.ReceiveNext();
-            Quaternion syncRot = (Quaternion)stream.ReceiveNext();
-            PlayerState syncState = (PlayerState)stream.ReceiveNext();
+            Vector3 syncPos = (Vector3) stream.ReceiveNext();
+            Vector3 syncVel = (Vector3) stream.ReceiveNext();
+            Quaternion syncRot = (Quaternion) stream.ReceiveNext();
+            PlayerState syncState = (PlayerState) stream.ReceiveNext();
 
             syncPosition = syncPos;
             syncVelocity = syncVel;
             syncRotation = syncRot;
 
-            transform.position = syncPos;
+            //transform.position = syncPos;
             state = syncState;
         }
     }
