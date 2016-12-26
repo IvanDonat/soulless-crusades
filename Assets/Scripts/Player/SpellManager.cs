@@ -24,7 +24,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
             spellSelectButtons[i] = GameObject.Find("Spell" + i.ToString()).GetComponent<Button>();
             spellSelectCooldownText[i] = spellSelectButtons[i].transform.FindChild("Cooldown").GetComponent<Text>();
             spellSelectNameText[i] = spellSelectButtons[i].transform.FindChild("Text").GetComponent<Text>();
-            spellSelectButtons[i].onClick.AddListener( () => {SpellButtonClicked();} );
+            spellSelectButtons[i].onClick.AddListener( delegate{ SpellButtonClicked(); } );
         }
 
 
@@ -50,15 +50,33 @@ public partial class PlayerScript : Photon.PunBehaviour {
                 spellSelectCooldownText[i].text = spellCooldown[i].ToString("F1");
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+            SpellButtonClicked(0);
+        if (Input.GetKeyDown(KeyCode.W))
+            SpellButtonClicked(1);
+        if (Input.GetKeyDown(KeyCode.E))
+            SpellButtonClicked(2);
+        
+        if (Input.GetKeyDown(KeyCode.A))
+            SpellButtonClicked(3);
+        if (Input.GetKeyDown(KeyCode.S))
+            SpellButtonClicked(4);
+        if (Input.GetKeyDown(KeyCode.D))
+            SpellButtonClicked(5);
+    }
+
+    private void SpellButtonClicked(int index)
+    {
+        if (spellName[index] != "" && spellCooldown[index] <= 0)
+        {
+            SetSpell(spellName[index]);
+        }
     }
 
     private void SpellButtonClicked()
     {
         int index = int.Parse(EventSystem.current.currentSelectedGameObject.name.Substring("Spell".Length));
-
-        if (spellName[index] != "" && spellCooldown[index] <= 0)
-        {
-            SetSpell(spellName[index]);
-        }
+        SpellButtonClicked(index);
     }
 }

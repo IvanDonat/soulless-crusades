@@ -52,6 +52,9 @@ public partial class PlayerScript : Photon.PunBehaviour {
 
         UpdateSpells();
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+            SetSpell(null);
+
         healthBar.value = Mathf.Lerp(healthBar.value, health / maxHealth, Time.deltaTime * 5f);
         healthBarNum.text = (Convert.ToInt32(healthBar.value * 100)).ToString().Aggregate(string.Empty, (c, i) => c + i + ' ') 
             + "/ " + maxHealth.ToString().Aggregate(string.Empty, (c, i) => c + i + ' ');

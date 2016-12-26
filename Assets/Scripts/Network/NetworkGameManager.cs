@@ -29,12 +29,6 @@ public class NetworkGameManager : MonoBehaviour {
         int minutes = (int)gameTime / 60;
         int seconds = (int)gameTime % 60;
         gameTimeText.text = minutes.ToString("D2") + ":" + seconds.ToString("D2");
-
-        if (Input.GetKey(KeyCode.Escape))
-        {
-            PhotonNetwork.LeaveRoom();
-            SceneManager.LoadScene(0);
-        }
     }
 
     public GameObject GetPlayingUI()
@@ -72,6 +66,12 @@ public class NetworkGameManager : MonoBehaviour {
         print("You killed: " + victim.NickName);
         kills++;
         PhotonNetwork.player.SetScore(kills);
+    }
+
+    public void Disconnect()
+    {
+        PhotonNetwork.LeaveRoom();
+        SceneManager.LoadScene(0);
     }
 
     void OnGUI()
