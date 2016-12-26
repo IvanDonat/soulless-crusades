@@ -112,16 +112,26 @@ public partial class PlayerScript : Photon.PunBehaviour {
     }
 
     [PunRPC]
-    public void TakeDamage(PhotonPlayer dmgDealer, float dmg)
+    public void TakeDamage(PhotonPlayer dmgDealer, float dmg, float stunTime)
     {
         health -= dmg;
         CancelCast();
-        movementScript.Stun(dmg / 20f);
+        movementScript.Stun(stunTime);
 
         if (dmgDealer != null)
         { // null in case of lava
             lastDamageDealer = dmgDealer;
         }
+    }
+
+    [PunRPC]
+    public void DoKnockback(Vector3 dir, float force, float dragDropTo, float dragResetTime)
+    {
+        dir.y = 0;
+        dir.Normalize();
+
+        movementScript.GetRigidbody().velocity += dir * force;
+        movementScript.SetDrag(dragDropTo, dragResetTime);
     }
 
     private void Die()

@@ -5,6 +5,10 @@ using UnityEngine;
 public class SpellScript : Photon.PunBehaviour {
     public float speed = 3f;
     public float damage = 20;
+    public float knockbackForce = 15f;
+    public float dragDropTo = 1f;
+    public float dragResetTime = 1f;
+    public float stunTime = 1f;
     public float castTime = 0.3f;
     public float castInterval = 1f;
 
@@ -27,7 +31,8 @@ public class SpellScript : Photon.PunBehaviour {
         {
             if (c.tag == "Player" && !c.GetComponent<PhotonView>().isMine)
             {
-                c.GetComponent<PhotonView>().RPC("TakeDamage", c.GetComponent<PhotonView>().owner, photonView.owner, damage);
+                c.GetComponent<PhotonView>().RPC("TakeDamage", c.GetComponent<PhotonView>().owner, photonView.owner, damage, stunTime);
+                c.GetComponent<PhotonView>().RPC("DoKnockback", c.GetComponent<PhotonView>().owner, c.transform.position - transform.position, knockbackForce, dragDropTo, dragResetTime);
             }
             else if (c.tag == "Player" && c.GetComponent<PhotonView>().isMine)
             {

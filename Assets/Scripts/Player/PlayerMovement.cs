@@ -13,7 +13,6 @@ public enum PlayerState
 
 public class PlayerMovement : Photon.PunBehaviour {
     private float defaultFriction = 5f; // friction drops when hit by spell
-    private float frictionRecoveryFactor = 0.2f;
     private float moveForce = 40f;
 
     private Rigidbody rbody;
@@ -27,6 +26,7 @@ public class PlayerMovement : Photon.PunBehaviour {
     private bool hasMovementOrder = false;
     private IEnumerator uncastCoroutine;
     private IEnumerator unstunCoroutine;
+    private IEnumerator resetDragCoroutine;
 
     private Transform terrain;
 
@@ -102,9 +102,7 @@ public class PlayerMovement : Photon.PunBehaviour {
     {
         if (!photonView.isMine)
             return;
-
-        rbody.drag = Mathf.Lerp(rbody.drag, defaultFriction, frictionRecoveryFactor);
-
+        
         if (hasMovementOrder)
         {
             Vector3 force = targetPosition - transform.position;
@@ -153,6 +151,16 @@ public class PlayerMovement : Photon.PunBehaviour {
         StartCoroutine(uncastCoroutine);
     }
 
+    public void SetDrag(float dragValue, float time)
+    {
+        if (resetDragCoroutine != null)
+            StopCoroutine(resetDragCoroutine);
+
+        rbody.drag = dragValue;
+        resetDragCoroutine = ResetDrag(time);
+        StartCoroutine(resetDragCoroutine);
+    }
+
     private IEnumerator Unstun(float time)
     {
         yield return new WaitForSeconds(time);
@@ -163,6 +171,12 @@ public class PlayerMovement : Photon.PunBehaviour {
     {
         yield return new WaitForSeconds(time);
         state = PlayerState.IDLE;
+    }
+
+    public IEnumerator ResetDrag(float time)
+    {
+        yield return new WaitForSeconds(time);
+        rbody.drag = defaultFriction;
     }
 
     public void CancelCast()
@@ -180,6 +194,11 @@ public class PlayerMovement : Photon.PunBehaviour {
     public PlayerState GetState()
     {
         return state;
+    }
+
+    public Rigidbody GetRigidbody()
+    {
+        return rbody;
     }
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
