@@ -196,11 +196,6 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     [PunRPC]
     public void RpcSendText(string nick, string msg)
     {
-        bool scrollDown = false;
-        print(chatScroll.value);
-        if (chatScroll.value <= 0.2f)
-            scrollDown = true;
-
         if (msg != "")
         {
             Transform parent = GameObject.Find("Message List Parent").transform;
@@ -208,8 +203,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
             go.GetComponentInChildren<Text>().text = string.Format("{0}: {1}", nick, msg);
         }
 
-        if(scrollDown)
-            chatScroll.value = 0f;
+        chatScroll.value = 0;
     }
 
     public void KickPlayer()
