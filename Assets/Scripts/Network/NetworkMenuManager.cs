@@ -45,7 +45,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     public Slider playerNumberSlider;
     public Button kickPlayer, startGame;
     public Scrollbar chatScroll;
-    public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab;
+    public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab, infoPanel;
 
     //Default room options
     private string roomName = "";
@@ -59,6 +59,9 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     private const string strConnected = "CONNECTED!";
     private const string strFailedToConnect = "SOULLESS CRUSADES FAILED TO ESTABLISH A CONNECTION TO SERVER!";
     private const string strDisconnected = "SOULLESS CRUSADES DISCONNECTED FROM SERVER!";
+
+    //Info msgs
+    private const string strKicked = "You have been kicked from this session!";
 
     void Awake()
     {
@@ -131,6 +134,11 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         }
     }
 
+    public void Okay()
+    {
+        infoPanel.SetActive(false);
+    }
+
     public void Exit()
     {
         Application.Quit();
@@ -139,6 +147,13 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     public void LeaveRoom()
     {
         PhotonNetwork.LeaveRoom();
+    }
+
+    public void KickedFromRoom()
+    {
+        PhotonNetwork.LeaveRoom();
+        infoPanel.SetActive(true);
+        infoPanel.GetComponentInChildren<Text>().text = strKicked;
     }
 
     public void OnSliderChangeValue(Slider slider)
@@ -207,7 +222,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     [PunRPC]
     private void RpcKick()
     {
-        LeaveRoom();
+        KickedFromRoom();
     }
 
     public void OnReadyChangedValue(Toggle ready)
