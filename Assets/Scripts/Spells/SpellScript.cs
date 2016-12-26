@@ -35,18 +35,21 @@ public class SpellScript : Photon.PunBehaviour {
             }
             else if (c.tag == "Spell")
             {
+                // tell owner to find his own spell and destroy it as well
                 gameManager.GetComponent<PhotonView>().RPC("DestroySpell", c.GetComponent<PhotonView>().owner, c.GetComponent<PhotonView>().viewID);
             }
 
-            Remove();
+            photonView.RPC("Remove", PhotonTargets.All);
         }
     }
 
+    [PunRPC] // use instead of PhotonNetwork.Destroy(...) to set off explosion on all clients
     public void Remove()
     {
         explosionTransform.parent = null;
         explosionTransform.gameObject.SetActive(true);
-        PhotonNetwork.Destroy(gameObject);
+
+        Destroy(gameObject);
     }
 
     public float GetCastTime()
