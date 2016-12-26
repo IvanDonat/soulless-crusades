@@ -8,7 +8,10 @@ public partial class PlayerScript : Photon.PunBehaviour {
     // mostly controlled by the main PlayerScript.cs
 
     private const int maxSpells = 6;
+
     private Button[] spellSelectButtons = new Button[maxSpells];
+    private Text[] spellSelectCooldownText = new Text[maxSpells];
+
     private string[] spellName = new string[maxSpells];
     private float[] spellCooldown = new float[maxSpells];
     private int indexSpellSelected;
@@ -18,6 +21,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
         for (int i = 0; i < maxSpells; i++)
         {
             spellSelectButtons[i] = GameObject.Find("Spell" + i.ToString()).GetComponent<Button>();
+            spellSelectCooldownText[i] = spellSelectButtons[i].transform.FindChild("Cooldown").GetComponent<Text>();
             spellSelectButtons[i].onClick.AddListener( () => {SpellButtonClicked();} );
         }
     }
@@ -27,6 +31,16 @@ public partial class PlayerScript : Photon.PunBehaviour {
         for (int i = 0; i < maxSpells; i++)
         {
             spellCooldown[i] -= Time.deltaTime;
+
+            if (spellCooldown[i] <= 0)
+            {
+                spellSelectCooldownText[i].gameObject.SetActive(false);
+            }
+            else
+            {
+                spellSelectCooldownText[i].gameObject.SetActive(true);
+                spellSelectCooldownText[i].text = spellCooldown[i].ToString("F1");
+            }
         }
     }
 
