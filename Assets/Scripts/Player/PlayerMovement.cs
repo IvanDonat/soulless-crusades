@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public enum PlayerState
 {
@@ -60,13 +61,16 @@ public class PlayerMovement : Photon.PunBehaviour {
 
         if (!photonView.isMine)
         {
-            transform.position = Vector3.Lerp(transform.position, syncPosition, Time.deltaTime * 2f);
+            transform.position = Vector3.Lerp(transform.position, syncPosition, Time.deltaTime * 10f);
             transform.rotation = Quaternion.Slerp(transform.rotation, syncRotation, Time.deltaTime * 5f);
             return;
         }
 
         if (Input.GetMouseButtonDown(1) && state != PlayerState.CASTING && state != PlayerState.STUNNED)
         {
+            if (EventSystem.current.IsPointerOverGameObject())
+                return;
+
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (terrain.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
@@ -198,7 +202,7 @@ public class PlayerMovement : Photon.PunBehaviour {
             syncVelocity = syncVel;
             syncRotation = syncRot;
 
-            transform.position = syncPos;
+            //transform.position = syncPos;
             state = syncState;
         }
     }

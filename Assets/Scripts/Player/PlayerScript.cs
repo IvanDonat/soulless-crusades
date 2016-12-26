@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class PlayerScript : Photon.PunBehaviour {
@@ -49,6 +50,9 @@ public class PlayerScript : Photon.PunBehaviour {
         if (Input.GetMouseButtonDown(0) && Time.time - lastCastedTimestamp >= currentSpellScript.castInterval 
             && movementScript.GetState() != PlayerState.CASTING && movementScript.GetState() != PlayerState.STUNNED)
         {
+            if (EventSystem.current.IsPointerOverGameObject())
+                return;
+
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (terrain.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
