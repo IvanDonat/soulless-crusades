@@ -32,7 +32,7 @@ public class SpellScript : Photon.PunBehaviour {
             if (c.tag == "Player" && !c.GetComponent<PhotonView>().isMine)
             {
                 c.GetComponent<PhotonView>().RPC("TakeDamage", c.GetComponent<PhotonView>().owner, photonView.owner, damage, stunTime);
-                c.GetComponent<PhotonView>().RPC("DoKnockback", c.GetComponent<PhotonView>().owner, c.transform.position - transform.position, knockbackForce, dragDropTo, dragResetTime);
+                c.GetComponent<PhotonView>().RPC("DoKnockback", c.GetComponent<PhotonView>().owner, transform.forward, knockbackForce, dragDropTo, dragResetTime);
             }
             else if (c.tag == "Player" && c.GetComponent<PhotonView>().isMine)
             {
