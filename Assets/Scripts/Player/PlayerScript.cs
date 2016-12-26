@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class PlayerScript : Photon.PunBehaviour {
+public partial class PlayerScript : Photon.PunBehaviour {
     private NetworkGameManager gameManager;
     private PlayerMovement movementScript;
     private Transform terrain;
@@ -16,7 +16,7 @@ public class PlayerScript : Photon.PunBehaviour {
     private PhotonPlayer lastDamageDealer;
 
     // currently supports one spell, @TODO multiple spells support
-    public Transform currentSpellPrefab;
+    private string currentSpellName;
     private SpellScript currentSpellScript;
     private float lastCastedTimestamp;
     private IEnumerator castCoroutine;
@@ -24,6 +24,8 @@ public class PlayerScript : Photon.PunBehaviour {
     private Slider healthBar;
     private Text healthBarNum;
 
+    public Texture2D defaultCursor;
+    public Texture2D castCursor;
 
     void Start()
     {
@@ -32,7 +34,6 @@ public class PlayerScript : Photon.PunBehaviour {
 
         movementScript = transform.GetComponent<PlayerMovement>();
         terrain = GameObject.FindGameObjectWithTag("Terrain").transform;
-        SetSpell(currentSpellPrefab);
 
         gameManager = GameObject.FindWithTag("GameController").GetComponent<NetworkGameManager>();
 
@@ -40,8 +41,9 @@ public class PlayerScript : Photon.PunBehaviour {
         healthBarNum = healthBar.GetComponentInChildren<Text>();
         health = maxHealth;
 
-
         gameManager.GetSpectatorUI().SetActive(false);
+
+        LinkSpellButtons();
     }
 
     void Update()
@@ -49,11 +51,13 @@ public class PlayerScript : Photon.PunBehaviour {
         if (!photonView.isMine)
             return;
 
-        if (Input.GetMouseButtonDown(0) && Time.time - lastCastedTimestamp >= currentSpellScript.castInterval 
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
+        if (currentSpellName != null && Input.GetMouseButtonDown(0) && Time.time - lastCastedTimestamp >= currentSpellScript.castInterval 
             && movementScript.GetState() != PlayerState.CASTING && movementScript.GetState() != PlayerState.STUNNED)
         {
-            if (EventSystem.current.IsPointerOverGameObject())
-                return;
+
 
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -67,10 +71,12 @@ public class PlayerScript : Photon.PunBehaviour {
 
                 if(castCoroutine != null)
                     CancelCast();
-                castCoroutine = CastWithDelay(currentSpellScript.GetCastTime(), aimPos, aimDir);
+                castCoroutine = CastWithDelay(currentSpellName, currentSpellScript.GetCastTime(), aimPos, aimDir);
                 StartCoroutine(castCoroutine);
 
                 movementScript.CastSpell(currentSpellScript.GetCastTime(), aimPos);
+
+                SetSpell(null);
             }
         }
 
@@ -81,18 +87,27 @@ public class PlayerScript : Photon.PunBehaviour {
             Die();
     }
 
-    private IEnumerator CastWithDelay(float time, Vector3 aimPos, Vector3 aimDir)
+    private IEnumerator CastWithDelay(string spell, float time, Vector3 aimPos, Vector3 aimDir)
     {
         yield return new WaitForSeconds(time);
         lastCastedTimestamp = Time.time;
 
-        PhotonNetwork.Instantiate("Spells/" + currentSpellPrefab.name, transform.position + aimDir*2, Quaternion.LookRotation(aimDir, Vector3.up), 0);
+        PhotonNetwork.Instantiate("Spells/" + spell, transform.position + aimDir*2, Quaternion.LookRotation(aimDir, Vector3.up), 0);
     }
 
-    public void SetSpell(Transform spell)
+    public void SetSpell(string spellName)
     {
-        currentSpellPrefab = spell;
-        currentSpellScript = spell.GetComponent<SpellScript>();
+        currentSpellName = spellName;
+        if (spellName != null)
+        {
+            GameObject spellGO = (GameObject) Resources.Load("Spells/" + spellName);
+            currentSpellScript = spellGO.GetComponent<SpellScript>();
+            Cursor.SetCursor(castCursor, Vector2.zero, CursorMode.Auto);
+        }
+        else
+        {
+            Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
+        }
     }
 
     [PunRPC]
@@ -110,6 +125,8 @@ public class PlayerScript : Photon.PunBehaviour {
 
     private void Die()
     {
+        Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
+        
         if (lastDamageDealer != null)
         {
             gameManager.GetComponent<PhotonView>().RPC("GotKill", lastDamageDealer, photonView.owner);
