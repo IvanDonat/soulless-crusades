@@ -51,7 +51,7 @@ public class NetworkGameManager : MonoBehaviour {
         {
             if (sp.GetComponent<PhotonView>().viewID == id)
             {
-                PhotonNetwork.Destroy(sp);
+                sp.GetComponent<SpellScript>().Remove();
                 break;
             }
         }

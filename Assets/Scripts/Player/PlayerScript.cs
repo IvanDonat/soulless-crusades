@@ -34,9 +34,9 @@ public class PlayerScript : Photon.PunBehaviour {
         gameManager = GameObject.FindWithTag("GameController").GetComponent<NetworkGameManager>();
 
         healthBar = GameObject.Find("Health Bar").GetComponent<Slider>();
+        healthBarNum = healthBar.GetComponentInChildren<Text>();
         health = maxHealth;
 
-        healthBarNum = healthBar.GetComponentInChildren<Text>();
 
         gameManager.GetSpectatorUI().SetActive(false);
     }

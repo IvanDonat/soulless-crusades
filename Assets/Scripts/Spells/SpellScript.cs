@@ -9,11 +9,10 @@ public class SpellScript : Photon.PunBehaviour {
     public float castInterval = 1f;
 
     private NetworkGameManager gameManager;
-    private Transform explosionTransform;
+    public Transform explosionTransform;
 
     void Start()
     {
-        explosionTransform = gameObject.GetComponentInChildren<Transform>();
         gameManager = GameObject.FindWithTag("GameController").GetComponent<NetworkGameManager>();;
     }
 
@@ -29,8 +28,6 @@ public class SpellScript : Photon.PunBehaviour {
             if (c.tag == "Player" && !c.GetComponent<PhotonView>().isMine)
             {
                 c.GetComponent<PhotonView>().RPC("TakeDamage", c.GetComponent<PhotonView>().owner, damage);
-                explosionTransform.SetParent(null);
-                explosionTransform.GetComponentInChildren<ParticleSystem>().Play();
             }
             else if (c.tag == "Player" && c.GetComponent<PhotonView>().isMine)
             {
@@ -41,8 +38,15 @@ public class SpellScript : Photon.PunBehaviour {
                 gameManager.GetComponent<PhotonView>().RPC("DestroySpell", c.GetComponent<PhotonView>().owner, c.GetComponent<PhotonView>().viewID);
             }
 
-            PhotonNetwork.Destroy(gameObject);
+            Remove();
         }
+    }
+
+    public void Remove()
+    {
+        explosionTransform.parent = null;
+        explosionTransform.gameObject.SetActive(true);
+        PhotonNetwork.Destroy(gameObject);
     }
 
     public float GetCastTime()
