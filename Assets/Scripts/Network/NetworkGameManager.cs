@@ -15,7 +15,6 @@ public class NetworkGameManager : MonoBehaviour {
     public GameObject sharedUI;
     public GameObject playingUI;
     public GameObject spectatorUI;
-
     // stats
     private int kills = 0;
 
@@ -41,8 +40,8 @@ public class NetworkGameManager : MonoBehaviour {
     private IEnumerator Wait(float sec)
     {
         yield return new WaitForSeconds(sec);
-        PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(Random.Range(-15f, 15f), 1, Random.Range(-15f, 15f)), Quaternion.identity, 0);
         playingUI.SetActive(true);
+        PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(Random.Range(-15f, 15f), 1, Random.Range(-15f, 15f)), Quaternion.identity, 0);
     }
 
     public GameObject GetPlayingUI()

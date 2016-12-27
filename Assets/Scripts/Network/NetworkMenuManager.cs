@@ -243,6 +243,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         }
         else
         {
+            startGame.gameObject.SetActive(false);
             foreach (PhotonPlayer p in PhotonNetwork.playerList)
                 AddPlayerListItem(p, parent);
         }

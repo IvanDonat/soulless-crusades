@@ -79,6 +79,7 @@ public class PlayerMovement : Photon.PunBehaviour {
                 hasMovementOrder = true;
                 GameObject.Instantiate(prefabParticlesOnClick, hit.point + Vector3.up * 0.1f, Quaternion.identity);
                 state = PlayerState.WALKING;
+                playerScript.SetSpell(null);
             }
         }
 

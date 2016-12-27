@@ -65,7 +65,6 @@ public class TerrainManager : MonoBehaviour {
         }
 
         float timePassedSinceGroundRaised = 0f;
-
         while (!groundRaised && timePassedSinceGroundRaised < 2f)
         {
             if (terrain.transform.position.y <= -0.6f)
