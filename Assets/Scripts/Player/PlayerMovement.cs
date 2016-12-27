@@ -61,7 +61,7 @@ public class PlayerMovement : Photon.PunBehaviour {
 
         if (!photonView.isMine)
         {
-            transform.position = syncPosition; // Lerp won't work well with Teleport spells, fix later! @TODO
+            transform.position = Vector3.Lerp(transform.position, syncPosition, Time.deltaTime * 10f);
             transform.rotation = Quaternion.Slerp(transform.rotation, syncRotation, Time.deltaTime * 5f);
             return;
         }
