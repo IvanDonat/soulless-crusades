@@ -54,6 +54,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
         PlayerProperties.SetProperty(PlayerProperties.KILLS, 0);
         PlayerProperties.SetProperty(PlayerProperties.DEATHS, 0);
         PlayerProperties.SetProperty(PlayerProperties.ALIVE, true);
+        PlayerProperties.SetProperty(PlayerProperties.WINS, 0);
     }
 
     void Update()

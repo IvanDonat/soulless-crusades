@@ -85,7 +85,9 @@ public class NetworkGameManager : MonoBehaviour {
 
     public List<PhotonPlayer> GetSortedPlayerList()
     {
-        return PhotonNetwork.playerList.OrderBy(pl => {if ((bool) pl.CustomProperties["alive"] == false) return 10000 + pl.GetScore(); else return pl.GetScore();}).ToList();
+        return PhotonNetwork.playerList.OrderBy(pl => 
+            {if ((bool) pl.CustomProperties[PlayerProperties.ALIVE] == false) return 10000 + pl.GetScore(); 
+            else return pl.GetScore();}).ToList();
     }
 
     public void Disconnect()
