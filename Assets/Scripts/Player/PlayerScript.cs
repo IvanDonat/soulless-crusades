@@ -79,7 +79,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
 
                 if(castCoroutine != null)
                     CancelCast();
-                castCoroutine = CastWithDelay(currentSpellName, indexSpellSelected, currentSpellScript.GetCooldown(), currentSpellScript.GetCastTime(), aimPos, aimDir);
+                castCoroutine = CastWithDelay(currentSpellName, indexSpellSelected, currentSpellScript.GetCooldown(), currentSpellScript.GetCastTime(), hit.point, aimPos, aimDir);
                 StartCoroutine(castCoroutine);
 
                 movementScript.CastSpell(currentSpellScript.GetCastTime(), aimPos);
@@ -89,11 +89,13 @@ public partial class PlayerScript : Photon.PunBehaviour {
         }
     }
 
-    private IEnumerator CastWithDelay(string spell, int spellIndex, float cooldown, float time, Vector3 aimPos, Vector3 aimDir)
+    private IEnumerator CastWithDelay(string spell, int spellIndex, float cooldown, float time, Vector3 mousePos, Vector3 aimPos, Vector3 aimDir)
     {
         yield return new WaitForSeconds(time);
-        spellCooldown[indexSpellSelected] = cooldown;
-        PhotonNetwork.Instantiate("Spells/" + spell, transform.position + aimDir*2, Quaternion.LookRotation(aimDir, Vector3.up), 0);
+        spellCooldown[spellIndex] = cooldown;
+        GameObject spellGO = (GameObject) PhotonNetwork.Instantiate("Spells/" + spell, transform.position + aimDir*2, Quaternion.LookRotation(aimDir, Vector3.up), 0);
+        SpellScript spellScript = spellGO.GetComponent<SpellScript>();
+        spellScript.SetParams(transform, mousePos);
     }
 
     public void SetSpell(string spellName)

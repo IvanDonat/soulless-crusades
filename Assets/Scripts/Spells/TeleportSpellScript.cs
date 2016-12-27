@@ -7,22 +7,9 @@ public class TeleportSpellScript : SpellScript {
     {
         if (photonView.isMine)
         {
-            RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (GameObject.FindWithTag("Terrain").GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
-            {
-                foreach(GameObject p in GameObject.FindGameObjectsWithTag("Player"))
-                {
-                    if (p.GetPhotonView().isMine)
-                    {
-                        Vector3 pos = hit.point;
-                        pos.y += 1.2f;
-
-                        photonView.RPC("TeleportPlayer", PhotonTargets.All, PhotonNetwork.player, pos);
-                        break;
-                    }
-                }
-            }
+            Vector3 pos = castMousePos;
+            pos.y += 1.2f;
+            photonView.RPC("TeleportPlayer", PhotonTargets.All, PhotonNetwork.player, pos);
         }
     }
 
