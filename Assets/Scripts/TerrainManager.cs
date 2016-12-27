@@ -32,15 +32,18 @@ public class TerrainManager : MonoBehaviour {
         heights = data.GetHeights(0, 0, width, height);
     }
 
+    void Start()
+    {
+        SetTerrainToCircle(75f);
+        ReloadTerrain();
+    }
+
     void Update()
     {
         timePassedSinceTerrainUpdate -= Time.deltaTime;
         if (timePassedSinceTerrainUpdate < 0)
         {
-            SetTerrainToCircle(75f);
-
-            ReloadTerrain();
-
+            //placeholder for terrain modification
             timePassedSinceTerrainUpdate = 1 / 10f;
         }
 
