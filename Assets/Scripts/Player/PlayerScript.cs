@@ -115,12 +115,12 @@ public partial class PlayerScript : Photon.PunBehaviour {
     public void TakeDamage(PhotonPlayer dmgDealer, float dmg, float stunTime)
     {
         health -= dmg;
-        CancelCast();
-        movementScript.Stun(stunTime);
 
         if (dmgDealer != null)
         { // null in case of lava
             lastDamageDealer = dmgDealer;
+            movementScript.Stun(stunTime);
+            CancelCast();
         }
     }
 
