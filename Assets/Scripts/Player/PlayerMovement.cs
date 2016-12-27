@@ -68,6 +68,8 @@ public class PlayerMovement : Photon.PunBehaviour {
 
         if (Application.platform == RuntimePlatform.Android)
         { // ANDROID
+            hasMovementOrder = false;
+
             if (Input.GetMouseButton(0) && state != PlayerState.CASTING && state != PlayerState.STUNNED)
             {
                 if (EventSystem.current.IsPointerOverGameObject())
