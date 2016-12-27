@@ -120,6 +120,11 @@ public partial class PlayerScript : Photon.PunBehaviour {
         }
     }
 
+    public string GetSpell()
+    {
+        return currentSpellName;
+    }
+
     [PunRPC]
     public void TakeDamage(PhotonPlayer dmgDealer, float dmg, float stunTime)
     {
