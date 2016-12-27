@@ -19,7 +19,7 @@ public class NetworkGameManager : MonoBehaviour {
 
     void Start()
     {
-        PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(Random.Range(-15f, 15f), 1, Random.Range(-15f, 15f)), Quaternion.identity, 0);
+        StartCoroutine(Wait(8.5f));
     }
 
     void Update()
@@ -29,6 +29,12 @@ public class NetworkGameManager : MonoBehaviour {
         int minutes = (int)gameTime / 60;
         int seconds = (int)gameTime % 60;
         gameTimeText.text = minutes.ToString("D2") + ":" + seconds.ToString("D2");
+    }
+
+    private IEnumerator Wait(float sec)
+    {
+        yield return new WaitForSeconds(sec);
+        PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(Random.Range(-15f, 15f), 1, Random.Range(-15f, 15f)), Quaternion.identity, 0);
     }
 
     public GameObject GetPlayingUI()

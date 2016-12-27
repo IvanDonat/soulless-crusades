@@ -11,7 +11,10 @@ public class TerrainManager : MonoBehaviour {
      * Heightmap Resolution impacts performance and the way it looks
      * preferably around 65, 129, 257?
      */
-
+    public GameObject arcaneCircle;
+    public GameObject lavaEffect;
+    private bool arcaneCircleProjected;
+    private bool groundRaised;
 
     private Terrain terrain;
     private TerrainData data;
@@ -40,6 +43,31 @@ public class TerrainManager : MonoBehaviour {
 
             timePassedSinceTerrainUpdate = 1 / 10f;
         }
+
+        if (arcaneCircle.transform.localScale.x <= 7f && arcaneCircle.transform.localScale.y <= 7f)
+            arcaneCircle.transform.localScale += new Vector3(3f * Time.deltaTime, 3f * Time.deltaTime, 0f);
+        else
+            arcaneCircleProjected = true;
+
+        if (terrain.transform.position.y <= -0.6f && arcaneCircleProjected == true)
+        {
+            terrain.transform.Translate(new Vector3(0, 0.2f * Time.deltaTime, 0));
+            lavaEffect.SetActive(true);
+        }
+        else if (terrain.transform.position.y >= -0.6f && arcaneCircleProjected == true)
+            StartCoroutine(Wait(2f));
+
+        if (groundRaised == true)
+        {
+            arcaneCircle.SetActive(false);
+            lavaEffect.SetActive(false);
+        }
+    }
+
+    private IEnumerator Wait(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        groundRaised = true;
     }
 
     void ReloadTerrain()
