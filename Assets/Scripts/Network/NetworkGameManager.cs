@@ -10,15 +10,19 @@ public class NetworkGameManager : MonoBehaviour {
     public Text gameTimeText;
     private float gameTime = 0;
 
+    private TerrainManager terrainManager;
+
     public GameObject sharedUI;
     public GameObject playingUI;
     public GameObject spectatorUI;
-
     // stats
     private int kills = 0;
 
     void Start()
     {
+        terrainManager = GameObject.FindWithTag("Terrain").GetComponent<TerrainManager>();
+        StartCoroutine(terrainManager.ProjectArcaneCircle());
+
         playingUI.SetActive(false);
         spectatorUI.SetActive(false);
         StartCoroutine(Wait(8.5f));
@@ -36,8 +40,8 @@ public class NetworkGameManager : MonoBehaviour {
     private IEnumerator Wait(float sec)
     {
         yield return new WaitForSeconds(sec);
-        PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(Random.Range(-15f, 15f), 1, Random.Range(-15f, 15f)), Quaternion.identity, 0);
         playingUI.SetActive(true);
+        PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(Random.Range(-15f, 15f), 1, Random.Range(-15f, 15f)), Quaternion.identity, 0);
     }
 
     public GameObject GetPlayingUI()

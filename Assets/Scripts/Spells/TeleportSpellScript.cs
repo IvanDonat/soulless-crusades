@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TeleportSpellScript : SpellScript {
+    public Transform teleportParticles;
+
     void Start()
     {
         if (photonView.isMine)
@@ -20,6 +22,9 @@ public class TeleportSpellScript : SpellScript {
         {
             if (p.GetPhotonView().owner == owner)
             {
+                Instantiate(teleportParticles, p.transform.position, Quaternion.identity);
+                Instantiate(teleportParticles, pos, Quaternion.identity);
+
                 p.transform.position = pos;
                 break;
             }

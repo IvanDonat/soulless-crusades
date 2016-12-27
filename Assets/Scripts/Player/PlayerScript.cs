@@ -23,13 +23,20 @@ public partial class PlayerScript : Photon.PunBehaviour {
     private Slider healthBar;
     private Text healthBarNum;
 
+    public Transform spawnParticles;
+
     public Texture2D defaultCursor;
     public Texture2D castCursor;
 
     void Start()
     {
+        Instantiate(spawnParticles, transform.position, Quaternion.identity);
+
         if(!photonView.isMine)
+        {
             Destroy(this); // remove this component if not mine
+            return;
+        }
 
         movementScript = transform.GetComponent<PlayerMovement>();
         terrain = GameObject.FindGameObjectWithTag("Terrain").transform;
