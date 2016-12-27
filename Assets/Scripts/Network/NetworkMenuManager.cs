@@ -84,10 +84,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
 
         if (PhotonNetwork.inRoom && Input.GetKey(KeyCode.Return))
         {
-            PhotonView photonView = PhotonView.Get(this);
-            photonView.RPC("RpcSendText", PhotonTargets.All, PhotonNetwork.player.NickName, chatInput.text);
-            chatInput.text = "";
-            chatInput.ActivateInputField();
+            SendMsg();
         }
 
         if (PhotonNetwork.inRoom)
@@ -97,8 +94,8 @@ public class NetworkMenuManager : Photon.PunBehaviour {
             foreach (PhotonPlayer p in PhotonNetwork.playerList)
             {
                 bool isReady = false; // treba biti ovako jer property može bit null
-                if(p.CustomProperties["ready"] != null)
-                    isReady = (bool) p.CustomProperties["ready"];
+                if (p.CustomProperties["ready"] != null)
+                    isReady = (bool)p.CustomProperties["ready"];
 
                 if (isReady)
                     readyCount++;
@@ -135,6 +132,14 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     public void Okay()
     {
         infoPanel.SetActive(false);
+    }
+
+    public void SendMsg()
+    {
+        PhotonView photonView = PhotonView.Get(this);
+        photonView.RPC("RpcSendText", PhotonTargets.All, PhotonNetwork.player.NickName, chatInput.text);
+        chatInput.text = "";
+        chatInput.ActivateInputField();
     }
 
     public void Exit()
