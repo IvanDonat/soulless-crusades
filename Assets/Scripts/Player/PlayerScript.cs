@@ -50,6 +50,10 @@ public partial class PlayerScript : Photon.PunBehaviour {
         gameManager.GetSpectatorUI().SetActive(false);
 
         LinkSpellButtons();
+
+        PlayerProperties.SetProperty(PlayerProperties.KILLS, 0);
+        PlayerProperties.SetProperty(PlayerProperties.DEATHS, 0);
+        PlayerProperties.SetProperty(PlayerProperties.ALIVE, true);
     }
 
     void Update()
@@ -151,7 +155,9 @@ public partial class PlayerScript : Photon.PunBehaviour {
     private void Die()
     {
         Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
-        
+
+        PlayerProperties.IncrementProperty(PlayerProperties.DEATHS);
+
         if (lastDamageDealer != null)
         {
             gameManager.GetComponent<PhotonView>().RPC("GotKill", lastDamageDealer, photonView.owner);

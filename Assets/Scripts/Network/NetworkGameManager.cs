@@ -16,10 +16,6 @@ public class NetworkGameManager : MonoBehaviour {
     public GameObject sharedUI;
     public GameObject playingUI;
     public GameObject spectatorUI;
-    // stats
-    private int kills = 0;
-
-    private Dictionary<PhotonPlayer, bool> isPlayerDead = new Dictionary<PhotonPlayer, bool>();
 
     void Start()
     {
@@ -29,9 +25,6 @@ public class NetworkGameManager : MonoBehaviour {
         playingUI.SetActive(false);
         spectatorUI.SetActive(false);
         StartCoroutine(Wait(8.5f));
-
-        foreach (PhotonPlayer p in PhotonNetwork.playerList)
-            isPlayerDead[p] = false;
     }
 
     void Update()
@@ -80,20 +73,19 @@ public class NetworkGameManager : MonoBehaviour {
     [PunRPC]
     public void OnPlayerDeath(PhotonPlayer player)
     { // is called for everyone by dying player
-        isPlayerDead[player] = true;
+        
     }
 
     [PunRPC]
     public void GotKill(PhotonPlayer victim)
     {
         print("You killed: " + victim.NickName);
-        kills++;
-        PhotonNetwork.player.SetScore(kills);
+        PlayerProperties.IncrementProperty(PlayerProperties.KILLS);
     }
 
     public List<PhotonPlayer> GetSortedPlayerList()
     {
-        return PhotonNetwork.playerList.OrderBy(pl => {if (isPlayerDead[pl] == true) return 10000 + pl.GetScore(); else return pl.GetScore();}).ToList();
+        return PhotonNetwork.playerList.OrderBy(pl => {if ((bool) pl.CustomProperties["alive"] == false) return 10000 + pl.GetScore(); else return pl.GetScore();}).ToList();
     }
 
     public void Disconnect()

@@ -69,7 +69,8 @@ public class PlayerMovement : Photon.PunBehaviour {
         if (Application.platform == RuntimePlatform.Android)
         { // ANDROID
             hasMovementOrder = false;
-            state = PlayerState.IDLE;
+            if(state == PlayerState.WALKING)
+                state = PlayerState.IDLE;
 
             if (Input.GetMouseButton(0) && state != PlayerState.CASTING && state != PlayerState.STUNNED)
             {
