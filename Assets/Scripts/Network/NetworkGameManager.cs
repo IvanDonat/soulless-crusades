@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -18,6 +19,8 @@ public class NetworkGameManager : MonoBehaviour {
     // stats
     private int kills = 0;
 
+    private Dictionary<PhotonPlayer, bool> isPlayerDead = new Dictionary<PhotonPlayer, bool>();
+
     void Start()
     {
         terrainManager = GameObject.FindWithTag("Terrain").GetComponent<TerrainManager>();
@@ -26,6 +29,9 @@ public class NetworkGameManager : MonoBehaviour {
         playingUI.SetActive(false);
         spectatorUI.SetActive(false);
         StartCoroutine(Wait(8.5f));
+
+        foreach (PhotonPlayer p in PhotonNetwork.playerList)
+            isPlayerDead[p] = false;
     }
 
     void Update()
@@ -35,6 +41,10 @@ public class NetworkGameManager : MonoBehaviour {
         int minutes = (int)gameTime / 60;
         int seconds = (int)gameTime % 60;
         gameTimeText.text = minutes.ToString("D2") + ":" + seconds.ToString("D2");
+
+
+        // koristiti GetSortedPlayerList() za updejtat listu
+        // @TODO @simbaorka101
     }
 
     private IEnumerator Wait(float sec)
@@ -68,9 +78,9 @@ public class NetworkGameManager : MonoBehaviour {
     }
 
     [PunRPC]
-    public void OnPlayerDeath(int playerID)
+    public void OnPlayerDeath(PhotonPlayer player)
     { // is called for everyone by dying player
-
+        isPlayerDead[player] = true;
     }
 
     [PunRPC]
@@ -79,6 +89,11 @@ public class NetworkGameManager : MonoBehaviour {
         print("You killed: " + victim.NickName);
         kills++;
         PhotonNetwork.player.SetScore(kills);
+    }
+
+    public List<PhotonPlayer> GetSortedPlayerList()
+    {
+        return PhotonNetwork.playerList.OrderBy(pl => {if (isPlayerDead[pl] == true) return 10000 + pl.GetScore(); else return pl.GetScore();}).ToList();
     }
 
     public void Disconnect()

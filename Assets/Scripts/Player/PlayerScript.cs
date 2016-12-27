@@ -160,7 +160,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
         gameManager.GetPlayingUI().SetActive(false);
         gameManager.GetSpectatorUI().SetActive(true);
 
-        gameManager.GetComponent<PhotonView>().RPC("OnPlayerDeath", PhotonTargets.All, photonView.viewID);
+        gameManager.GetComponent<PhotonView>().RPC("OnPlayerDeath", PhotonTargets.All, photonView.owner);
 
         PhotonNetwork.Destroy(this.photonView);
     }
