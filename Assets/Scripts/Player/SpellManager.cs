@@ -30,6 +30,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
 
         // TEMPORARY
         spellName[0] = "Fireball";
+        spellName[1] = "Teleport";
     }
 
     void UpdateSpells()
@@ -72,6 +73,8 @@ public partial class PlayerScript : Photon.PunBehaviour {
         {
             SetSpell(spellName[index]);
         }
+
+        indexSpellSelected = index;
     }
 
     private void SpellButtonClicked()

@@ -7,18 +7,20 @@ public class PlayerBurn : Photon.PunBehaviour {
     private PlayerScript playerScript;
     private bool onFire = false;
 
-	void Start () {
+    void Start ()
+    {
         if (photonView.isMine)
             playerScript = transform.GetComponent<PlayerScript>();
     }
 	
 
-	void Update () {
+    void Update () 
+    {
         if (onFire && photonView.isMine)
         {
             playerScript.TakeDamage(null, 10f * Time.deltaTime, 0);
         }
-	}
+    }
 
     private void OnCollisionStay(Collision collision)
     {
