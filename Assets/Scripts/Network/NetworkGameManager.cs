@@ -10,6 +10,8 @@ public class NetworkGameManager : MonoBehaviour {
     public Text gameTimeText;
     private float gameTime = 0;
 
+    private TerrainManager terrainManager;
+
     public GameObject sharedUI;
     public GameObject playingUI;
     public GameObject spectatorUI;
@@ -19,6 +21,9 @@ public class NetworkGameManager : MonoBehaviour {
 
     void Start()
     {
+        terrainManager = GameObject.FindWithTag("Terrain").GetComponent<TerrainManager>();
+        StartCoroutine(terrainManager.ProjectArcaneCircle());
+
         playingUI.SetActive(false);
         spectatorUI.SetActive(false);
         StartCoroutine(Wait(8.5f));

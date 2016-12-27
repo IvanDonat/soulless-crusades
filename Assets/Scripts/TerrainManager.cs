@@ -13,7 +13,6 @@ public class TerrainManager : MonoBehaviour {
      */
     public GameObject arcaneCircle;
     public GameObject lavaEffect;
-    private bool arcaneCircleProjected;
     private bool groundRaised;
 
     private Terrain terrain;
@@ -43,31 +42,45 @@ public class TerrainManager : MonoBehaviour {
 
             timePassedSinceTerrainUpdate = 1 / 10f;
         }
-
-        if (arcaneCircle.transform.localScale.x <= 7f && arcaneCircle.transform.localScale.y <= 7f)
-            arcaneCircle.transform.localScale += new Vector3(3f * Time.deltaTime, 3f * Time.deltaTime, 0f);
-        else
-            arcaneCircleProjected = true;
-
-        if (terrain.transform.position.y <= -0.6f && arcaneCircleProjected == true)
-        {
-            terrain.transform.Translate(new Vector3(0, 0.2f * Time.deltaTime, 0));
-            lavaEffect.SetActive(true);
-        }
-        else if (terrain.transform.position.y >= -0.6f && arcaneCircleProjected == true)
-            StartCoroutine(Wait(2f));
-
-        if (groundRaised == true)
-        {
-            arcaneCircle.SetActive(false);
-            lavaEffect.SetActive(false);
-        }
     }
 
-    private IEnumerator Wait(float seconds)
+    public IEnumerator ProjectArcaneCircle()
     {
-        yield return new WaitForSeconds(seconds);
-        groundRaised = true;
+        bool arcaneCircleProjected = false;
+        groundRaised = false;
+
+        arcaneCircle.SetActive(true);
+        lavaEffect.SetActive(false);
+        arcaneCircle.transform.localScale = new Vector3(0, 0, 1);
+        terrain.transform.position = new Vector3(-data.size.x / 2, -1.5f, -data.size.z / 2);
+
+        while (!arcaneCircleProjected)
+        {
+            if (arcaneCircle.transform.localScale.x <= 7f && arcaneCircle.transform.localScale.y <= 7f)
+                arcaneCircle.transform.localScale += new Vector3(3f * Time.deltaTime, 3f * Time.deltaTime, 0f);
+            else
+                arcaneCircleProjected = true;
+            
+            yield return new WaitForEndOfFrame();
+        }
+
+        float timePassedSinceGroundRaised = 0f;
+
+        while (!groundRaised && timePassedSinceGroundRaised < 2f)
+        {
+            if (terrain.transform.position.y <= -0.6f)
+            {
+                terrain.transform.Translate(new Vector3(0, 0.2f * Time.deltaTime, 0));
+                lavaEffect.SetActive(true);
+            }
+            else if (terrain.transform.position.y >= -0.6f)
+                timePassedSinceGroundRaised += Time.deltaTime;
+            
+            yield return new WaitForEndOfFrame();
+        }
+
+        arcaneCircle.SetActive(false);
+        lavaEffect.SetActive(false);
     }
 
     void ReloadTerrain()
@@ -91,8 +104,6 @@ public class TerrainManager : MonoBehaviour {
 
         data.SetHeights(0, 0, heights);
     }
-
-
 
     public void SetTerrainToCircle(float radius)
     {
