@@ -13,9 +13,18 @@ public class SpellScript : Photon.PunBehaviour {
 
     public string tooltipText = "Generic Spell.";
 
+    protected Transform myPlayer;
+    protected Vector3 castMousePos;
+
     void Awake()
     {
         gameManager = GameObject.FindWithTag("GameController").GetComponent<NetworkGameManager>();
+    }
+
+    public void SetParams(Transform myPlayer, Vector3 castMousePos)
+    {
+        this.myPlayer = myPlayer;
+        this.castMousePos = castMousePos;
     }
 
     public float GetCastTime()
