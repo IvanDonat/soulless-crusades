@@ -19,6 +19,8 @@ public class NetworkGameManager : MonoBehaviour {
 
     void Start()
     {
+        playingUI.SetActive(false);
+        spectatorUI.SetActive(false);
         StartCoroutine(Wait(8.5f));
     }
 
@@ -35,6 +37,7 @@ public class NetworkGameManager : MonoBehaviour {
     {
         yield return new WaitForSeconds(sec);
         PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(Random.Range(-15f, 15f), 1, Random.Range(-15f, 15f)), Quaternion.identity, 0);
+        playingUI.SetActive(true);
     }
 
     public GameObject GetPlayingUI()
