@@ -62,6 +62,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
             return;
 
         UpdateSpells();
+        PlayerProperties.SetProperty(PlayerProperties.HEALTH, (int) health);
 
         if (Input.GetKeyDown(KeyCode.Escape))
             SetSpell(null);
@@ -160,6 +161,13 @@ public partial class PlayerScript : Photon.PunBehaviour {
 
         movementScript.GetRigidbody().velocity += dir * force;
         movementScript.SetDrag(dragDropTo, dragResetTime);
+    }
+
+    [PunRPC]
+    public void Heal(float amount)
+    {
+        health += amount;
+        health = Mathf.Clamp(health, 0, maxHealth);
     }
     
     public void Die(bool isGameOver)

@@ -78,6 +78,7 @@ public class NetworkGameManager : Photon.PunBehaviour {
         PlayerProperties.SetProperty(PlayerProperties.DEATHS, 0);
         PlayerProperties.SetProperty(PlayerProperties.WINS, 0);
         PlayerProperties.SetProperty(PlayerProperties.ALIVE, false);
+        PlayerProperties.SetProperty(PlayerProperties.HEALTH, 100);
 
         if(PhotonNetwork.isMasterClient)
             SetState(GameState.WARMUP); 

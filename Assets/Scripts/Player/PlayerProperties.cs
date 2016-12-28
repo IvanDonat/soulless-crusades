@@ -6,7 +6,8 @@ public static class PlayerProperties {
     public const string KILLS   = "kills";
     public const string DEATHS  = "deaths";
     public const string ALIVE   = "alive";
-    public const string WINS =    "wins";
+    public const string WINS    = "wins";
+    public const string HEALTH  = "health";
     
     public static void SetProperty(string key, int value)
     {
