@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class NetworkGameManager : MonoBehaviour {
+public class NetworkGameManager : Photon.PunBehaviour {
     public Transform playerPrefab;
 
     public Text gameTimeText;
@@ -23,6 +23,8 @@ public class NetworkGameManager : MonoBehaviour {
 
     private List<GameObject> scoreList = new List<GameObject>();
     private RectTransform scorePanelRect;
+
+    private bool isGameActive = false;
 
     void Start()
     {
@@ -54,6 +56,8 @@ public class NetworkGameManager : MonoBehaviour {
 
             scoreList.Add(go);
         }
+
+       
     }
 
     void Update()
@@ -70,9 +74,6 @@ public class NetworkGameManager : MonoBehaviour {
             scorePanel.transform.Translate(0, 500f * Time.deltaTime, 0);
 
         scorePanelRect.anchoredPosition = new Vector2(0, Mathf.Clamp(scorePanelRect.anchoredPosition.y, -144f, 99f));
-
-        // koristiti GetSortedPlayerList() za updejtat listu
-        // @TODO @simbaorka101
 
         foreach (PhotonPlayer p in PhotonNetwork.playerList)
         {
@@ -97,12 +98,8 @@ public class NetworkGameManager : MonoBehaviour {
                 }
             }
         }
-        /*
-        foreach (PhotonPlayer p in PhotonNetwork.playerList)
-            if (go.name == victim.NickName)
-                foreach (RectTransform r in go.GetComponent<RectTransform>())
-                    if (r.gameObject.name == "Kills")
-                        r.GetComponent<Text>().text = PhotonNetwork.player.CustomProperties[PlayerProperties.KILLS].ToString();*/
+
+
     }
 
     private IEnumerator Wait(float sec)
@@ -110,6 +107,7 @@ public class NetworkGameManager : MonoBehaviour {
         yield return new WaitForSeconds(sec);
         playingUI.SetActive(true);
         PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(Random.Range(-15f, 15f), 1, Random.Range(-15f, 15f)), Quaternion.identity, 0);
+        isGameActive = true;
     }
 
     public GameObject GetPlayingUI()
@@ -139,8 +137,33 @@ public class NetworkGameManager : MonoBehaviour {
     public void OnPlayerDeath(PhotonPlayer player)
     { // is called for everyone by dying player
 
+        if(PhotonNetwork.isMasterClient && isGameActive)
+        {
+            int aliveCount = 0;
+            foreach (PhotonPlayer p in PhotonNetwork.playerList)
+                if ((bool)p.CustomProperties[PlayerProperties.ALIVE] == true)
+                    aliveCount++;
+
+            print(aliveCount);
+            if (aliveCount <= 1)
+            {
+                photonView.RPC("RoundOver", PhotonTargets.All);
+                isGameActive = false;
+            }
+        }
 
     }
+
+    [PunRPC]
+    public void RoundOver()
+    {
+        foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
+            if (player.GetComponent<PhotonView>().isMine)
+                player.GetComponent<PlayerScript>().Die(true);
+
+
+    }
+
 
     [PunRPC]
     public void GotKill(PhotonPlayer victim)

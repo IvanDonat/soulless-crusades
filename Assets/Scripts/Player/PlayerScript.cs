@@ -71,7 +71,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
         healthBarNum.text = (Convert.ToInt32(healthBar.value * 100)).ToString().Aggregate(string.Empty, (c, i) => c + i + ' ') 
             + "/ " + maxHealth.ToString().Aggregate(string.Empty, (c, i) => c + i + ' ');
         if (healthBar.value < 1 / 100f)
-            Die();
+            Die(false);
 
         if (EventSystem.current.IsPointerOverGameObject())
             return;
@@ -152,22 +152,24 @@ public partial class PlayerScript : Photon.PunBehaviour {
         movementScript.GetRigidbody().velocity += dir * force;
         movementScript.SetDrag(dragDropTo, dragResetTime);
     }
-
-    private void Die()
+    
+    public void Die(bool isGameOver)
     {
         Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
-
-        PlayerProperties.IncrementProperty(PlayerProperties.DEATHS);
-
-        if (lastDamageDealer != null)
-        {
-            gameManager.GetComponent<PhotonView>().RPC("GotKill", lastDamageDealer, photonView.owner);
-        }
-
+        
+        PlayerProperties.SetProperty(PlayerProperties.ALIVE, false);
+        
         gameManager.GetPlayingUI().SetActive(false);
         gameManager.GetSpectatorUI().SetActive(true);
+        
+        if(!isGameOver)
+        {
+            gameManager.GetComponent<PhotonView>().RPC("OnPlayerDeath", PhotonTargets.All, photonView.owner);
+            PlayerProperties.IncrementProperty(PlayerProperties.DEATHS);
 
-        gameManager.GetComponent<PhotonView>().RPC("OnPlayerDeath", PhotonTargets.All, photonView.owner);
+            if (lastDamageDealer != null)
+                gameManager.GetComponent<PhotonView>().RPC("GotKill", lastDamageDealer, photonView.owner);
+        }
 
         PhotonNetwork.Destroy(this.photonView);
     }
