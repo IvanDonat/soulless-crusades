@@ -28,6 +28,8 @@ public partial class PlayerScript : Photon.PunBehaviour {
     public Texture2D defaultCursor;
     public Texture2D castCursor;
 
+    public float shieldTimeLeft = 0f;
+
     void Start()
     {
         Instantiate(spawnParticles, transform.position, Quaternion.identity);
@@ -97,6 +99,11 @@ public partial class PlayerScript : Photon.PunBehaviour {
                 SetSpell(null);
             }
         }
+
+        if (shieldTimeLeft >= 0f)
+        {
+            shieldTimeLeft -= 1f * Time.deltaTime;
+        }
     }
 
     private IEnumerator CastWithDelay(string spell, int spellIndex, float cooldown, float time, Vector3 mousePos, Vector3 aimPos, Vector3 aimDir)
@@ -131,6 +138,9 @@ public partial class PlayerScript : Photon.PunBehaviour {
     [PunRPC]
     public void TakeDamage(PhotonPlayer dmgDealer, float dmg, float stunTime)
     {
+        if (shieldTimeLeft >= 0f)
+            return;
+
         health -= dmg;
 
         if (dmgDealer != null)
@@ -144,6 +154,9 @@ public partial class PlayerScript : Photon.PunBehaviour {
     [PunRPC]
     public void DoKnockback(Vector3 dir, float force, float dragDropTo, float dragResetTime)
     {
+        if (shieldTimeLeft >= 0f)
+            return;
+
         dir.y = 0;
         dir.Normalize();
 
