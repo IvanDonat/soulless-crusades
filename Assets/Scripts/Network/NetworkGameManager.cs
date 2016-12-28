@@ -38,6 +38,7 @@ public class NetworkGameManager : MonoBehaviour {
         foreach (PhotonPlayer p in PhotonNetwork.playerList)
         {
             GameObject go = Instantiate(scoreItem, scoreContent) as GameObject;
+            go.name = p.NickName;
 
             foreach (RectTransform r in go.GetComponentInChildren<RectTransform>())
             {
@@ -72,6 +73,36 @@ public class NetworkGameManager : MonoBehaviour {
 
         // koristiti GetSortedPlayerList() za updejtat listu
         // @TODO @simbaorka101
+
+        foreach (PhotonPlayer p in PhotonNetwork.playerList)
+        {
+            foreach (GameObject go in scoreList)
+            {
+                if (go.name != p.NickName)
+                    continue;
+
+                foreach (RectTransform r in go.GetComponentsInChildren<RectTransform>())
+                {
+                    if(p.CustomProperties[PlayerProperties.KILLS] == null)
+                        return;
+
+                    if (r.gameObject.name == "Name")
+                        r.GetComponent<Text>().text = p.NickName;
+                    else if (r.gameObject.name == "Kills")
+                        r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.KILLS].ToString();
+                    else if (r.gameObject.name == "Deaths")
+                        r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.DEATHS].ToString();
+                    else if (r.gameObject.name == "Rounds Won")
+                        r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.WINS].ToString();
+                }
+            }
+        }
+        /*
+        foreach (PhotonPlayer p in PhotonNetwork.playerList)
+            if (go.name == victim.NickName)
+                foreach (RectTransform r in go.GetComponent<RectTransform>())
+                    if (r.gameObject.name == "Kills")
+                        r.GetComponent<Text>().text = PhotonNetwork.player.CustomProperties[PlayerProperties.KILLS].ToString();*/
     }
 
     private IEnumerator Wait(float sec)
@@ -107,7 +138,8 @@ public class NetworkGameManager : MonoBehaviour {
     [PunRPC]
     public void OnPlayerDeath(PhotonPlayer player)
     { // is called for everyone by dying player
-        
+
+
     }
 
     [PunRPC]
@@ -115,6 +147,8 @@ public class NetworkGameManager : MonoBehaviour {
     {
         print("You killed: " + victim.NickName);
         PlayerProperties.IncrementProperty(PlayerProperties.KILLS);
+
+        
     }
 
     public List<PhotonPlayer> GetSortedPlayerList()

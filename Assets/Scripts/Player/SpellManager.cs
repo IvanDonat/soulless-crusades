@@ -52,6 +52,12 @@ public partial class PlayerScript : Photon.PunBehaviour {
             }
         }
 
+        foreach (Button b in spellSelectButtons)
+            b.GetComponent<Image>().color = Color.white;
+
+        if (currentSpellName != null)
+            spellSelectButtons[indexSpellSelected].GetComponent<Image>().color = Color.red;
+
         if (Input.GetKeyDown(KeyCode.Q))
             SpellButtonClicked(0);
         if (Input.GetKeyDown(KeyCode.W))
