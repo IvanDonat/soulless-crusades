@@ -17,6 +17,13 @@ public class NetworkGameManager : MonoBehaviour {
     public GameObject playingUI;
     public GameObject spectatorUI;
 
+    public GameObject scorePanel;
+    public Transform scoreContent;
+    public GameObject scoreItem;
+
+    private List<GameObject> scoreList = new List<GameObject>();
+    private RectTransform scorePanelRect;
+
     void Start()
     {
         terrainManager = GameObject.FindWithTag("Terrain").GetComponent<TerrainManager>();
@@ -25,6 +32,27 @@ public class NetworkGameManager : MonoBehaviour {
         playingUI.SetActive(false);
         spectatorUI.SetActive(false);
         StartCoroutine(Wait(8.5f));
+
+        scorePanelRect = scorePanel.GetComponent<RectTransform>();
+
+        foreach (PhotonPlayer p in PhotonNetwork.playerList)
+        {
+            GameObject go = Instantiate(scoreItem, scoreContent) as GameObject;
+
+            foreach (RectTransform r in go.GetComponentInChildren<RectTransform>())
+            {
+                if (r.gameObject.name == "Name")
+                    r.GetComponent<Text>().text = p.NickName;
+                else if (r.gameObject.name == "Kills")
+                    r.GetComponent<Text>().text = "0";
+                else if (r.gameObject.name == "Deaths")
+                    r.GetComponent<Text>().text = "0";
+                else if (r.gameObject.name == "Rounds Won")
+                    r.GetComponent<Text>().text = "0";
+            }
+
+            scoreList.Add(go);
+        }
     }
 
     void Update()
@@ -35,6 +63,12 @@ public class NetworkGameManager : MonoBehaviour {
         int seconds = (int)gameTime % 60;
         gameTimeText.text = minutes.ToString("D2") + ":" + seconds.ToString("D2");
 
+        if (Input.GetKey(KeyCode.Tab))
+            scorePanel.transform.Translate(0, -500f * Time.deltaTime, 0);
+        else
+            scorePanel.transform.Translate(0, 500f * Time.deltaTime, 0);
+
+        scorePanelRect.anchoredPosition = new Vector2(0, Mathf.Clamp(scorePanelRect.anchoredPosition.y, -144f, 99f));
 
         // koristiti GetSortedPlayerList() za updejtat listu
         // @TODO @simbaorka101
