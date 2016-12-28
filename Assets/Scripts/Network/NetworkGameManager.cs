@@ -5,6 +5,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+public enum GameState
+{
+    WARMUP,
+    IN_ROUND,
+    BETWEEN_ROUNDS,
+    GAME_OVER
+}
+
 public class NetworkGameManager : Photon.PunBehaviour {
     public Transform playerPrefab;
 
@@ -16,6 +24,7 @@ public class NetworkGameManager : Photon.PunBehaviour {
     public GameObject sharedUI;
     public GameObject playingUI;
     public GameObject spectatorUI;
+    public GameObject betweenRoundsUI;
 
     public GameObject scorePanel;
     public Transform scoreContent;
@@ -24,7 +33,12 @@ public class NetworkGameManager : Photon.PunBehaviour {
     private List<GameObject> scoreList = new List<GameObject>();
     private RectTransform scorePanelRect;
 
-    private bool isGameActive = false;
+    public const string GAME_STATE = "gamestate";
+    private GameState gameState = GameState.WARMUP;
+
+    // between rounds
+    private const float timeBetweenRounds = 5f;
+    private float timeBetweenRoundsCounter;
 
     void Start()
     {
@@ -33,6 +47,7 @@ public class NetworkGameManager : Photon.PunBehaviour {
 
         playingUI.SetActive(false);
         spectatorUI.SetActive(false);
+        betweenRoundsUI.SetActive(false);
         StartCoroutine(Wait(8.5f));
 
         scorePanelRect = scorePanel.GetComponent<RectTransform>();
@@ -57,12 +72,22 @@ public class NetworkGameManager : Photon.PunBehaviour {
             scoreList.Add(go);
         }
 
-       
+        PlayerProperties.SetProperty(PlayerProperties.KILLS, 0);
+        PlayerProperties.SetProperty(PlayerProperties.DEATHS, 0);
+        PlayerProperties.SetProperty(PlayerProperties.WINS, 0);
+        PlayerProperties.SetProperty(PlayerProperties.ALIVE, false);
+
+        if(PhotonNetwork.isMasterClient)
+            SetState(GameState.WARMUP); 
+        timeBetweenRoundsCounter = timeBetweenRounds;
     }
 
     void Update()
     {
         gameTime += Time.deltaTime;
+
+        if (!PhotonNetwork.isMasterClient)
+            gameState = GetState();
 
         int minutes = (int)gameTime / 60;
         int seconds = (int)gameTime % 60;
@@ -99,15 +124,34 @@ public class NetworkGameManager : Photon.PunBehaviour {
             }
         }
 
+        if (GetState() == GameState.BETWEEN_ROUNDS && PhotonNetwork.isMasterClient)
+        {
+            timeBetweenRoundsCounter -= Time.deltaTime;
+            if (timeBetweenRoundsCounter <= 0)
+            {
+                photonView.RPC("StartNewRound", PhotonTargets.All);
+                timeBetweenRoundsCounter = timeBetweenRounds;
+            }
+        }
+    }
 
+    [PunRPC]
+    public void StartNewRound()
+    {
+        playingUI.SetActive(true);
+        spectatorUI.SetActive(false);
+        betweenRoundsUI.SetActive(false);
+        PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(Random.Range(-15f, 15f), 1, Random.Range(-15f, 15f)), Quaternion.identity, 0);
+        if(PhotonNetwork.isMasterClient)
+            SetState(GameState.IN_ROUND);
     }
 
     private IEnumerator Wait(float sec)
     {
         yield return new WaitForSeconds(sec);
-        playingUI.SetActive(true);
-        PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(Random.Range(-15f, 15f), 1, Random.Range(-15f, 15f)), Quaternion.identity, 0);
-        isGameActive = true;
+        if(PhotonNetwork.isMasterClient)
+            photonView.RPC("StartNewRound", PhotonTargets.All);
+
     }
 
     public GameObject GetPlayingUI()
@@ -137,18 +181,26 @@ public class NetworkGameManager : Photon.PunBehaviour {
     public void OnPlayerDeath(PhotonPlayer player)
     { // is called for everyone by dying player
 
-        if(PhotonNetwork.isMasterClient && isGameActive)
+        if(PhotonNetwork.isMasterClient && GetState() == GameState.IN_ROUND)
         {
             int aliveCount = 0;
+            PhotonPlayer alivePlayer = null;
             foreach (PhotonPlayer p in PhotonNetwork.playerList)
+            {
                 if ((bool)p.CustomProperties[PlayerProperties.ALIVE] == true)
+                {
+                    alivePlayer = p;
                     aliveCount++;
-
-            print(aliveCount);
+                }
+            }
+            
             if (aliveCount <= 1)
             {
+                if (alivePlayer != null)
+                    photonView.RPC("WonRound", alivePlayer);
+
                 photonView.RPC("RoundOver", PhotonTargets.All);
-                isGameActive = false;
+                SetState(GameState.BETWEEN_ROUNDS);
             }
         }
 
@@ -161,7 +213,9 @@ public class NetworkGameManager : Photon.PunBehaviour {
             if (player.GetComponent<PhotonView>().isMine)
                 player.GetComponent<PlayerScript>().Die(true);
 
-
+        betweenRoundsUI.SetActive(true);
+        spectatorUI.SetActive(false);
+        playingUI.SetActive(false);
     }
 
 
@@ -169,9 +223,14 @@ public class NetworkGameManager : Photon.PunBehaviour {
     public void GotKill(PhotonPlayer victim)
     {
         print("You killed: " + victim.NickName);
-        PlayerProperties.IncrementProperty(PlayerProperties.KILLS);
+        PlayerProperties.IncrementProperty(PlayerProperties.KILLS);        
+    }
 
-        
+    [PunRPC]
+    public void WonRound()
+    {
+        print("You won this round!");
+        PlayerProperties.IncrementProperty(PlayerProperties.WINS); 
     }
 
     public List<PhotonPlayer> GetSortedPlayerList()
@@ -179,6 +238,31 @@ public class NetworkGameManager : Photon.PunBehaviour {
         return PhotonNetwork.playerList.OrderBy(pl => 
             {if ((bool) pl.CustomProperties[PlayerProperties.ALIVE] == false) return 10000 + pl.GetScore(); 
             else return pl.GetScore();}).ToList();
+    }
+
+    public void SetState(GameState s)
+    {
+        if (PhotonNetwork.isMasterClient)
+        {
+            gameState = s;
+            var props = new ExitGames.Client.Photon.Hashtable();
+            props.Add(GAME_STATE, s);
+            PhotonNetwork.room.SetCustomProperties(props, null);
+        }
+        else
+            Debug.LogError("non master client tried to set state");
+    }
+
+    public GameState GetState()
+    {
+        if (PhotonNetwork.isMasterClient)
+        {
+            return gameState;
+        }
+        else
+        {
+            return (GameState)PhotonNetwork.room.CustomProperties[GAME_STATE];
+        }
     }
 
     public void Disconnect()

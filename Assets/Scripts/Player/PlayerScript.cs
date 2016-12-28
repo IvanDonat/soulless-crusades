@@ -49,12 +49,9 @@ public partial class PlayerScript : Photon.PunBehaviour {
 
         gameManager.GetSpectatorUI().SetActive(false);
 
-        LinkSpellButtons();
-
-        PlayerProperties.SetProperty(PlayerProperties.KILLS, 0);
-        PlayerProperties.SetProperty(PlayerProperties.DEATHS, 0);
         PlayerProperties.SetProperty(PlayerProperties.ALIVE, true);
-        PlayerProperties.SetProperty(PlayerProperties.WINS, 0);
+
+        LinkSpellButtons();
     }
 
     void Update()
@@ -84,6 +81,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
             if (terrain.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
             {
                 Vector3 aimPos = hit.point;
+                aimPos -= Camera.main.transform.forward * (transform.position.y - aimPos.y); // move towards camera by a bit
                 aimPos.y = transform.position.y;
 
                 Vector3 aimDir = aimPos - transform.position;
