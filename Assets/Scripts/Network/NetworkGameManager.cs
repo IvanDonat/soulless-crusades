@@ -30,6 +30,8 @@ public class NetworkGameManager : Photon.PunBehaviour {
     public Transform scoreContent;
     public GameObject scoreItem;
 
+    public Text roundOverText;
+
     private List<GameObject> scoreList = new List<GameObject>();
     private RectTransform scorePanelRect;
 
@@ -93,7 +95,7 @@ public class NetworkGameManager : Photon.PunBehaviour {
         int seconds = (int)gameTime % 60;
         gameTimeText.text = minutes.ToString("D2") + ":" + seconds.ToString("D2");
 
-        if (Input.GetKey(KeyCode.Tab))
+        if (Input.GetKey(KeyCode.Tab) || GetState() == GameState.BETWEEN_ROUNDS)
             scorePanel.transform.Translate(0, -500f * Time.deltaTime, 0);
         else
             scorePanel.transform.Translate(0, 500f * Time.deltaTime, 0);
@@ -197,7 +199,7 @@ public class NetworkGameManager : Photon.PunBehaviour {
             if (aliveCount <= 1)
             {
                 if (alivePlayer != null)
-                    photonView.RPC("WonRound", alivePlayer);
+                    photonView.RPC("WonRound", PhotonTargets.All, alivePlayer);
 
                 photonView.RPC("RoundOver", PhotonTargets.All);
                 SetState(GameState.BETWEEN_ROUNDS);
@@ -227,10 +229,11 @@ public class NetworkGameManager : Photon.PunBehaviour {
     }
 
     [PunRPC]
-    public void WonRound()
+    public void WonRound(PhotonPlayer roundWinner)
     {
-        print("You won this round!");
-        PlayerProperties.IncrementProperty(PlayerProperties.WINS); 
+        roundOverText.text = roundWinner.NickName + "\n\nWon this round!";
+        if (PhotonNetwork.player == roundWinner)
+            PlayerProperties.IncrementProperty(PlayerProperties.WINS); 
     }
 
     public List<PhotonPlayer> GetSortedPlayerList()
