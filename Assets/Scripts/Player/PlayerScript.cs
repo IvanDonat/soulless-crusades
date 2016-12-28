@@ -101,9 +101,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
         }
 
         if (shieldTimeLeft >= 0f)
-        {
-            shieldTimeLeft -= 1f * Time.deltaTime;
-        }
+            shieldTimeLeft -= Time.deltaTime;
     }
 
     private IEnumerator CastWithDelay(string spell, int spellIndex, float cooldown, float time, Vector3 mousePos, Vector3 aimPos, Vector3 aimDir)
