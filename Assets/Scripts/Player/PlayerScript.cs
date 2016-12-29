@@ -24,6 +24,8 @@ public partial class PlayerScript : Photon.PunBehaviour {
     private Slider healthBar;
     private Text healthBarNum;
 
+    private Slider castingBar;
+
     public Transform spawnParticles;
 
     public Texture2D defaultCursor;
@@ -49,6 +51,9 @@ public partial class PlayerScript : Photon.PunBehaviour {
         healthBar = GameObject.Find("Health Bar").GetComponent<Slider>();
         healthBarNum = healthBar.GetComponentInChildren<Text>();
         health = maxHealth;
+
+        castingBar = GameObject.Find("Casting Bar").GetComponent<Slider>();
+        castingBar.gameObject.SetActive(false);
 
         gameManager.GetSpectatorUI().SetActive(false);
 
@@ -109,7 +114,18 @@ public partial class PlayerScript : Photon.PunBehaviour {
 
     private IEnumerator CastWithDelay(string spell, int spellIndex, float cooldown, float time, Vector3 mousePos, Vector3 aimPos, Vector3 aimDir)
     {
-        yield return new WaitForSeconds(time);
+        float timePassed = 0f;
+        if(time > 0.1f)
+            castingBar.gameObject.SetActive(true);
+        
+        while (timePassed <= time)
+        {
+            castingBar.value = timePassed / time;
+            timePassed += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+
+        castingBar.gameObject.SetActive(false);
         spellCooldown[spellIndex] = cooldown;
         GameObject spellGO = (GameObject) PhotonNetwork.Instantiate("Spells/" + spell, transform.position + aimDir*2, Quaternion.LookRotation(aimDir, Vector3.up), 0);
         Spell spellScript = spellGO.GetComponent<Spell>();
@@ -195,6 +211,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
 
     public void CancelCast()
     {
+        castingBar.gameObject.SetActive(false);
         if(castCoroutine != null)
             StopCoroutine(castCoroutine);
         movementScript.CancelCast();
