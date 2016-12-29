@@ -11,6 +11,10 @@ public static class PlayerProperties {
     
     public static void SetProperty(string key, int value)
     {
+        if (PhotonNetwork.player.CustomProperties.ContainsKey(key))
+            if ((int)PhotonNetwork.player.CustomProperties[key] == value)
+                return;
+
         var props = new ExitGames.Client.Photon.Hashtable();
         props.Add(key, value);
         PhotonNetwork.player.SetCustomProperties(props, null);
@@ -18,6 +22,10 @@ public static class PlayerProperties {
 
     public static void SetProperty(string key, bool value)
     {
+        if (PhotonNetwork.player.CustomProperties.ContainsKey(key))
+            if ((bool)PhotonNetwork.player.CustomProperties[key] == value)
+                return;
+
         var props = new ExitGames.Client.Photon.Hashtable();
         props.Add(key, value);
         PhotonNetwork.player.SetCustomProperties(props, null);
