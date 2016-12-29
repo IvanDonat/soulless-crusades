@@ -13,10 +13,10 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     private float roomRefreshTimer;
 
     public Text labelVersion, labelError, labelStatus, labelPlayerInt, labelRoomName,
-                labelPlayerNumber, maxPlayers;
+                labelPlayerNumber, maxPlayers, labelRoundsToWin, labelRoundsToWinInt;
     public InputField roomInputField, chatInput;
     public Toggle privateToggle, readyToggle;
-    public Slider playerNumberSlider;
+    public Slider playerNumberSlider, roundsToWinSlider;
     public Button kickPlayer, startGame;
     public Scrollbar chatScroll;
     public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab, infoPanel;
@@ -159,10 +159,15 @@ public class NetworkMenuManager : Photon.PunBehaviour {
         infoPanel.GetComponentInChildren<Text>().text = strKicked;
     }
 
-    public void OnSliderChangeValue(Slider slider)
+    public void OnMaxPlayersSliderChangeValue(Slider slider)
     {
         labelPlayerInt.text = slider.value.ToString();
         numberOfPlayers = (byte)slider.value;
+    }
+
+    public void OnRoundsToWinSliderChangeValue(Slider slider)
+    {
+        labelRoundsToWinInt.text = slider.value.ToString();
     }
 
     public void OnRoomNameChangeValue(InputField inputField)
@@ -245,9 +250,16 @@ public class NetworkMenuManager : Photon.PunBehaviour {
             startGame.gameObject.SetActive(true);
             AddPlayerListItem(PhotonNetwork.player, parent);
             kickPlayer.onClick.AddListener(() => { KickPlayer(); });
+
+            var props = new ExitGames.Client.Photon.Hashtable();
+            props.Add("maxwins", (int) roundsToWinSlider.value);
+            PhotonNetwork.room.SetCustomProperties(props, null);
+            labelRoundsToWin.text = "Rounds to Win: " + (int) roundsToWinSlider.value;
         }
         else
         {
+            labelRoundsToWin.text = "Rounds to Win: " + PhotonNetwork.room.CustomProperties["maxwins"].ToString();
+
             startGame.gameObject.SetActive(false);
             foreach (PhotonPlayer p in PhotonNetwork.playerList)
                 AddPlayerListItem(p, parent);

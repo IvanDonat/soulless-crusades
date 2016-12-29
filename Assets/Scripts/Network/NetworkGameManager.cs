@@ -87,9 +87,7 @@ public class NetworkGameManager : Photon.PunBehaviour {
         PlayerProperties.SetProperty(PlayerProperties.ALIVE, false);
         PlayerProperties.SetProperty(PlayerProperties.HEALTH, 100);
 
-       // winsForGameOver = PhotonNetwork.room.CustomProperties["maxwins"];
-        Debug.Log("CHANGE LATER, OVERRIDING ROOM PROPERTY");
-        winsForGameOver = 2;
+        winsForGameOver = (int) PhotonNetwork.room.CustomProperties["maxwins"];
 
         foreach (var player in PhotonNetwork.playerList)
             masterClientWinTracker[player] = 0;
