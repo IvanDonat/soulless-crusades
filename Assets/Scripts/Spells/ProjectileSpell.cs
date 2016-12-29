@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ProjectileSpellScript : SpellScript {
+public class ProjectileSpell : Spell {
     public float speed = 3f;
     public float damage = 20;
     public float knockbackForce = 15f;
@@ -13,6 +13,7 @@ public class ProjectileSpellScript : SpellScript {
     public Transform explosionTransform;
     public Transform healTransform;
     public bool isLifeLeach = false;
+    public bool parentToVictim = false;
 
     private Transform victim;
 
@@ -36,9 +37,6 @@ public class ProjectileSpellScript : SpellScript {
                 {
                     healTransform.parent = p.transform;
                     healTransform.localPosition = new Vector3(0f, -1f, 0f);
-                    healTransform.gameObject.SetActive(true);
-                    if (photonView.isMine)
-                        p.GetComponent<PlayerScript>().Heal(damage);
                     break;
                 }
             }
@@ -51,6 +49,13 @@ public class ProjectileSpellScript : SpellScript {
             {
                 c.GetComponent<PhotonView>().RPC("TakeDamage", c.GetComponent<PhotonView>().owner, photonView.owner, damage, stunTime);
                 c.GetComponent<PhotonView>().RPC("DoKnockback", c.GetComponent<PhotonView>().owner, transform.forward, knockbackForce, dragDropTo, dragResetTime);
+
+                if (isLifeLeach)
+                {
+                    myPlayer.GetComponent<PlayerScript>().Heal(damage);
+                    healTransform.gameObject.SetActive(true);
+                }
+
                 victim = c.transform;
             }
             else if (c.tag == "Player" && c.GetComponent<PhotonView>().isMine)
@@ -63,24 +68,31 @@ public class ProjectileSpellScript : SpellScript {
                 gameManager.GetComponent<PhotonView>().RPC("DestroySpell", c.GetComponent<PhotonView>().owner, c.GetComponent<PhotonView>().viewID);
             }
 
-            photonView.RPC("Remove", PhotonTargets.All);
+            if (victim != null)
+                photonView.RPC("Remove", PhotonTargets.All, victim.GetComponent<PhotonView>().owner);
+            else
+                photonView.RPC("Remove", PhotonTargets.All, null);
         }
     }
 
     [PunRPC] // use instead of PhotonNetwork.Destroy(...) to set off explosion on all clients
-    public void Remove()
+    public void Remove(PhotonPlayer victim)
     {
-        if (isLifeLeach)
+        if (parentToVictim && victim != null)
         {
-            explosionTransform.parent = victim;
-            explosionTransform.gameObject.SetActive(true);
-
+            foreach (GameObject p in GameObject.FindGameObjectsWithTag("Player"))
+            {
+                if (p.GetPhotonView().owner == victim)
+                {
+                    explosionTransform.parent = p.transform;
+                    break;
+                }
+            }
         }
         else
-        {
             explosionTransform.parent = null;
-            explosionTransform.gameObject.SetActive(true);
-        }
+
+        explosionTransform.gameObject.SetActive(true);
 
         Destroy(gameObject);
     }

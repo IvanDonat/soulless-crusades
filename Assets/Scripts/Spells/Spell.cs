@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpellScript : Photon.PunBehaviour {
+public class Spell : Photon.PunBehaviour {
     // inherited by spell types
     // use those as components
 

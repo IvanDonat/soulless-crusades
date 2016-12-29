@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShieldSpell : SpellScript
+public class ShieldSpell : Spell
 {
     public float shieldTime = 5f;
 

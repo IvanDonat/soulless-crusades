@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealSpell : SpellScript
+public class HealSpell : Spell
 {
-    public float healAmmount = 10f;
+    public float healAmount = 10f;
     public float healAnimLen = 2f;
 
     void Start()
@@ -17,7 +17,7 @@ public class HealSpell : SpellScript
                 gameObject.transform.localPosition = new Vector3(0f, -1f, 0f);
 
                 if (photonView.isMine)
-                    p.GetComponent<PlayerScript>().Heal(healAmmount);
+                    p.GetComponent<PlayerScript>().Heal(healAmount);
                 break;
             }
         }

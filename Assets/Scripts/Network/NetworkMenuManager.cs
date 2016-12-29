@@ -178,7 +178,6 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     public void CreateRoom()
     {
         PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = numberOfPlayers, IsVisible = !privateToggle.isOn }, null);
-        playerNumberSlider.value = 2;
         privateToggle.isOn = false;
         roomInputField.text = "";
     }

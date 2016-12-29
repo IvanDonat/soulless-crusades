@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TeleportSpellScript : SpellScript {
+public class TeleportSpell : Spell {
     public Transform teleportParticles;
 
     void Start()

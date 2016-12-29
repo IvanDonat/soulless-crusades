@@ -17,7 +17,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
 
     // currently supports one spell, @TODO multiple spells support
     private string currentSpellName;
-    private SpellScript currentSpellScript;
+    private Spell currentSpellScript;
     private IEnumerator castCoroutine;
 
     public Slider healthBar3D;
@@ -112,7 +112,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
         yield return new WaitForSeconds(time);
         spellCooldown[spellIndex] = cooldown;
         GameObject spellGO = (GameObject) PhotonNetwork.Instantiate("Spells/" + spell, transform.position + aimDir*2, Quaternion.LookRotation(aimDir, Vector3.up), 0);
-        SpellScript spellScript = spellGO.GetComponent<SpellScript>();
+        Spell spellScript = spellGO.GetComponent<Spell>();
         spellScript.SetParams(transform, mousePos);
     }
 
@@ -122,7 +122,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
         if (spellName != null)
         {
             GameObject spellGO = (GameObject) Resources.Load("Spells/" + spellName);
-            currentSpellScript = spellGO.GetComponent<SpellScript>();
+            currentSpellScript = spellGO.GetComponent<Spell>();
             Cursor.SetCursor(castCursor, Vector2.zero, CursorMode.Auto);
         }
         else
