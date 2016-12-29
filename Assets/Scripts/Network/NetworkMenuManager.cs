@@ -19,7 +19,8 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     public Slider playerNumberSlider, roundsToWinSlider;
     public Button kickPlayer, startGame;
     public Scrollbar chatScroll;
-    public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab, infoPanel;
+    public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab, infoPanel,
+                        selectSpellsPanel;
 
     private Dictionary<PhotonPlayer, Toggle> readyCheckmarks = new Dictionary<PhotonPlayer, Toggle>();
 
@@ -192,6 +193,16 @@ public class NetworkMenuManager : Photon.PunBehaviour {
     {
         kickPlayer.interactable = true;
         selectedPlayer = EventSystem.current.currentSelectedGameObject.transform.parent.GetComponent<PhotonPlayerContainer>().Get();
+    }
+
+    public void OpenSpellList()
+    {
+        selectSpellsPanel.SetActive(true);
+    }
+
+    public void CloseSpellList()
+    {
+        selectSpellsPanel.SetActive(false);
     }
 
     public void StartGame()
