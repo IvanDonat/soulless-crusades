@@ -125,7 +125,16 @@ public class NetworkGameManager : Photon.PunBehaviour {
                         r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.WINS].ToString();
                 }
             }
+
         }
+
+        foreach (PhotonPlayer p in PhotonNetwork.playerList)
+        {
+            foreach (GameObject go in GameObject.FindGameObjectsWithTag("HealthBar3D"))
+            {
+                Slider s = go.GetComponent<Slider>();
+                s.value = Mathf.Lerp(s.value, (int)p.CustomProperties[PlayerProperties.HEALTH] / 100f, Time.deltaTime * 5f);
+            }
 
         if (GetState() == GameState.BETWEEN_ROUNDS && PhotonNetwork.isMasterClient)
         {

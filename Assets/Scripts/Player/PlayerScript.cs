@@ -20,6 +20,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
     private SpellScript currentSpellScript;
     private IEnumerator castCoroutine;
 
+    public Slider healthBar3D;
     private Slider healthBar;
     private Text healthBarNum;
 
@@ -68,6 +69,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
             SetSpell(null);
 
         healthBar.value = Mathf.Lerp(healthBar.value, health / maxHealth, Time.deltaTime * 5f);
+        //healthBar3D.value = Mathf.Lerp(healthBar3D.value, (int)PhotonNetwork.player.CustomProperties[PlayerProperties.HEALTH] / (float)maxHealth, Time.deltaTime * 5f);
         healthBarNum.text = (Convert.ToInt32(healthBar.value * 100)).ToString().Aggregate(string.Empty, (c, i) => c + i + ' ') 
             + "/ " + maxHealth.ToString().Aggregate(string.Empty, (c, i) => c + i + ' ');
         if (healthBar.value < 1 / 100f)
