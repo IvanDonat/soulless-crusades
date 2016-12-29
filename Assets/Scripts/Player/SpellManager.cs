@@ -32,6 +32,8 @@ public partial class PlayerScript : Photon.PunBehaviour {
         spellName[0] = "Fireball";
         spellName[1] = "Teleport";
         spellName[2] = "Shield";
+        spellName[3] = "LifeLeach";
+        spellName[4] = "Heal";
     }
 
     void UpdateSpells()

@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShieldSpell : SpellScript
+public class HealSpell : SpellScript
 {
-    public float shieldTime = 5f;
+    public float healAmmount = 10f;
+    public float healAnimLen = 2f;
 
     void Start()
     {
@@ -13,10 +14,10 @@ public class ShieldSpell : SpellScript
             if (p.GetPhotonView().owner == photonView.owner)
             {
                 gameObject.transform.parent = p.transform;
-                gameObject.transform.localPosition = new Vector3(0f, 0f, 0f);
+                gameObject.transform.localPosition = new Vector3(0f, -1f, 0f);
 
                 if (photonView.isMine)
-                    p.GetComponent<PlayerScript>().shieldTimeLeft += shieldTime;
+                    p.GetComponent<PlayerScript>().Heal(healAmmount);
                 break;
             }
         }
@@ -25,7 +26,7 @@ public class ShieldSpell : SpellScript
 
     private IEnumerator DestroySpell()
     {
-        yield return new WaitForSeconds(shieldTime);
+        yield return new WaitForSeconds(healAnimLen);
         Destroy(gameObject);
     }
 }
