@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public enum PlayerState
 {
@@ -12,6 +13,8 @@ public enum PlayerState
 }
 
 public class PlayerMovement : Photon.PunBehaviour {
+    public Slider healthBar3D;
+
     private float defaultFriction = 5f; // friction drops when hit by spell
     private float moveForce = 40f;
 
@@ -50,6 +53,8 @@ public class PlayerMovement : Photon.PunBehaviour {
 
     void Update()
     {
+        healthBar3D.value = Mathf.Lerp(healthBar3D.value, (int)photonView.owner.CustomProperties[PlayerProperties.HEALTH] / 100f, Time.deltaTime * 5f);
+
         if (state == PlayerState.IDLE)
             anim.CrossFade("free", 0.5f);
         if (state == PlayerState.WALKING)

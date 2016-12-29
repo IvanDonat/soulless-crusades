@@ -25,6 +25,7 @@ public class NetworkGameManager : Photon.PunBehaviour {
     public GameObject playingUI;
     public GameObject spectatorUI;
     public GameObject betweenRoundsUI;
+    public GameObject gameOverUI;
 
     public GameObject scorePanel;
     public Transform scoreContent;
@@ -42,6 +43,10 @@ public class NetworkGameManager : Photon.PunBehaviour {
     private const float timeBetweenRounds = 5f;
     private float timeBetweenRoundsCounter;
 
+    // tracks wins for each player, UNSYNCED FOR EVERYONE ELSE!!
+    private Dictionary<PhotonPlayer, int> masterClientWinTracker = new Dictionary<PhotonPlayer, int>();
+    private int winsForGameOver = -1;
+
     void Start()
     {
         terrainManager = GameObject.FindWithTag("Terrain").GetComponent<TerrainManager>();
@@ -50,6 +55,8 @@ public class NetworkGameManager : Photon.PunBehaviour {
         playingUI.SetActive(false);
         spectatorUI.SetActive(false);
         betweenRoundsUI.SetActive(false);
+        gameOverUI.SetActive(false);
+
         StartCoroutine(Wait(8.5f));
 
         scorePanelRect = scorePanel.GetComponent<RectTransform>();
@@ -79,6 +86,13 @@ public class NetworkGameManager : Photon.PunBehaviour {
         PlayerProperties.SetProperty(PlayerProperties.WINS, 0);
         PlayerProperties.SetProperty(PlayerProperties.ALIVE, false);
         PlayerProperties.SetProperty(PlayerProperties.HEALTH, 100);
+
+       // winsForGameOver = PhotonNetwork.room.CustomProperties["maxwins"];
+        Debug.Log("CHANGE LATER, OVERRIDING ROOM PROPERTY");
+        winsForGameOver = 2;
+
+        foreach (var player in PhotonNetwork.playerList)
+            masterClientWinTracker[player] = 0;
 
         if(PhotonNetwork.isMasterClient)
             SetState(GameState.WARMUP); 
@@ -126,19 +140,6 @@ public class NetworkGameManager : Photon.PunBehaviour {
                 }
             }
 
-        }
-
-        foreach (PhotonPlayer p in PhotonNetwork.playerList)
-        {
-            foreach (GameObject go in GameObject.FindGameObjectsWithTag("HealthBar3D"))
-            {
-                if (go.transform.parent.parent.GetComponent<PhotonView>().owner != p)
-                    continue;
-                
-                Slider s = go.GetComponent<Slider>();
-                s.value = Mathf.Lerp(s.value, (int)p.CustomProperties[PlayerProperties.HEALTH] / 100f, Time.deltaTime * 5f);
-                break;
-            }
         }
 
         if (GetState() == GameState.BETWEEN_ROUNDS && PhotonNetwork.isMasterClient)
@@ -214,9 +215,18 @@ public class NetworkGameManager : Photon.PunBehaviour {
             if (aliveCount <= 1)
             {
                 if (alivePlayer != null)
-                    photonView.RPC("WonRound", PhotonTargets.All, alivePlayer);
+                {
+                    masterClientWinTracker[alivePlayer]++;
 
-                photonView.RPC("RoundOver", PhotonTargets.All);
+                    if (masterClientWinTracker[alivePlayer] >= winsForGameOver)
+                    {
+                        photonView.RPC("GameOver", PhotonTargets.All, alivePlayer);
+                        SetState(GameState.GAME_OVER);
+                        return;
+                    }
+                }
+
+                photonView.RPC("RoundOver", PhotonTargets.All, alivePlayer);
                 SetState(GameState.BETWEEN_ROUNDS);
             }
         }
@@ -224,8 +234,12 @@ public class NetworkGameManager : Photon.PunBehaviour {
     }
 
     [PunRPC]
-    public void RoundOver()
+    public void RoundOver(PhotonPlayer winner)
     {
+        roundOverText.text = winner.NickName + "\n\nWon this round!";
+        if (PhotonNetwork.player == winner)
+            PlayerProperties.IncrementProperty(PlayerProperties.WINS); 
+
         foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
             if (player.GetComponent<PhotonView>().isMine)
                 player.GetComponent<PlayerScript>().Die(true);
@@ -235,20 +249,28 @@ public class NetworkGameManager : Photon.PunBehaviour {
         playingUI.SetActive(false);
     }
 
+    [PunRPC]
+    public void GameOver(PhotonPlayer lastRoundWinner)
+    {
+        if (PhotonNetwork.player == lastRoundWinner)
+            PlayerProperties.IncrementProperty(PlayerProperties.WINS); 
+
+        foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
+        if (player.GetComponent<PhotonView>().isMine)
+            player.GetComponent<PlayerScript>().Die(true);
+
+        betweenRoundsUI.SetActive(false);
+        spectatorUI.SetActive(false);
+        playingUI.SetActive(false);
+        gameOverUI.SetActive(true);
+    }
+
 
     [PunRPC]
     public void GotKill(PhotonPlayer victim)
     {
         print("You killed: " + victim.NickName);
         PlayerProperties.IncrementProperty(PlayerProperties.KILLS);        
-    }
-
-    [PunRPC]
-    public void WonRound(PhotonPlayer roundWinner)
-    {
-        roundOverText.text = roundWinner.NickName + "\n\nWon this round!";
-        if (PhotonNetwork.player == roundWinner)
-            PlayerProperties.IncrementProperty(PlayerProperties.WINS); 
     }
 
     public List<PhotonPlayer> GetSortedPlayerList()
