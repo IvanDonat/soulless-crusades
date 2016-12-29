@@ -132,9 +132,14 @@ public class NetworkGameManager : Photon.PunBehaviour {
         {
             foreach (GameObject go in GameObject.FindGameObjectsWithTag("HealthBar3D"))
             {
+                if (go.transform.parent.parent.GetComponent<PhotonView>().owner != p)
+                    continue;
+                
                 Slider s = go.GetComponent<Slider>();
                 s.value = Mathf.Lerp(s.value, (int)p.CustomProperties[PlayerProperties.HEALTH] / 100f, Time.deltaTime * 5f);
+                break;
             }
+        }
 
         if (GetState() == GameState.BETWEEN_ROUNDS && PhotonNetwork.isMasterClient)
         {
