@@ -71,20 +71,21 @@ public class ProjectileSpell : Spell {
             if (victim != null)
                 photonView.RPC("Remove", PhotonTargets.All, victim.GetComponent<PhotonView>().owner);
             else
-                photonView.RPC("Remove", PhotonTargets.All, null);
+                photonView.RPC("Remove", PhotonTargets.All);
         }
     }
 
     [PunRPC] // use instead of PhotonNetwork.Destroy(...) to set off explosion on all clients
     public void Remove(PhotonPlayer victim)
     {
-        if (parentToVictim && victim != null)
+        if (parentToVictim)
         {
             foreach (GameObject p in GameObject.FindGameObjectsWithTag("Player"))
             {
                 if (p.GetPhotonView().owner == victim)
                 {
                     explosionTransform.parent = p.transform;
+                    explosionTransform.localPosition = Vector3.zero;
                     break;
                 }
             }
@@ -94,6 +95,14 @@ public class ProjectileSpell : Spell {
 
         explosionTransform.gameObject.SetActive(true);
 
+        Destroy(gameObject);
+    }
+
+    [PunRPC]
+    public void Remove()
+    {
+        explosionTransform.parent = null;
+        explosionTransform.gameObject.SetActive(true);
         Destroy(gameObject);
     }
 }

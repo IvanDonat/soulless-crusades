@@ -18,7 +18,7 @@ public class TeleportSpell : Spell {
     [PunRPC]
     public void TeleportPlayer(PhotonPlayer owner, Vector3 pos)
     {
-        foreach(GameObject p in GameObject.FindGameObjectsWithTag("Player"))
+        foreach (GameObject p in GameObject.FindGameObjectsWithTag("Player"))
         {
             if (p.GetPhotonView().owner == owner)
             {

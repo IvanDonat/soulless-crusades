@@ -13,7 +13,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
     private Text[] spellSelectCooldownText = new Text[maxSpells];
     private Text[] spellSelectNameText = new Text[maxSpells];
 
-    private string[] spellName = new string[maxSpells];
+    private static string[] spellName = new string[maxSpells];
     private float[] spellCooldown = new float[maxSpells];
     private int indexSpellSelected;
 

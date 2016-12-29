@@ -187,7 +187,7 @@ public class NetworkGameManager : Photon.PunBehaviour {
         {
             if (sp.GetComponent<PhotonView>().viewID == id)
             {
-                sp.GetComponent<PhotonView>().RPC("Remove", PhotonTargets.All, null);
+                sp.GetComponent<PhotonView>().RPC("Remove", PhotonTargets.All);
                 break;
             }
         }
