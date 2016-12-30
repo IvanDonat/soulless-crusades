@@ -118,7 +118,7 @@ public class PlayerMovement : Photon.PunBehaviour {
             state = PlayerState.IDLE;
         }
 
-        if (hasMovementOrder && DistanceToTarget() > 1f)
+        if (hasMovementOrder && DistanceToTarget() > 1f && state != PlayerState.STUNNED)
         {
             targetRotation = Quaternion.LookRotation(targetPosition - transform.position, Vector3.up);;
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
@@ -133,7 +133,7 @@ public class PlayerMovement : Photon.PunBehaviour {
         if (!photonView.isMine)
             return;
         
-        if (hasMovementOrder)
+        if (hasMovementOrder && state != PlayerState.STUNNED)
         {
             Vector3 force = targetPosition - transform.position;
             force.Normalize();
@@ -199,7 +199,8 @@ public class PlayerMovement : Photon.PunBehaviour {
     private IEnumerator Uncast(float time)
     {
         yield return new WaitForSeconds(time);
-        state = PlayerState.IDLE;
+        if(state != PlayerState.STUNNED)
+            state = PlayerState.IDLE;
     }
 
     public IEnumerator ResetDrag(float time)
@@ -212,7 +213,8 @@ public class PlayerMovement : Photon.PunBehaviour {
     {
         if(uncastCoroutine != null)
             StopCoroutine(uncastCoroutine);
-        state = PlayerState.IDLE;
+        if(state != PlayerState.STUNNED)
+            state = PlayerState.IDLE;
     }
 
     public void SetState(PlayerState st)
