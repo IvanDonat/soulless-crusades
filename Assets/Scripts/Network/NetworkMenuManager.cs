@@ -337,6 +337,7 @@ public class NetworkMenuManager : Photon.PunBehaviour {
                 Destroy(t.gameObject);
         }
 
+        selectSpellsPanel.SetActive(true);
         readyToggle.isOn = false;
     }
 

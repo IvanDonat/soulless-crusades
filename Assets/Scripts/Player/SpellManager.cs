@@ -24,16 +24,8 @@ public partial class PlayerScript : Photon.PunBehaviour {
             spellSelectButtons[i] = GameObject.Find("Spell" + i.ToString()).GetComponent<Button>();
             spellSelectCooldownText[i] = spellSelectButtons[i].transform.FindChild("Cooldown").GetComponent<Text>();
             spellSelectNameText[i] = spellSelectButtons[i].transform.FindChild("Text").GetComponent<Text>();
-            spellSelectButtons[i].onClick.AddListener( delegate{ SpellButtonClicked(); } );
+            spellSelectButtons[i].onClick.AddListener(delegate{SpellButtonClicked();});
         }
-
-
-        // TEMPORARY
-        spellName[0] = "Fireball";
-        spellName[1] = "Teleport";
-        spellName[2] = "Shield";
-        spellName[3] = "LifeLeach";
-        spellName[4] = "Heal";
     }
 
     void UpdateSpells()
@@ -90,5 +82,10 @@ public partial class PlayerScript : Photon.PunBehaviour {
     {
         int index = int.Parse(EventSystem.current.currentSelectedGameObject.name.Substring("Spell".Length));
         SpellButtonClicked(index);
+    }
+
+    public static void SetSpells(string[] list)
+    {
+        spellName = list;
     }
 }
