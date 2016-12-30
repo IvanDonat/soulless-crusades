@@ -37,7 +37,6 @@ public class PlayerMovement : Photon.PunBehaviour {
 
     // networking
     private Vector3 syncPosition;
-    private Vector3 syncVelocity;
     private Quaternion syncRotation;
 
     void Awake()
@@ -239,19 +238,16 @@ public class PlayerMovement : Photon.PunBehaviour {
         if (stream.isWriting)
         {
             stream.SendNext(transform.position);
-            stream.SendNext(rbody.velocity);
             stream.SendNext(transform.rotation);
             stream.SendNext(state);
         }
         else
         {
             Vector3 syncPos = (Vector3) stream.ReceiveNext();
-            Vector3 syncVel = (Vector3) stream.ReceiveNext();
             Quaternion syncRot = (Quaternion) stream.ReceiveNext();
             PlayerState syncState = (PlayerState) stream.ReceiveNext();
 
             syncPosition = syncPos;
-            syncVelocity = syncVel;
             syncRotation = syncRot;
             state = syncState;
         }
