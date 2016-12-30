@@ -162,7 +162,6 @@ public class PlayerMovement : Photon.PunBehaviour {
             StopCoroutine(unstunCoroutine);
 
         hasMovementOrder = false;
-
         state = PlayerState.STUNNED;
         unstunCoroutine = Unstun(time);
         StartCoroutine(unstunCoroutine);

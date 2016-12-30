@@ -5,6 +5,8 @@ using UnityEngine;
 public class GameCamera : MonoBehaviour {
     private Transform myPlayer;
     Vector3 offset = new Vector3(0, 25, -25);
+    Vector3 shakeOffset = Vector3.zero;
+    private Vector3 camPos;
 
     private float speed = 10f;
     private float mouseDeadzone = 0.05f;
@@ -14,6 +16,7 @@ public class GameCamera : MonoBehaviour {
     void Start()
     {
         transform.position = offset;
+        camPos = transform.position;
     }
 
     void LateUpdate()
@@ -26,32 +29,45 @@ public class GameCamera : MonoBehaviour {
         mousePos.x /= Screen.width;
         mousePos.y /= Screen.height;
 
-        Vector3 newPos = transform.position;
-
         if (mousePos.x < mouseDeadzone)
         { // move left
-            newPos += Vector3.left * speed * Time.deltaTime;
+            camPos += Vector3.left * speed * Time.deltaTime;
         }
 
         if (mousePos.x > 1f - mouseDeadzone)
         { // move right
-            newPos += Vector3.right * speed * Time.deltaTime;
+            camPos += Vector3.right * speed * Time.deltaTime;
         }
 
         if (mousePos.y < mouseDeadzone)
         { // move back
-            newPos += Vector3.back * speed * Time.deltaTime;
+            camPos += Vector3.back * speed * Time.deltaTime;
         }
 
         if (mousePos.y > 1f - mouseDeadzone)
         { // move forward
-            newPos += Vector3.forward * speed * Time.deltaTime;
+            camPos += Vector3.forward * speed * Time.deltaTime;
         }
       
-        newPos.x = Mathf.Clamp(newPos.x, minX + offset.x, maxX + offset.x);
-        newPos.y = transform.position.y;
-        newPos.z = Mathf.Clamp(newPos.z, minZ + offset.z, maxZ + offset.z);
+        camPos.x = Mathf.Clamp(camPos.x, minX + offset.x, maxX + offset.x);
+        camPos.z = Mathf.Clamp(camPos.z, minZ + offset.z, maxZ + offset.z);
 
-        transform.position = newPos;
+        transform.position = camPos;
+        transform.position += shakeOffset;
+    }
+
+    public IEnumerator Shake(float intensity, float time)
+    {
+        float timePassed = 0f;
+        while (timePassed <= time)
+        {
+            shakeOffset = Random.insideUnitSphere;
+            shakeOffset *= intensity;
+
+            yield return new WaitForEndOfFrame();
+            timePassed += Time.deltaTime;
+        }
+
+        shakeOffset = Vector3.zero;
     }
 }

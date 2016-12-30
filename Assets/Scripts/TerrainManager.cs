@@ -15,6 +15,8 @@ public class TerrainManager : MonoBehaviour {
     public GameObject lavaEffect;
     private bool groundRaised;
 
+    public AudioSource soundCrumble;
+
     private NetworkGameManager gameManager;
     private Terrain terrain;
     private TerrainData data;
@@ -48,8 +50,7 @@ public class TerrainManager : MonoBehaviour {
     public void StartRound()
     {
         roundTimeElapsed = 0f;
-        SetTerrainToCircle(startRadius);
-        ReloadTerrain();
+        StartCoroutine(SetTerrainToCircle(startRadius, 0f));
     }
 
     void Update()
@@ -62,8 +63,10 @@ public class TerrainManager : MonoBehaviour {
             index = radiusScaling.Length - 1;
         if (index != currentScalingIndex)
         {
-            SetTerrainToCircle(radiusScaling[index] * startRadius);
-            ReloadTerrain();
+            StartCoroutine(SetTerrainToCircle(radiusScaling[index] * startRadius, 1f));
+            StartCoroutine(Camera.main.GetComponent<GameCamera>().Shake(.3f, 2f));
+            soundCrumble.Play();
+            currentScalingIndex = index;
         }
     }
 
@@ -127,8 +130,10 @@ public class TerrainManager : MonoBehaviour {
         data.SetHeights(0, 0, heights);
     }
 
-    public void SetTerrainToCircle(float radius)
+    public IEnumerator SetTerrainToCircle(float radius, float time)
     {
+        yield return new WaitForSeconds(time);
+
         float terrainStartDescentDist = radius;
         float descentLength = 10;
 
@@ -154,5 +159,7 @@ public class TerrainManager : MonoBehaviour {
                 heights[i, j] = h;
             }
         }
+
+        ReloadTerrain();
     }
 }
