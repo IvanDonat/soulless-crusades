@@ -13,12 +13,21 @@ public class Spell : Photon.PunBehaviour {
 
     public string tooltipText = "Generic Spell.";
 
+    public AudioSource sound;
+
     protected Transform myPlayer;
     protected Vector3 castMousePos;
 
     void Awake()
     {
         gameManager = GameObject.FindWithTag("GameController").GetComponent<NetworkGameManager>();
+
+        if (sound != null)
+        {
+            sound.transform.SetParent(null);
+            sound.gameObject.AddComponent<DestroyAfterTime>();
+            sound.gameObject.GetComponent<DestroyAfterTime>().lifetimeInSeconds = 10f;
+        }
     }
 
     public void SetParams(Transform myPlayer, Vector3 castMousePos)
