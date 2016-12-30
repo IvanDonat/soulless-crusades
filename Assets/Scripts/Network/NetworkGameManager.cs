@@ -52,6 +52,8 @@ public class NetworkGameManager : Photon.PunBehaviour {
     private bool androidShowScore = false;
     public GameObject showScore, hideScore;
 
+    public Text winner;
+
     void Start()
     {
         terrainManager = GameObject.FindWithTag("Terrain").GetComponent<TerrainManager>();
@@ -267,6 +269,10 @@ public class NetworkGameManager : Photon.PunBehaviour {
         spectatorUI.SetActive(false);
         playingUI.SetActive(false);
         gameOverUI.SetActive(true);
+
+        winner.text = lastRoundWinner.NickName + " is the winner!";
+        AndroidShowScore();
+        StartCoroutine(DisconnectTimer());
     }
 
 
@@ -275,6 +281,12 @@ public class NetworkGameManager : Photon.PunBehaviour {
     {
         print("You killed: " + victim.NickName);
         PlayerProperties.IncrementProperty(PlayerProperties.KILLS);        
+    }
+
+    IEnumerator DisconnectTimer()
+    {
+        yield return new WaitForSeconds(6f);
+        Disconnect();
     }
 
     public List<PhotonPlayer> GetSortedPlayerList()
@@ -311,7 +323,7 @@ public class NetworkGameManager : Photon.PunBehaviour {
 
     public void Disconnect()
     {
-        PhotonNetwork.LeaveRoom();
+        PhotonNetwork.Disconnect();
         SceneManager.LoadScene(0);
     }
 
