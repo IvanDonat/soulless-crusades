@@ -15,7 +15,6 @@ public partial class PlayerScript : Photon.PunBehaviour {
     private float health;
     private PhotonPlayer lastDamageDealer;
 
-    // currently supports one spell, @TODO multiple spells support
     private string currentSpellName;
     private Spell currentSpellScript;
     private IEnumerator castCoroutine;
@@ -36,6 +35,8 @@ public partial class PlayerScript : Photon.PunBehaviour {
 
     public AudioSource audioSpellSelect;
 
+    public Text nameBar;
+
     void Start()
     {
         Instantiate(spawnParticles, transform.position, Quaternion.identity);
@@ -45,6 +46,8 @@ public partial class PlayerScript : Photon.PunBehaviour {
             Destroy(this); // remove this component if not mine
             return;
         }
+
+        nameBar.text = PhotonNetwork.player.NickName;
 
         movementScript = transform.GetComponent<PlayerMovement>();
         terrain = GameObject.FindGameObjectWithTag("Terrain").transform;
