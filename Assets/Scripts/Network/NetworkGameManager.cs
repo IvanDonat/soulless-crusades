@@ -49,6 +49,9 @@ public class NetworkGameManager : Photon.PunBehaviour {
     private Dictionary<PhotonPlayer, int> masterClientWinTracker = new Dictionary<PhotonPlayer, int>();
     private int winsForGameOver = -1;
 
+    private bool androidShowScore = false;
+    public GameObject showScore, hideScore;
+
     void Start()
     {
         terrainManager = GameObject.FindWithTag("Terrain").GetComponent<TerrainManager>();
@@ -110,7 +113,7 @@ public class NetworkGameManager : Photon.PunBehaviour {
         int seconds = (int)gameTime % 60;
         gameTimeText.text = minutes.ToString("D2") + ":" + seconds.ToString("D2");
 
-        if (Input.GetKey(KeyCode.Tab) || GetState() == GameState.BETWEEN_ROUNDS)
+        if (Input.GetKey(KeyCode.Tab) || GetState() == GameState.BETWEEN_ROUNDS || androidShowScore == true)
             scorePanel.transform.Translate(0, -500f * Time.deltaTime, 0);
         else
             scorePanel.transform.Translate(0, 500f * Time.deltaTime, 0);
@@ -309,6 +312,20 @@ public class NetworkGameManager : Photon.PunBehaviour {
     {
         PhotonNetwork.LeaveRoom();
         SceneManager.LoadScene(0);
+    }
+
+    public void AndroidShowScore()
+    {
+        hideScore.SetActive(true);
+        showScore.SetActive(false);
+        androidShowScore = true;
+    }
+
+    public void AndroidHideScore()
+    {
+        showScore.SetActive(true);
+        hideScore.SetActive(false);
+        androidShowScore = false;
     }
 
     void OnGUI()
