@@ -272,7 +272,6 @@ public class NetworkGameManager : Photon.PunBehaviour {
 
         winner.text = lastRoundWinner.NickName + " is the winner!";
         AndroidShowScore();
-        StartCoroutine(DisconnectTimer());
     }
 
 
@@ -281,12 +280,6 @@ public class NetworkGameManager : Photon.PunBehaviour {
     {
         print("You killed: " + victim.NickName);
         PlayerProperties.IncrementProperty(PlayerProperties.KILLS);        
-    }
-
-    IEnumerator DisconnectTimer()
-    {
-        yield return new WaitForSeconds(6f);
-        Disconnect();
     }
 
     public List<PhotonPlayer> GetSortedPlayerList()
