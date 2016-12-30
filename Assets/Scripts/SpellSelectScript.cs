@@ -13,6 +13,14 @@ public class SpellSelectScript : MonoBehaviour {
     private List<Button> selectedSpellButtons = new List<Button>();
     private List<Button> allSpellButtons = new List<Button>();
 
+    private Dictionary<Button, Spell> buttonToSpell = new Dictionary<Button, Spell>();
+
+    public static Button currentlyHoveredButton;
+
+    public RectTransform tooltipCanvas;
+    public Text tooltipName;
+    public Text tooltipDescription;
+
     void Start()
     {
         GameObject[] allSpells = Resources.LoadAll<GameObject>("Spells");
@@ -26,8 +34,35 @@ public class SpellSelectScript : MonoBehaviour {
             button.GetComponentInChildren<Text>().text = obj.name;
             allSpellButtons.Add(button);
 
+            buttonToSpell[button] = obj.GetComponent<Spell>();
+
             button.onClick.AddListener(() => ClickedButtonSelectSpell());
         }
+    }
+
+    void Update()
+    {
+        if (currentlyHoveredButton != null)
+        {
+            tooltipCanvas.gameObject.SetActive(true);
+
+            Vector3 mpos = Input.mousePosition;
+            mpos.z = 700f;
+            Vector3 worldPos = Camera.main.ScreenToWorldPoint(mpos);
+            worldPos += Vector3.right * tooltipCanvas.sizeDelta.x / 2 * tooltipCanvas.localScale.x * 1.1f;
+            worldPos += Vector3.down * tooltipCanvas.sizeDelta.y / 2 * tooltipCanvas.localScale.y * 1.1f;
+            tooltipCanvas.position = worldPos;
+
+            Spell s = buttonToSpell[currentlyHoveredButton];
+            tooltipName.text = s.gameObject.name;
+
+            tooltipDescription.text = "";
+            tooltipDescription.text += s.tooltipText + "\n\n";
+            tooltipDescription.text += "Cast Time: " + s.castTime + " s\n";
+            tooltipDescription.text += "Cooldown: " + s.castInterval + " s\n";
+        }
+        else
+            tooltipCanvas.gameObject.SetActive(false);
     }
 
     private void ClickedButtonSelectSpell()
