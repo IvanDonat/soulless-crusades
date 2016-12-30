@@ -12,6 +12,7 @@ public class TeleportSpell : Spell {
             Vector3 pos = castMousePos;
             pos.y += 1.2f;
             photonView.RPC("TeleportPlayer", PhotonTargets.All, PhotonNetwork.player, pos);
+            myPlayer.GetComponent<PlayerScript>().shieldTimeLeft += .3f;
         }
     }
 
