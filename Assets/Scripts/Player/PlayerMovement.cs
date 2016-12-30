@@ -35,6 +35,8 @@ public class PlayerMovement : Photon.PunBehaviour {
 
     public Transform prefabParticlesOnClick;
 
+    public AudioSource castingSound;
+
     // networking
     private Vector3 syncPosition;
     private Vector3 syncVelocity;
@@ -49,11 +51,15 @@ public class PlayerMovement : Photon.PunBehaviour {
         playerScript = transform.GetComponent<PlayerScript>();
 
         terrain = GameObject.FindGameObjectWithTag("Terrain").transform;
+
+        if (photonView.isMine)
+            castingSound.volume *= 2f;
     }
 
     void Update()
     {
         healthBar3D.value = Mathf.Lerp(healthBar3D.value, (int)photonView.owner.CustomProperties[PlayerProperties.HEALTH] / 100f, Time.deltaTime * 5f);
+        castingSound.gameObject.SetActive(state == PlayerState.CASTING);
 
         if (state == PlayerState.IDLE)
             anim.CrossFade("free", 0.5f);
@@ -253,8 +259,6 @@ public class PlayerMovement : Photon.PunBehaviour {
             syncPosition = syncPos;
             syncVelocity = syncVel;
             syncRotation = syncRot;
-
-            //transform.position = syncPos;
             state = syncState;
         }
     }

@@ -31,7 +31,10 @@ public partial class PlayerScript : Photon.PunBehaviour {
     public Texture2D defaultCursor;
     public Texture2D castCursor;
 
+    [NonSerialized]
     public float shieldTimeLeft = 0f;
+
+    public AudioSource audioSpellSelect;
 
     void Start()
     {
@@ -140,6 +143,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
             GameObject spellGO = (GameObject) Resources.Load("Spells/" + spellName);
             currentSpellScript = spellGO.GetComponent<Spell>();
             Cursor.SetCursor(castCursor, Vector2.zero, CursorMode.Auto);
+            audioSpellSelect.Play();
         }
         else
         {
