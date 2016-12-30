@@ -16,6 +16,7 @@ public class TerrainManager : MonoBehaviour {
     private bool groundRaised;
 
     public AudioSource soundCrumble;
+    public AudioSource soundCrumbleLong;
 
     private NetworkGameManager gameManager;
     private Terrain terrain;
@@ -49,6 +50,7 @@ public class TerrainManager : MonoBehaviour {
 
     public void StartRound()
     {
+        currentScalingIndex = 0;
         roundTimeElapsed = 0f;
         StartCoroutine(SetTerrainToCircle(startRadius, 0f));
     }
@@ -91,6 +93,9 @@ public class TerrainManager : MonoBehaviour {
         }
 
         float timePassedSinceGroundRaised = 0f;
+        soundCrumbleLong.Play();
+        StartCoroutine(Camera.main.GetComponent<GameCamera>().Shake(.3f, 4.2f));
+
         while (!groundRaised && timePassedSinceGroundRaised < 2f)
         {
             if (terrain.transform.position.y <= -0.6f)
