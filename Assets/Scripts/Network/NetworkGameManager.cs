@@ -17,7 +17,9 @@ public class NetworkGameManager : Photon.PunBehaviour {
     public Transform playerPrefab;
 
     public Text gameTimeText;
+    public Text roundTimeText;
     private float gameTime = 0;
+    private float roundTime = 0;
 
     private TerrainManager terrainManager;
 
@@ -108,12 +110,19 @@ public class NetworkGameManager : Photon.PunBehaviour {
     {
         gameTime += Time.deltaTime;
 
+        if (gameState == GameState.IN_ROUND)
+            roundTime += Time.deltaTime;
+
         if (!PhotonNetwork.isMasterClient)
             gameState = GetState();
 
         int minutes = (int)gameTime / 60;
         int seconds = (int)gameTime % 60;
         gameTimeText.text = minutes.ToString("D2") + ":" + seconds.ToString("D2");
+
+        minutes = (int)roundTime / 60;
+        seconds = (int)roundTime % 60;
+        roundTimeText.text = minutes.ToString("D2") + ":" + seconds.ToString("D2");
 
         if (Input.GetKey(KeyCode.Tab) || GetState() == GameState.BETWEEN_ROUNDS || androidShowScore == true)
             scorePanel.transform.Translate(0, -500f * Time.deltaTime, 0);
@@ -168,6 +177,7 @@ public class NetworkGameManager : Photon.PunBehaviour {
         terrainManager.StartRound();
         if(PhotonNetwork.isMasterClient)
             SetState(GameState.IN_ROUND);
+        roundTime = 0f;
     }
 
     private IEnumerator Wait(float sec)
@@ -312,6 +322,15 @@ public class NetworkGameManager : Photon.PunBehaviour {
         {
             return (GameState)PhotonNetwork.room.CustomProperties[GAME_STATE];
         }
+    }
+
+    public float GetDragScalar()
+    {
+        // 1 at 0 sec
+        // 0.1 at 2 minutes
+        float timeRatio = roundTime / 180f;
+        timeRatio = Mathf.Clamp(timeRatio, 0f, .9f);
+        return 1 - timeRatio;
     }
 
     public void Disconnect()

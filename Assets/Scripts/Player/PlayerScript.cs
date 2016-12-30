@@ -176,13 +176,15 @@ public partial class PlayerScript : Photon.PunBehaviour {
     }
 
     [PunRPC]
-    public void DoKnockback(Vector3 dir, float force, float dragDropTo, float dragResetTime)
+    public void DoKnockback(Vector3 dir, float force, float dragResetTime)
     {
         if (shieldTimeLeft >= 0f)
             return;
 
         dir.y = 0;
         dir.Normalize();
+
+        float dragDropTo = 2f * gameManager.GetDragScalar();
 
         movementScript.GetRigidbody().velocity += dir * force;
         movementScript.SetDrag(dragDropTo, dragResetTime);

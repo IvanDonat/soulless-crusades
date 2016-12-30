@@ -6,7 +6,6 @@ public class ProjectileSpell : Spell {
     public float speed = 3f;
     public float damage = 20;
     public float knockbackForce = 15f;
-    public float dragDropTo = 1f;
     public float dragResetTime = 1f;
     public float stunTime = 1f;
 
@@ -48,7 +47,7 @@ public class ProjectileSpell : Spell {
             if (c.tag == "Player" && !c.GetComponent<PhotonView>().isMine)
             {
                 c.GetComponent<PhotonView>().RPC("TakeDamage", c.GetComponent<PhotonView>().owner, photonView.owner, damage, stunTime);
-                c.GetComponent<PhotonView>().RPC("DoKnockback", c.GetComponent<PhotonView>().owner, transform.forward, knockbackForce, dragDropTo, dragResetTime);
+                c.GetComponent<PhotonView>().RPC("DoKnockback", c.GetComponent<PhotonView>().owner, transform.forward, knockbackForce, dragResetTime);
 
                 if (isLifeLeach)
                 {
