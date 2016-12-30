@@ -15,14 +15,23 @@ public class TerrainManager : MonoBehaviour {
     public GameObject lavaEffect;
     private bool groundRaised;
 
+    private NetworkGameManager gameManager;
     private Terrain terrain;
     private TerrainData data;
     private int width, height;
     private float[,] heights;
-    private float timePassedSinceTerrainUpdate = -1f;
+
+    private float startRadius = 75f;
+    private float[] radiusScaling = {1.0f, 0.9f, 0.8f, 0.75f, 0.7f, 0.65f, 0.60f, 0.5f, 0.45f, 0.4f, 0.35f, 0.3f};
+    private float stageInterval = 10f; // how long is each stage
+    private float roundTimeElapsed = 0f;
+    private int currentScalingIndex = 0;
+
 
     void Awake()
     {
+        gameManager = GameObject.FindWithTag("GameController").GetComponent<NetworkGameManager>();
+
         terrain = GetComponent<Terrain>();
         data = terrain.terrainData;
 
@@ -33,17 +42,28 @@ public class TerrainManager : MonoBehaviour {
 
     void Start()
     {
-        SetTerrainToCircle(75f);
+        StartRound();
+    }
+
+    public void StartRound()
+    {
+        roundTimeElapsed = 0f;
+        SetTerrainToCircle(startRadius);
         ReloadTerrain();
     }
 
     void Update()
     {
-        timePassedSinceTerrainUpdate -= Time.deltaTime;
-        if (timePassedSinceTerrainUpdate < 0)
+        if(gameManager.GetState() == GameState.IN_ROUND)
+            roundTimeElapsed += Time.deltaTime;
+        
+        int index = (int)(roundTimeElapsed / stageInterval);
+        if (index >= radiusScaling.Length)
+            index = radiusScaling.Length - 1;
+        if (index != currentScalingIndex)
         {
-            //placeholder for terrain modification
-            timePassedSinceTerrainUpdate = 1 / 10f;
+            SetTerrainToCircle(radiusScaling[index] * startRadius);
+            ReloadTerrain();
         }
     }
 

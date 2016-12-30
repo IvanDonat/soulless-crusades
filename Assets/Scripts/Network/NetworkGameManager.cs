@@ -163,6 +163,7 @@ public class NetworkGameManager : Photon.PunBehaviour {
         spectatorUI.SetActive(false);
         betweenRoundsUI.SetActive(false);
         PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(Random.Range(-15f, 15f), 1, Random.Range(-15f, 15f)), Quaternion.identity, 0);
+        terrainManager.StartRound();
         if(PhotonNetwork.isMasterClient)
             SetState(GameState.IN_ROUND);
     }
