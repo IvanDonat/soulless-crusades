@@ -41,13 +41,13 @@ public partial class PlayerScript : Photon.PunBehaviour {
     {
         Instantiate(spawnParticles, transform.position, Quaternion.identity);
 
+        nameBar.text = photonView.owner.NickName;
+
         if(!photonView.isMine)
         {
             Destroy(this); // remove this component if not mine
             return;
         }
-
-        nameBar.text = PhotonNetwork.player.NickName;
 
         movementScript = transform.GetComponent<PlayerMovement>();
         terrain = GameObject.FindGameObjectWithTag("Terrain").transform;
