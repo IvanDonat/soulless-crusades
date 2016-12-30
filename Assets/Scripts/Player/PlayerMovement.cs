@@ -91,6 +91,7 @@ public class PlayerMovement : Photon.PunBehaviour {
                 {
                     SetTargetPosition(hit.point);
                     hasMovementOrder = true;
+                    rbody.drag = defaultFriction;
                     state = PlayerState.WALKING;
                 }
             }
@@ -106,6 +107,7 @@ public class PlayerMovement : Photon.PunBehaviour {
             {
                 SetTargetPosition(hit.point);
                 hasMovementOrder = true;
+                rbody.drag = defaultFriction;
                 GameObject.Instantiate(prefabParticlesOnClick, hit.point + Vector3.up * 0.1f, Quaternion.identity);
                 state = PlayerState.WALKING;
                 playerScript.SetSpell(null);
