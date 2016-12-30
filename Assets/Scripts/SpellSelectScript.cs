@@ -63,6 +63,23 @@ public class SpellSelectScript : MonoBehaviour {
             tooltipDescription.text += s.tooltipText + "\n\n";
             tooltipDescription.text += "Cast Time: " + s.castTime + " s\n";
             tooltipDescription.text += "Cooldown: " + s.castInterval + " s\n";
+
+            if (s is HealSpell)
+            {
+                tooltipDescription.text += "Heal amount: " + (s as HealSpell).healAmount + '\n';
+            }
+            else if (s is ProjectileSpell)
+            {
+                tooltipDescription.text += "Damage: " + (s as ProjectileSpell).damage + '\n';
+                tooltipDescription.text += "Knockback: " + (s as ProjectileSpell).knockbackForce + '\n';
+            }
+            else if (s is ShieldSpell)
+            {
+                tooltipDescription.text += "Shield time: " + (s as ShieldSpell).shieldTime + '\n';
+            }
+
+            int numLines = tooltipDescription.text.Split('\n').Length - 1;
+            tooltipCanvas.sizeDelta = new Vector2(tooltipCanvas.sizeDelta.x, 90 + 65 * numLines);
         }
         else
             tooltipCanvas.gameObject.SetActive(false);
