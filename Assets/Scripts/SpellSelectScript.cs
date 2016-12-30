@@ -32,7 +32,7 @@ public class SpellSelectScript : MonoBehaviour {
 
     private void ClickedButtonSelectSpell()
     {
-        if (selectedSpellButtons.Count >= 5)
+        if (selectedSpellButtons.Count >= 6)
             return;
 
         Button buttonClicked = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();

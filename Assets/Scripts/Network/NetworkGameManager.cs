@@ -33,6 +33,8 @@ public class NetworkGameManager : Photon.PunBehaviour {
 
     public Text roundOverText;
 
+    public Slider castingBar;
+
     private List<GameObject> scoreList = new List<GameObject>();
     private RectTransform scorePanelRect;
 

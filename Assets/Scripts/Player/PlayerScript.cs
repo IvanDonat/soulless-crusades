@@ -52,7 +52,7 @@ public partial class PlayerScript : Photon.PunBehaviour {
         healthBarNum = healthBar.GetComponentInChildren<Text>();
         health = maxHealth;
 
-        castingBar = GameObject.Find("Casting Bar").GetComponent<Slider>();
+        castingBar = gameManager.castingBar;
         castingBar.gameObject.SetActive(false);
 
         gameManager.GetSpectatorUI().SetActive(false);
