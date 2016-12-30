@@ -16,10 +16,12 @@ public class SpellSelectScript : MonoBehaviour {
     private Dictionary<Button, Spell> buttonToSpell = new Dictionary<Button, Spell>();
 
     public static Button currentlyHoveredButton;
+    public Button closeButton;
 
     public RectTransform tooltipCanvas;
     public Text tooltipName;
     public Text tooltipDescription;
+    public Text errorText;
 
     void Start()
     {
@@ -38,6 +40,7 @@ public class SpellSelectScript : MonoBehaviour {
 
             button.onClick.AddListener(() => ClickedButtonSelectSpell());
         }
+        CheckSpellNumber();
     }
 
     void Update()
@@ -80,6 +83,7 @@ public class SpellSelectScript : MonoBehaviour {
         buttonClicked.onClick.RemoveAllListeners();
         buttonClicked.onClick.AddListener(() => ClickButtonDeselectSpell());
 
+        CheckSpellNumber();
         UpdateSpellManagerSpells();
     }
 
@@ -95,7 +99,23 @@ public class SpellSelectScript : MonoBehaviour {
         buttonClicked.onClick.RemoveAllListeners();
         buttonClicked.onClick.AddListener(() => ClickedButtonSelectSpell());
 
+        CheckSpellNumber();
         UpdateSpellManagerSpells();
+    }
+
+    private void CheckSpellNumber()
+    {
+        if (selectedSpellButtons.Count < 5) //6 when available
+        {
+            closeButton.interactable = false;
+            errorText.text = string.Format("You have to select {0} more spell(s) to continue!", 
+                5 - selectedSpellButtons.Count);
+        }
+        else
+        {
+            closeButton.interactable = true;
+            errorText.text = "";
+        }
     }
 
     private void UpdateSpellManagerSpells()
