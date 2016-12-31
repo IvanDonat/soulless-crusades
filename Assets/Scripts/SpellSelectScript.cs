@@ -122,11 +122,14 @@ public class SpellSelectScript : MonoBehaviour {
 
     private void CheckSpellNumber()
     {
-        if (selectedSpellButtons.Count < 5) //6 when available
+        if (selectedSpellButtons.Count < 6)
         {
             closeButton.interactable = false;
-            errorText.text = string.Format("You have to select {0} more spell(s) to continue!", 
-                5 - selectedSpellButtons.Count);
+            if (selectedSpellButtons.Count != 5)
+                errorText.text = string.Format("You have to select {0} more spells to continue!", 
+                    6 - selectedSpellButtons.Count);
+            else
+                errorText.text = string.Format("You have to select 1 more spell to continue!");
         }
         else
         {
