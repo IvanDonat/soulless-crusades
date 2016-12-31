@@ -68,4 +68,12 @@ public class SpikeSpell : Spell {
             c.GetComponent<PhotonView>().RPC("SetSlowdown", c.GetComponent<PhotonView>().owner, slowdownTime);
         }
     }
+
+    void OnTriggerExit(Collider c)
+    {
+        if (photonView.isMine && c.tag == "Player")
+        {
+            c.GetComponent<PhotonView>().RPC("SetSlowdown", c.GetComponent<PhotonView>().owner, slowdownTime);
+        }
+    }
 }

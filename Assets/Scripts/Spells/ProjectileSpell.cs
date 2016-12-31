@@ -61,7 +61,7 @@ public class ProjectileSpell : Spell {
             {
                 return;
             }
-            else if (c.tag == "Spell")
+            else if (c.tag == "Spell" && c.GetComponent<ProjectileSpell>() != null)
             {
                 // tell owner to find his own spell and destroy it as well
                 gameManager.GetComponent<PhotonView>().RPC("DestroySpell", c.GetComponent<PhotonView>().owner, c.GetComponent<PhotonView>().viewID);
