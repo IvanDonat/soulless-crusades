@@ -22,6 +22,7 @@ public class PlayerMovement : Photon.PunBehaviour {
     private PlayerScript playerScript;
 
     public Animation anim;
+    public Transform playerMarker;
 
     private Vector3 targetPosition;
     private Quaternion targetRotation;
@@ -48,6 +49,8 @@ public class PlayerMovement : Photon.PunBehaviour {
         playerScript = transform.GetComponent<PlayerScript>();
 
         terrain = GameObject.FindGameObjectWithTag("Terrain").transform;
+
+        playerMarker.gameObject.SetActive(photonView.isMine);
     }
 
     void Update()
@@ -70,6 +73,25 @@ public class PlayerMovement : Photon.PunBehaviour {
             return;
         }
 
+        HandleInput();
+
+        if (photonView.isMine && state == PlayerState.STUNNED)
+        {
+            transform.Rotate(Vector3.up * Time.deltaTime * 360 * 1.5f, Space.Self);
+        }
+
+        if (hasMovementOrder && DistanceToTarget() > 1f && state != PlayerState.STUNNED)
+        {
+            targetRotation = Quaternion.LookRotation(targetPosition - transform.position, Vector3.up);;
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+        }
+
+        if (DistanceToTarget() < 1f && state == PlayerState.WALKING)
+            state = PlayerState.IDLE;
+    }
+
+    private void HandleInput()
+    {
         if (Application.platform == RuntimePlatform.Android)
         { // ANDROID
             hasMovementOrder = false;
@@ -118,15 +140,6 @@ public class PlayerMovement : Photon.PunBehaviour {
             playerScript.CancelCast();
             state = PlayerState.IDLE;
         }
-
-        if (hasMovementOrder && DistanceToTarget() > 1f && state != PlayerState.STUNNED)
-        {
-            targetRotation = Quaternion.LookRotation(targetPosition - transform.position, Vector3.up);;
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
-        }
-
-        if (DistanceToTarget() < 1f && state == PlayerState.WALKING)
-            state = PlayerState.IDLE;
     }
 
     void FixedUpdate()
