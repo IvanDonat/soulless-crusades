@@ -139,7 +139,6 @@ public class TerrainManager : MonoBehaviour {
     {
         yield return new WaitForSeconds(time);
 
-        float terrainStartDescentDist = radius;
         float descentLength = 10;
 
         for (int i = 0; i < height; i++)
@@ -152,14 +151,46 @@ public class TerrainManager : MonoBehaviour {
                 float offsetY = Mathf.Abs(j - height / 2);
                 float dist = Mathf.Sqrt(offsetX * offsetX + offsetY * offsetY);
 
-                if (dist < terrainStartDescentDist)
+                if (dist < radius)
                     h = 1;
-                else if (dist >= terrainStartDescentDist + descentLength)
+                else if (dist >= radius + descentLength)
                     h = 0;
                 else
                 {
-                    h = Mathf.Lerp(1, 0, (dist - terrainStartDescentDist) / (dist - terrainStartDescentDist + descentLength));
+                    h = Mathf.Lerp(1, 0, (dist - radius) / (dist - radius + descentLength));
                 }
+
+                heights[i, j] = h;
+            }
+        }
+
+        ReloadTerrain();
+    }
+
+    public IEnumerator SetTerrainToHexagon(float radius, float time) // @TODO FIX SLOPE
+    {
+        yield return new WaitForSeconds(time);
+
+        float descentLength = 10;
+
+        for (int i = 0; i < height; i++)
+        {
+            for (int j = 0; j < width; j++)
+            {
+                float h = 0;
+
+                float offsetX = Mathf.Abs(i - width / 2);
+                float offsetY = Mathf.Abs(j - height / 2);
+                float dist = Mathf.Sqrt(offsetX * offsetX + offsetY * offsetY);
+    
+                if (radius * Mathf.Sqrt(2) - offsetX > offsetY)
+                    h = 1f;
+                else if (offsetX < radius && offsetY < radius)
+                    h = 1f;
+                else if (radius + descentLength < dist)
+                    h = Mathf.Lerp(1, 0, (dist - radius) / (dist - radius + descentLength));
+                else
+                    h = 0f;
 
                 heights[i, j] = h;
             }

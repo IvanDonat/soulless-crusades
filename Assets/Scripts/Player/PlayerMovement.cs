@@ -36,6 +36,8 @@ public class PlayerMovement : Photon.PunBehaviour {
 
     public Transform prefabParticlesOnClick;
 
+    private float slowdownTime = 0f;
+
     // networking
     private Vector3 syncPosition;
     private Quaternion syncRotation;
@@ -85,6 +87,9 @@ public class PlayerMovement : Photon.PunBehaviour {
             targetRotation = Quaternion.LookRotation(targetPosition - transform.position, Vector3.up);;
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
         }
+
+        if (slowdownTime > 0f)
+            slowdownTime -= Time.deltaTime;
 
         if (DistanceToTarget() < 1f && state == PlayerState.WALKING)
             state = PlayerState.IDLE;
@@ -155,6 +160,9 @@ public class PlayerMovement : Photon.PunBehaviour {
             if (DistanceToTarget() < 1f)
                 force *= DistanceToTarget();
 
+            if (slowdownTime > 0)
+                force /= 2f;
+
             rbody.AddForce(force * moveForce, ForceMode.Acceleration);
         }
     }
@@ -179,6 +187,12 @@ public class PlayerMovement : Photon.PunBehaviour {
         state = PlayerState.STUNNED;
         unstunCoroutine = Unstun(time);
         StartCoroutine(unstunCoroutine);
+    }
+
+    [PunRPC]
+    public void SetSlowdown(float time)
+    {
+        slowdownTime = time;
     }
 
     public void CastSpell(float time, Vector3 aimPos)
