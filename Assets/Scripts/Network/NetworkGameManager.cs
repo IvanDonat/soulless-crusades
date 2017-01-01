@@ -75,6 +75,7 @@ public class NetworkGameManager : Photon.PunBehaviour
         {
             GameObject go = Instantiate(scoreItem, scoreContent) as GameObject;
             go.name = p.NickName;
+            go.GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
 
             foreach (RectTransform r in go.GetComponentInChildren<RectTransform>())
             {
