@@ -72,10 +72,22 @@ public class SpellSelectScript : MonoBehaviour {
             {
                 tooltipDescription.text += "Damage: " + (s as ProjectileSpell).damage + '\n';
                 tooltipDescription.text += "Knockback: " + (s as ProjectileSpell).knockbackForce + '\n';
+                tooltipDescription.text += "Stun time: " + (s as ProjectileSpell).stunTime + " s\n";
             }
             else if (s is ShieldSpell)
             {
-                tooltipDescription.text += "Shield time: " + (s as ShieldSpell).shieldTime + '\n';
+                tooltipDescription.text += "Shield time: " + (s as ShieldSpell).shieldTime + " s\n";
+            }
+            else if (s is SpikeSpell)
+            {
+                tooltipDescription.text += "Spike lifetime: " + (s as SpikeSpell).duration + " s\n";
+                tooltipDescription.text += "Slowdown duration: " + (s as SpikeSpell).slowdownTime + " s\n";
+            }
+            else if (s is MeteorSpell)
+            {
+                tooltipDescription.text += "Damage: " + (s as MeteorSpell).damage + '\n';
+                tooltipDescription.text += "Knockback: " + (s as MeteorSpell).knockbackForce + '\n';
+                tooltipDescription.text += "Stun time: " + (s as MeteorSpell).stunTime + " s\n";
             }
 
             int numLines = tooltipDescription.text.Split('\n').Length - 1;
