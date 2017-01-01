@@ -11,6 +11,7 @@ public class MeteorSpell : Spell
     public float stunTime = 1f;
 
     private bool inAir = true;
+    public Transform explosionTransform;
 
     void Start () 
     {
@@ -42,6 +43,7 @@ public class MeteorSpell : Spell
             }
 
             inAir = false;
+            photonView.RPC("Remove", PhotonTargets.All);
         }
     }
 
@@ -54,8 +56,8 @@ public class MeteorSpell : Spell
     [PunRPC]
     public void Remove()
     {
-        //explosionTransform.parent = null;
-        //explosionTransform.gameObject.SetActive(true);
+        explosionTransform.parent = null;
+        explosionTransform.gameObject.SetActive(true);
         Destroy(gameObject);
     }
 }
