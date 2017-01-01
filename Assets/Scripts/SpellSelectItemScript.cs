@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class SpellSelectItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
-
+public class SpellSelectItemScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
+{
     private Button b;
 
     void Awake()

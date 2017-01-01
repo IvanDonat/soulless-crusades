@@ -13,7 +13,8 @@ public enum GameState
     GAME_OVER
 }
 
-public class NetworkGameManager : Photon.PunBehaviour {
+public class NetworkGameManager : Photon.PunBehaviour 
+{
     public Transform playerPrefab;
 
     public Text gameTimeText;

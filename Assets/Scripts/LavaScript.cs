@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LavaScript : MonoBehaviour {
+public class LavaScript : MonoBehaviour
+{
     private MeshRenderer rend;
     private Vector2 offset = Vector2.zero;
 

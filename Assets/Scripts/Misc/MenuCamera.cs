@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MenuCamera : MonoBehaviour {
+public class MenuCamera : MonoBehaviour
+{
     enum TransitionStage
     {
         FIRST,    // makne se unazad

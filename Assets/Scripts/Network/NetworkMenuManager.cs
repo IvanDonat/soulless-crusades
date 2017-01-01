@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class NetworkMenuManager : Photon.PunBehaviour {
+public class NetworkMenuManager : Photon.PunBehaviour 
+{
 
     public string gameVersion = "";
     public bool autoJoinLobby = true;

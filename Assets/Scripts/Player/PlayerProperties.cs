@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class PlayerProperties {
+public static class PlayerProperties
+{
     public const string KILLS   = "kills";
     public const string DEATHS  = "deaths";
     public const string ALIVE   = "alive";

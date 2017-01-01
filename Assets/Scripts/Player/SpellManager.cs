@@ -4,7 +4,8 @@ using UnityEngine.EventSystems;
 using UnityEngine;
 using UnityEngine.UI;
 
-public partial class PlayerScript : Photon.PunBehaviour {
+public partial class PlayerScript : Photon.PunBehaviour
+{
     // mostly controlled by the main PlayerScript.cs
 
     private const int maxSpells = 6;

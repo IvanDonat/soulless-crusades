@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerBurn : Photon.PunBehaviour {
+public class PlayerBurn : Photon.PunBehaviour 
+{
     public GameObject burn;
     private PlayerScript playerScript;
     private bool onFire = false;

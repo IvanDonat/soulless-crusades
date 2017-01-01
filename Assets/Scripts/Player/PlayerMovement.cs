@@ -12,7 +12,8 @@ public enum PlayerState
     STUNNED
 }
 
-public class PlayerMovement : Photon.PunBehaviour {
+public class PlayerMovement : Photon.PunBehaviour
+{
     public Slider healthBar3D;
 
     private float defaultFriction = 5f; // friction drops when hit by spell

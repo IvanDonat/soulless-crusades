@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class SpellSelectScript : MonoBehaviour {
+public class SpellSelectScript : MonoBehaviour
+{
     public Transform selectedSpellsParent;
     public Transform allSpellsParent;
 

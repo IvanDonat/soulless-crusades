@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TerrainManager : MonoBehaviour {
+public class TerrainManager : MonoBehaviour
+{
     /* what the terrain asset should be like (in case it gets changed)
      * 
      * relatively low Terrain Width and Length, depending on arena size

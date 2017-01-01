@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpikeSpell : Spell {
+public class SpikeSpell : Spell 
+{
     public float duration = 10f;
     public float slowdownTime = 5f;
     public Collider spikeCollider;

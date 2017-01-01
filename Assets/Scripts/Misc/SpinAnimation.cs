@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpinAnimation : MonoBehaviour {
+public class SpinAnimation : MonoBehaviour 
+{
     public float speed = 360f;
 
     void Update()

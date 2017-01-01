@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DestroyAfterTime : MonoBehaviour {
+public class DestroyAfterTime : MonoBehaviour 
+{
     public float lifetimeInSeconds = 2f;
 
     void Update()

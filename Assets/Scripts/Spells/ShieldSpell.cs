@@ -20,6 +20,7 @@ public class ShieldSpell : Spell
                 break;
             }
         }
+
         StartCoroutine(DestroySpell());
     }
 

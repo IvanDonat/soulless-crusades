@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class UISoundScript : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler {
+public class UISoundScript : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler
+{
     // add this script to each UI object that should make sound fx
 
     //private AudioSource hoverSound;

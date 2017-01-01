@@ -6,7 +6,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public partial class PlayerScript : Photon.PunBehaviour {
+public partial class PlayerScript : Photon.PunBehaviour
+{
     private NetworkGameManager gameManager;
     private PlayerMovement movementScript;
     private Transform terrain;

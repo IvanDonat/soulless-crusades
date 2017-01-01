@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameCamera : MonoBehaviour {
+public class GameCamera : MonoBehaviour
+{
     private Transform myPlayer;
     Vector3 offset = new Vector3(0, 25, -25);
     Vector3 shakeOffset = Vector3.zero;

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ProjectileSpell : Spell {
+public class ProjectileSpell : Spell 
+{
     public float speed = 3f;
     public float damage = 20;
     public float knockbackForce = 15f;

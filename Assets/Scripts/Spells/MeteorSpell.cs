@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeteorSpell : Spell {
-
+public class MeteorSpell : Spell 
+{
     public float speed = 3f;
     public float damage = 20;
     public float knockbackForce = 15f;
@@ -12,7 +12,8 @@ public class MeteorSpell : Spell {
 
     private bool inAir = true;
 
-    void Start () {
+    void Start () 
+    {
         if (photonView.isMine)
         {
             castMousePos += Vector3.up * 60f;
@@ -20,7 +21,8 @@ public class MeteorSpell : Spell {
         }
     }
 
-    void Update() {
+    void Update()
+    {
         transform.Translate(Vector3.down * Time.deltaTime * speed, Space.World);
 
         if (transform.position.y <= 1f && inAir && photonView.isMine)

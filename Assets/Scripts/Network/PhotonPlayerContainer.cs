@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PhotonPlayerContainer : Photon.PunBehaviour {
+public class PhotonPlayerContainer : Photon.PunBehaviour
+{
     private PhotonPlayer pp;
 
     public void Set(PhotonPlayer photonPlayer)
