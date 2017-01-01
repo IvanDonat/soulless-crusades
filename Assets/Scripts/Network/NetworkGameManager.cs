@@ -36,6 +36,8 @@ public class NetworkGameManager : Photon.PunBehaviour
 
     public Text roundOverText;
 
+    public Text miniScoresNames, miniScoresRounds;
+
     public Slider castingBar;
 
     private List<GameObject> scoreList = new List<GameObject>();
@@ -133,8 +135,13 @@ public class NetworkGameManager : Photon.PunBehaviour
 
         scorePanelRect.anchoredPosition = new Vector2(0, Mathf.Clamp(scorePanelRect.anchoredPosition.y, -144f, 99f));
 
+
+        miniScoresNames.text = "";
+        miniScoresRounds.text = "";
+
         foreach (PhotonPlayer p in PhotonNetwork.playerList)
         {
+            // major scoreboard
             foreach (GameObject go in scoreList)
             {
                 if (go.name != p.NickName)
@@ -156,6 +163,9 @@ public class NetworkGameManager : Photon.PunBehaviour
                 }
             }
 
+            // mini scoreboard
+            miniScoresNames.text += p.NickName.Substring(0, Mathf.Min(7, p.NickName.Length)) + '\n';
+            miniScoresRounds.text += p.CustomProperties[PlayerProperties.WINS] + "/" + winsForGameOver + '\n';
         }
 
         if (GetState() == GameState.BETWEEN_ROUNDS && PhotonNetwork.isMasterClient)

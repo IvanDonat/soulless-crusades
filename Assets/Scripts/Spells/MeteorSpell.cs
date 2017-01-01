@@ -10,7 +10,6 @@ public class MeteorSpell : Spell
     public float dragResetTime = 1f;
     public float stunTime = 1f;
 
-    private bool inAir = true;
     public Transform explosionTransform;
 
     void Start () 
