@@ -26,7 +26,7 @@ public class MeteorSpell : Spell
     {
         transform.Translate(Vector3.down * Time.deltaTime * speed, Space.World);
 
-        if (transform.position.y <= 1f && inAir && photonView.isMine)
+        if (transform.position.y <= 1f && photonView.isMine)
         {
             foreach (GameObject go in GameObject.FindGameObjectsWithTag("Player"))
             {
@@ -42,8 +42,9 @@ public class MeteorSpell : Spell
                 }
             }
 
-            inAir = false;
-            photonView.RPC("Remove", PhotonTargets.All);
+            explosionTransform.parent = null;
+            explosionTransform.gameObject.SetActive(true);
+            Destroy(gameObject);
         }
     }
 
@@ -51,13 +52,5 @@ public class MeteorSpell : Spell
     public void SetPosition(Vector3 pos)
     {
         transform.position = pos;
-    }
-
-    [PunRPC]
-    public void Remove()
-    {
-        explosionTransform.parent = null;
-        explosionTransform.gameObject.SetActive(true);
-        Destroy(gameObject);
     }
 }
