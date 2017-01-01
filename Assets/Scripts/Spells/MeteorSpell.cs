@@ -41,7 +41,10 @@ public class MeteorSpell : Spell
                     go.GetComponent<PhotonView>().RPC("DoKnockback", go.GetComponent<PhotonView>().owner, knockBackDir, knockbackForce, dragResetTime);
                 }
             }
+        }
 
+        if (transform.position.y <= 1f)
+        {
             explosionTransform.parent = null;
             explosionTransform.gameObject.SetActive(true);
             Destroy(gameObject);
