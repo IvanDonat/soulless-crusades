@@ -284,8 +284,8 @@ public class NetworkGameManager : Photon.PunBehaviour
             PlayerProperties.IncrementProperty(PlayerProperties.WINS); 
 
         foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
-        if (player.GetComponent<PhotonView>().isMine)
-            player.GetComponent<PlayerScript>().Die(true);
+            if (player.GetComponent<PhotonView>().isMine)
+                player.GetComponent<PlayerScript>().Die(true);
 
         betweenRoundsUI.SetActive(false);
         spectatorUI.SetActive(false);
@@ -343,6 +343,17 @@ public class NetworkGameManager : Photon.PunBehaviour
         float timeRatio = roundTime / 180f;
         timeRatio = Mathf.Clamp(timeRatio, 0f, .9f);
         return 1 - timeRatio;
+    }
+
+    public override void OnPhotonPlayerDisconnected(PhotonPlayer other)
+    {
+        if (PhotonNetwork.playerList.Length == 1)
+        {
+            // @TODO handle this
+            // @TODO maybe put a messageboxish thing
+            print("Everyone left. Disconnecting."); 
+            Disconnect();
+        }
     }
 
     public void Disconnect()
