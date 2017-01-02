@@ -102,7 +102,8 @@ public class ProjectileSpell : Spell
     public void Remove()
     {
         explosionTransform.parent = null;
-        explosionTransform.gameObject.SetActive(true);
+        if(!parentToVictim)
+            explosionTransform.gameObject.SetActive(true);
         Destroy(gameObject);
     }
 }

@@ -304,4 +304,14 @@ public class PlayerMovement : Photon.PunBehaviour
             state = syncState;
         }
     }
+
+    void OnCollisionEnter(Collision c)
+    {
+        if (c.transform.tag == "Rock")
+        {
+            hasMovementOrder = false;
+            if(state == PlayerState.WALKING)
+                state = PlayerState.IDLE;
+        }
+    }
 }

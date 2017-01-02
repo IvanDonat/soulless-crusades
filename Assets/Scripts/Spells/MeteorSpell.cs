@@ -25,7 +25,13 @@ public class MeteorSpell : Spell
     {
         transform.Translate(Vector3.down * Time.deltaTime * speed, Space.World);
 
-        if (transform.position.y <= 1f && photonView.isMine)
+        if (transform.position.y <= 1f)
+            Explode();
+    }
+
+    private void Explode()
+    {
+        if (photonView.isMine)
         {
             foreach (GameObject go in GameObject.FindGameObjectsWithTag("Player"))
             {
@@ -42,17 +48,21 @@ public class MeteorSpell : Spell
             }
         }
 
-        if (transform.position.y <= 1f)
-        {
-            explosionTransform.parent = null;
-            explosionTransform.gameObject.SetActive(true);
-            Destroy(gameObject);
-        }
+        explosionTransform.parent = null;
+        explosionTransform.gameObject.SetActive(true);
+        Destroy(gameObject);
     }
 
     [PunRPC]
     public void SetPosition(Vector3 pos)
     {
         transform.position = pos;
+    }
+
+    void OnTriggerEnter(Collider c)
+    {
+        // @TODO fix?
+        if (c.tag == "Rock")
+            Explode();
     }
 }
