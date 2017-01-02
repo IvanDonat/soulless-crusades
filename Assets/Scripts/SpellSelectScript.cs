@@ -90,6 +90,10 @@ public class SpellSelectScript : MonoBehaviour
                 tooltipDescription.text += "Knockback: " + (s as MeteorSpell).knockbackForce + '\n';
                 tooltipDescription.text += "Stun time: " + (s as MeteorSpell).stunTime + " s\n";
             }
+            else if (s is InvisibilitySpell)
+            {
+                tooltipDescription.text += "Duration: " + (s as InvisibilitySpell).cloakTime + " s\n";
+            }
 
             int numLines = tooltipDescription.text.Split('\n').Length - 1;
             tooltipCanvas.sizeDelta = new Vector2(tooltipCanvas.sizeDelta.x, 90 + 65 * numLines);
