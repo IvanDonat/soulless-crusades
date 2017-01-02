@@ -365,11 +365,6 @@ public class NetworkGameManager : Photon.PunBehaviour
         androidShowScore = false;
     }
 
-    public override void OnMasterClientSwitched(PhotonPlayer newMasterClient)
-    {
-        Disconnect();
-    }
-
     void OnGUI()
     {
         if(PhotonNetwork.connected)
