@@ -133,7 +133,7 @@ public class NetworkGameManager : Photon.PunBehaviour
         else
             scorePanel.transform.Translate(0, 500f * Time.deltaTime, 0);
 
-        scorePanelRect.anchoredPosition = new Vector2(0, Mathf.Clamp(scorePanelRect.anchoredPosition.y, -144f, 99f));
+        scorePanelRect.anchoredPosition = new Vector2(0, Mathf.Clamp(scorePanelRect.anchoredPosition.y, -160f, 99f));
 
 
         miniScoresNames.text = "";
