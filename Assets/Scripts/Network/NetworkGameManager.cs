@@ -59,6 +59,8 @@ public class NetworkGameManager : Photon.PunBehaviour
 
     public Text winner;
 
+    public GameObject deathParticles;
+
     void Start()
     {
         terrainManager = GameObject.FindWithTag("Terrain").GetComponent<TerrainManager>();
@@ -225,7 +227,7 @@ public class NetworkGameManager : Photon.PunBehaviour
     }
 
     [PunRPC]
-    public void OnPlayerDeath(PhotonPlayer player)
+    public void OnPlayerDeath(PhotonPlayer player, Vector3 deathPos)
     { // is called for everyone by dying player
 
         if(PhotonNetwork.isMasterClient && GetState() == GameState.IN_ROUND)
@@ -259,6 +261,8 @@ public class NetworkGameManager : Photon.PunBehaviour
                 SetState(GameState.BETWEEN_ROUNDS);
             }
         }
+
+        Instantiate(deathParticles, deathPos, new Quaternion(0,0,0,0));
 
     }
 

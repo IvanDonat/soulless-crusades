@@ -209,7 +209,7 @@ public partial class PlayerScript : Photon.PunBehaviour
         
         if(!isGameOver)
         {
-            gameManager.GetComponent<PhotonView>().RPC("OnPlayerDeath", PhotonTargets.All, photonView.owner);
+            gameManager.GetComponent<PhotonView>().RPC("OnPlayerDeath", PhotonTargets.All, photonView.owner, transform.position);
             PlayerProperties.IncrementProperty(PlayerProperties.DEATHS);
 
             if (lastDamageDealer != null)
@@ -219,6 +219,12 @@ public partial class PlayerScript : Photon.PunBehaviour
             }
         }
 
+        StartCoroutine(DieAfter(0.8f));
+    }
+
+    private IEnumerator DieAfter (float time)
+    {
+        yield return new WaitForSeconds(time);
         PhotonNetwork.Destroy(this.photonView);
     }
 
