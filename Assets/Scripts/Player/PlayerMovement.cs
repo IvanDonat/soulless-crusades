@@ -14,7 +14,10 @@ public enum PlayerState
 
 public class PlayerMovement : Photon.PunBehaviour
 {
+    public Transform model; // 3d model
+
     public Slider healthBar3D;
+    public Text nameBar3D;
 
     private float defaultFriction = 5f; // friction drops when hit by spell
     private float moveForce = 40f;
@@ -22,7 +25,7 @@ public class PlayerMovement : Photon.PunBehaviour
     private Rigidbody rbody;
     private PlayerScript playerScript;
 
-    public Animation anim;
+    public Animation anim; 
     public Transform playerMarker;
 
     private Vector3 targetPosition;
@@ -38,6 +41,7 @@ public class PlayerMovement : Photon.PunBehaviour
     public Transform prefabParticlesOnClick;
 
     private float slowdownTime = 0f;
+    private float cloakTime = 0f;
 
     // networking
     private Vector3 syncPosition;
@@ -68,6 +72,20 @@ public class PlayerMovement : Photon.PunBehaviour
             anim.CrossFade("attack", 0.5f);
         if (state == PlayerState.STUNNED)
             anim.CrossFade("free", 0.5f);
+
+        if (cloakTime > 0f)
+        {
+            model.gameObject.SetActive(false);
+            healthBar3D.gameObject.SetActive(false);
+            nameBar3D.gameObject.SetActive(false);
+            cloakTime -= Time.deltaTime;
+        }
+        else
+        {
+            model.gameObject.SetActive(true);
+            healthBar3D.gameObject.SetActive(true);
+            nameBar3D.gameObject.SetActive(true);
+        }
 
         if (!photonView.isMine)
         {
@@ -194,6 +212,12 @@ public class PlayerMovement : Photon.PunBehaviour
     public void SetSlowdown(float time)
     {
         slowdownTime = time;
+    }
+
+    [PunRPC]
+    public void Cloak(float time)
+    {
+        cloakTime = time;
     }
 
     public void CastSpell(float time, Vector3 aimPos)
