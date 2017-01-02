@@ -213,7 +213,10 @@ public partial class PlayerScript : Photon.PunBehaviour
             PlayerProperties.IncrementProperty(PlayerProperties.DEATHS);
 
             if (lastDamageDealer != null)
+            {
                 gameManager.GetComponent<PhotonView>().RPC("GotKill", lastDamageDealer, photonView.owner);
+                Events.Add(lastDamageDealer.NickName + " slayed you.");
+            }
         }
 
         PhotonNetwork.Destroy(this.photonView);

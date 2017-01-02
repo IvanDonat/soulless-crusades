@@ -19,8 +19,8 @@ public class NetworkGameManager : Photon.PunBehaviour
 
     public Text gameTimeText;
     public Text roundTimeText;
-    private float gameTime = 0;
-    private float roundTime = 0;
+    private static float gameTime = 0;
+    private static float roundTime = 0;
 
     private TerrainManager terrainManager;
 
@@ -190,6 +190,7 @@ public class NetworkGameManager : Photon.PunBehaviour
         if(PhotonNetwork.isMasterClient)
             SetState(GameState.IN_ROUND);
         roundTime = 0f;
+        Events.Add("Round started.");
     }
 
     private IEnumerator Wait(float sec)
@@ -265,6 +266,8 @@ public class NetworkGameManager : Photon.PunBehaviour
     public void RoundOver(PhotonPlayer winner)
     {
         roundOverText.text = winner.NickName + "\n\nWon this round!";
+        Events.Add(winner.NickName + " won this round!");
+
         if (PhotonNetwork.player == winner)
             PlayerProperties.IncrementProperty(PlayerProperties.WINS); 
 
@@ -293,6 +296,7 @@ public class NetworkGameManager : Photon.PunBehaviour
         gameOverUI.SetActive(true);
 
         winner.text = lastRoundWinner.NickName + " is the winner!";
+        Events.Add(lastRoundWinner.NickName + " is the winner!");
         AndroidShowScore();
     }
 
@@ -300,7 +304,7 @@ public class NetworkGameManager : Photon.PunBehaviour
     [PunRPC]
     public void GotKill(PhotonPlayer victim)
     {
-        print("You killed: " + victim.NickName);
+        Events.Add("You killed: " + victim.NickName);
         PlayerProperties.IncrementProperty(PlayerProperties.KILLS);        
     }
 
@@ -336,6 +340,11 @@ public class NetworkGameManager : Photon.PunBehaviour
         }
     }
 
+    public static float GetGameTime()
+    {
+        return gameTime;
+    }
+
     public float GetDragScalar()
     {
         // 1 at 0 sec
@@ -358,6 +367,7 @@ public class NetworkGameManager : Photon.PunBehaviour
 
     public void Disconnect()
     {
+        Events.Add("Disconnecting.");
         PhotonNetwork.Disconnect();
         SceneManager.LoadScene(0);
     }
