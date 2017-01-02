@@ -20,6 +20,8 @@ public partial class PlayerScript : Photon.PunBehaviour
     private Spell currentSpellScript;
     private IEnumerator castCoroutine;
 
+    public Transform model;
+
     public Slider healthBar3D;
     private Slider healthBar;
     private Text healthBarNum;
@@ -212,6 +214,10 @@ public partial class PlayerScript : Photon.PunBehaviour
             gameManager.GetComponent<PhotonView>().RPC("OnPlayerDeath", PhotonTargets.All, photonView.owner, transform.position);
             PlayerProperties.IncrementProperty(PlayerProperties.DEATHS);
 
+            // hide model and destroy after .8 sec so it matches the death particles spawned by OnPlayerDeath(...) in GameManager
+            model.parent = null;
+            model.gameObject.AddComponent<DestroyAfterTime>().lifetimeInSeconds = .8f;
+
             if (lastDamageDealer != null)
             {
                 gameManager.GetComponent<PhotonView>().RPC("GotKill", lastDamageDealer, photonView.owner);
@@ -219,13 +225,7 @@ public partial class PlayerScript : Photon.PunBehaviour
             }
         }
 
-        StartCoroutine(DieAfter(0.8f));
-    }
-
-    private IEnumerator DieAfter (float time)
-    {
-        yield return new WaitForSeconds(time);
-        PhotonNetwork.Destroy(this.photonView);
+        PhotonNetwork.Destroy(photonView);
     }
 
     public void CancelCast()

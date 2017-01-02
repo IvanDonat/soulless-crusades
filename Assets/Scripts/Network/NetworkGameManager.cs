@@ -276,8 +276,12 @@ public class NetworkGameManager : Photon.PunBehaviour
             PlayerProperties.IncrementProperty(PlayerProperties.WINS); 
 
         foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
+        {
             if (player.GetComponent<PhotonView>().isMine)
+            {
                 player.GetComponent<PlayerScript>().Die(true);
+            }
+        }
 
         betweenRoundsUI.SetActive(true);
         spectatorUI.SetActive(false);
@@ -291,8 +295,12 @@ public class NetworkGameManager : Photon.PunBehaviour
             PlayerProperties.IncrementProperty(PlayerProperties.WINS); 
 
         foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
+        {
             if (player.GetComponent<PhotonView>().isMine)
+            {
                 player.GetComponent<PlayerScript>().Die(true);
+            }
+        }
 
         betweenRoundsUI.SetActive(false);
         spectatorUI.SetActive(false);
