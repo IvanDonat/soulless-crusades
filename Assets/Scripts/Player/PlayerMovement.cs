@@ -20,7 +20,7 @@ public class PlayerMovement : Photon.PunBehaviour
     public Text nameBar3D;
 
     private float defaultFriction = 5f; // friction drops when hit by spell
-    private float moveForce = 40f;
+    private float moveForce = 30f;
 
     private Rigidbody rbody;
     private PlayerScript playerScript;
@@ -65,13 +65,13 @@ public class PlayerMovement : Photon.PunBehaviour
         healthBar3D.value = Mathf.Lerp(healthBar3D.value, (int)photonView.owner.CustomProperties[PlayerProperties.HEALTH] / 100f, Time.deltaTime * 5f);
 
         if (state == PlayerState.IDLE)
-            anim.CrossFade("free", 0.5f);
+            anim.CrossFade("Idle", 0.5f);
         if (state == PlayerState.WALKING)
-            anim.CrossFade("walk", 0.5f);
+            anim.CrossFade("Walk01", 0.5f);
         if (state == PlayerState.CASTING)
-            anim.CrossFade("attack", 0.5f);
+            anim.CrossFade("SwingNormal", 0.5f);
         if (state == PlayerState.STUNNED)
-            anim.CrossFade("free", 0.5f);
+            anim.CrossFade("Idle", 0.5f);
 
         if (cloakTime > 0f)
         {
