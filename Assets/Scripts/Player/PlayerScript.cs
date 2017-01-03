@@ -134,7 +134,7 @@ public partial class PlayerScript : Photon.PunBehaviour
 
         castingBar.gameObject.SetActive(false);
         spellCooldown[spellIndex] = cooldown;
-        GameObject spellGO = (GameObject) PhotonNetwork.Instantiate("Spells/" + spell, transform.position + aimDir*2, Quaternion.LookRotation(aimDir, Vector3.up), 0);
+		GameObject spellGO = (GameObject) PhotonNetwork.Instantiate("Spells/" + spell, transform.position + aimDir + Vector3.up * 0.3f, Quaternion.LookRotation(aimDir, Vector3.up), 0);
         Spell spellScript = spellGO.GetComponent<Spell>();
         spellScript.SetParams(transform, mousePos);
     }

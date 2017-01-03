@@ -29,6 +29,9 @@ public class ProjectileSpell : Spell
 
     void OnTriggerEnter(Collider c)
     {
+		if (c.tag == "Player" && c.GetComponent<PhotonView> ().isMine)
+			return;
+
         if (isLifeLeach)
         {
             foreach (GameObject p in GameObject.FindGameObjectsWithTag("Player"))
@@ -45,7 +48,7 @@ public class ProjectileSpell : Spell
         if (photonView.isMine)
         {
 
-            if (c.tag == "Player" && !c.GetComponent<PhotonView>().isMine)
+            if (c.tag == "Player")
             {
                 c.GetComponent<PhotonView>().RPC("TakeDamage", c.GetComponent<PhotonView>().owner, photonView.owner, damage, stunTime);
                 c.GetComponent<PhotonView>().RPC("DoKnockback", c.GetComponent<PhotonView>().owner, transform.forward, knockbackForce, dragResetTime);
