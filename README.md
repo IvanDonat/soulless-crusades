@@ -1,5 +1,5 @@
 # soulless-crusades
-A multiplayer brawl arena game inspired by the Warcraft III mod Warlocks.
+A multiplayer brawl arena game.
 
 ![](https://puu.sh/t2ZQ7/e554496e56.png)
 ![](https://puu.sh/t2ZXe/695e922567.png)
