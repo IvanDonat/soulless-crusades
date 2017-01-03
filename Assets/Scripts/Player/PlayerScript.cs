@@ -82,7 +82,7 @@ public partial class PlayerScript : Photon.PunBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             SetSpell(null);
 
-        healthBar.value = Mathf.Lerp(healthBar.value, health / maxHealth, Time.deltaTime * 5f);
+        healthBar.value = Mathf.Lerp(healthBar.value, health / maxHealth, Time.deltaTime * 20f);
         //healthBar3D.value = Mathf.Lerp(healthBar3D.value, (int)PhotonNetwork.player.CustomProperties[PlayerProperties.HEALTH] / (float)maxHealth, Time.deltaTime * 5f);
         healthBarNum.text = (Convert.ToInt32(healthBar.value * 100)).ToString().Aggregate(string.Empty, (c, i) => c + i + ' ') 
             + "/ " + maxHealth.ToString().Aggregate(string.Empty, (c, i) => c + i + ' ');
