@@ -1,6 +1,4 @@
 # soulless-crusades
 A multiplayer brawl arena game.
 
-![](https://puu.sh/t2ZQ7/e554496e56.png)
-![](https://puu.sh/t2ZXe/695e922567.png)
-![](https://puu.sh/t2ZRO/1f66a36e71.png)
+[![YouTube Teaser Video](https://puu.sh/ta72j/2f66c93a1e.png)]([https://www.youtube.com/watch?v=h789Cm9fUSA)
