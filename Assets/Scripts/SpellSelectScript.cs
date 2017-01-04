@@ -27,14 +27,27 @@ public class SpellSelectScript : MonoBehaviour
     void Start()
     {
         GameObject[] allSpells = Resources.LoadAll<GameObject>("Spells");
+        Sprite[] allIcons = Resources.LoadAll<Sprite>("Spells");
         foreach (var obj in allSpells)
         {
             Transform buttonTransform = (Transform) Instantiate(spellSelectButtonPrefab);
             buttonTransform.name = obj.name;
             buttonTransform.SetParent(allSpellsParent, false);
 
+            Image icon = buttonTransform.FindChild("Icon").GetComponent<Image>();
+            icon.enabled = false;
+            foreach (Sprite s in allIcons)
+            {
+                if (s.name == obj.name)
+                {
+                    icon.sprite = s;
+                    icon.enabled = true;
+                    break;
+                }
+            }
+
             Button button = buttonTransform.GetComponent<Button>();
-            button.GetComponentInChildren<Text>().text = obj.name;
+            //button.GetComponentInChildren<Text>().text = obj.name;
             allSpellButtons.Add(button);
 
             buttonToSpell[button] = obj.GetComponent<Spell>();
