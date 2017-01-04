@@ -34,6 +34,8 @@ public partial class PlayerScript : Photon.PunBehaviour
     [NonSerialized]
     public float shieldTimeLeft = 0f;
 
+    private float blindTimeLeft = 0f;
+
     public AudioSource audioSpellSelect;
 
     public Text nameBar;
@@ -117,6 +119,11 @@ public partial class PlayerScript : Photon.PunBehaviour
 
         if (shieldTimeLeft >= 0f)
             shieldTimeLeft -= Time.deltaTime;
+
+        if (blindTimeLeft >= 0f)
+            blindTimeLeft -= Time.deltaTime;
+        else
+            gameManager.lensFlare.SetActive(false);     
     }
 
     private IEnumerator CastWithDelay(string spell, int spellIndex, float cooldown, float time, Vector3 mousePos, Vector3 aimPos, Vector3 aimDir)
@@ -196,6 +203,13 @@ public partial class PlayerScript : Photon.PunBehaviour
     {
         health += amount;
         health = Mathf.Clamp(health, 0, maxHealth);
+    }
+
+    [PunRPC]
+    public void Blind(float time)
+    {
+        blindTimeLeft += time;
+        gameManager.lensFlare.SetActive(true);
     }
     
     public void Die(bool isGameOver)

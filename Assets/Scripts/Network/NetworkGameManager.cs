@@ -61,6 +61,8 @@ public class NetworkGameManager : Photon.PunBehaviour
 
     public GameObject deathParticles;
 
+    public GameObject lensFlare;
+
     void Start()
     {
         terrainManager = GameObject.FindWithTag("Terrain").GetComponent<TerrainManager>();
