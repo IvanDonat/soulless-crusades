@@ -9,7 +9,7 @@ public class ProjectileSpell : Spell
     public float knockbackForce = 15f;
     public float dragResetTime = 1f;
     public float stunTime = 1f;
-	public float gravityScale = 0f;
+    public float gravityScale = 0f;
 
     public Transform explosionTransform;
     public Transform healTransform;
@@ -26,7 +26,7 @@ public class ProjectileSpell : Spell
     void Update()
     {
         transform.Translate(transform.forward * speed * Time.deltaTime, Space.World);
-		transform.Translate (Vector3.down * gravityScale * Time.deltaTime, Space.World); // linear movement
+        transform.Translate (Vector3.down * gravityScale * Time.deltaTime, Space.World); // linear movement
     }
 
     void OnTriggerEnter(Collider c)
