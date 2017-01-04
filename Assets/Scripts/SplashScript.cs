@@ -12,8 +12,13 @@ public class SplashScript : MonoBehaviour
     void Start()
     {
         logo.enabled = false;
-
         StartCoroutine(ShowLogo());
+    }
+
+    void Update()
+    {
+        if (Input.GetKey(KeyCode.Escape) || Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.Space))
+            SceneManager.LoadScene("Menu");
     }
 
     private IEnumerator ShowLogo()

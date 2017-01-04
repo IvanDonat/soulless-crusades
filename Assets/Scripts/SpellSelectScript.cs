@@ -16,12 +16,15 @@ public class SpellSelectScript : MonoBehaviour
 
     private Dictionary<Button, Spell> buttonToSpell = new Dictionary<Button, Spell>();
 
+    // this is also used from ingame by SpellManager.cs since it's static and accessible, for tooltip
     public static Button currentlyHoveredButton;
+
     public Button closeButton;
 
     public RectTransform tooltipCanvas;
     public Text tooltipName;
     public Text tooltipDescription;
+
     public Text errorText;
 
     void Start()
@@ -72,45 +75,7 @@ public class SpellSelectScript : MonoBehaviour
 
             Spell s = buttonToSpell[currentlyHoveredButton];
             tooltipName.text = s.gameObject.name;
-
-            tooltipDescription.text = "";
-            tooltipDescription.text += s.tooltipText + "\n\n";
-            tooltipDescription.text += "Cast Time: " + s.castTime + " s\n";
-            tooltipDescription.text += "Cooldown: " + s.castInterval + " s\n";
-
-            if (s is HealSpell)
-            {
-                tooltipDescription.text += "Heal amount: " + (s as HealSpell).healAmount + '\n';
-            }
-            else if (s is ProjectileSpell)
-            {
-                tooltipDescription.text += "Damage: " + (s as ProjectileSpell).damage + '\n';
-                tooltipDescription.text += "Knockback: " + (s as ProjectileSpell).knockbackForce + '\n';
-                tooltipDescription.text += "Stun time: " + (s as ProjectileSpell).stunTime + " s\n";
-            }
-            else if (s is ShieldSpell)
-            {
-                tooltipDescription.text += "Shield time: " + (s as ShieldSpell).shieldTime + " s\n";
-            }
-            else if (s is SpikeSpell)
-            {
-                tooltipDescription.text += "Spike lifetime: " + (s as SpikeSpell).duration + " s\n";
-                tooltipDescription.text += "Slowdown duration: " + (s as SpikeSpell).slowdownTime + " s\n";
-            }
-            else if (s is MeteorSpell)
-            {
-                tooltipDescription.text += "Damage: " + (s as MeteorSpell).damage + '\n';
-                tooltipDescription.text += "Knockback: " + (s as MeteorSpell).knockbackForce + '\n';
-                tooltipDescription.text += "Stun time: " + (s as MeteorSpell).stunTime + " s\n";
-            }
-            else if (s is InvisibilitySpell)
-            {
-                tooltipDescription.text += "Duration: " + (s as InvisibilitySpell).cloakTime + " s\n";
-            }
-            else if (s is BlindSpell)
-            {
-                tooltipDescription.text += "Duration: " + (s as BlindSpell).blindTime + " s\n";
-            }
+            tooltipDescription.text = GetTooltipText(s);
 
             int numLines = tooltipDescription.text.Split('\n').Length - 1;
             tooltipCanvas.sizeDelta = new Vector2(tooltipCanvas.sizeDelta.x, 90 + 65 * numLines);
@@ -184,5 +149,50 @@ public class SpellSelectScript : MonoBehaviour
         }
 
         PlayerScript.SetSpells(list);
+    }
+
+    public static string GetTooltipText(Spell s)
+    {
+        string txt = "";
+
+        txt += s.tooltipText + "\n\n";
+        txt += "Cast Time: " + s.castTime + " s\n";
+        txt += "Cooldown: " + s.castInterval + " s\n";
+
+        if (s is HealSpell)
+        {
+            txt += "Heal amount: " + (s as HealSpell).healAmount + '\n';
+        }
+        else if (s is ProjectileSpell)
+        {
+            txt += "Damage: " + (s as ProjectileSpell).damage + '\n';
+            txt += "Knockback: " + (s as ProjectileSpell).knockbackForce + '\n';
+            txt += "Stun time: " + (s as ProjectileSpell).stunTime + " s\n";
+        }
+        else if (s is ShieldSpell)
+        {
+            txt += "Shield time: " + (s as ShieldSpell).shieldTime + " s\n";
+        }
+        else if (s is SpikeSpell)
+        {
+            txt += "Spike lifetime: " + (s as SpikeSpell).duration + " s\n";
+            txt += "Slowdown duration: " + (s as SpikeSpell).slowdownTime + " s\n";
+        }
+        else if (s is MeteorSpell)
+        {
+            txt += "Damage: " + (s as MeteorSpell).damage + '\n';
+            txt += "Knockback: " + (s as MeteorSpell).knockbackForce + '\n';
+            txt += "Stun time: " + (s as MeteorSpell).stunTime + " s\n";
+        }
+        else if (s is InvisibilitySpell)
+        {
+            txt += "Duration: " + (s as InvisibilitySpell).cloakTime + " s\n";
+        }
+        else if (s is BlindSpell)
+        {
+            txt += "Duration: " + (s as BlindSpell).blindTime + " s\n";
+        }
+
+        return txt;
     }
 }

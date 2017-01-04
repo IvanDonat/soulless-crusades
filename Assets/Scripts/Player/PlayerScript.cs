@@ -151,7 +151,7 @@ public partial class PlayerScript : Photon.PunBehaviour
         currentSpellName = spellName;
         if (spellName != null)
         {
-            GameObject spellGO = (GameObject) Resources.Load("Spells/" + spellName);
+            GameObject spellGO = Resources.Load<GameObject>("Spells/" + spellName);
             currentSpellScript = spellGO.GetComponent<Spell>();
             Cursor.SetCursor(castCursor, Vector2.zero, CursorMode.Auto);
             audioSpellSelect.Play();

@@ -34,6 +34,10 @@ public class NetworkGameManager : Photon.PunBehaviour
     public Transform scoreContent;
     public GameObject scoreItem;
 
+    public GameObject tooltipParent;
+    public Text tooltipName;
+    public Text tooltipDescription;
+
     public Text roundOverText;
 
     public Text miniScoresNames, miniScoresRounds;
@@ -72,6 +76,8 @@ public class NetworkGameManager : Photon.PunBehaviour
         spectatorUI.SetActive(false);
         betweenRoundsUI.SetActive(false);
         gameOverUI.SetActive(false);
+
+        tooltipParent.SetActive(false);
 
         StartCoroutine(Wait(8.5f));
 

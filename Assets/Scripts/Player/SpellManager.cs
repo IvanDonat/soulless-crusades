@@ -18,13 +18,35 @@ public partial class PlayerScript : Photon.PunBehaviour
     private float[] spellCooldown = new float[maxSpells];
     private int indexSpellSelected;
 
+    private Dictionary<Button, string> buttonToSpell = new Dictionary<Button, string>();
+
     void LinkSpellButtons()
     {
+        Sprite[] allIcons = Resources.LoadAll<Sprite>("Spells");
+
         for (int i = 0; i < maxSpells; i++)
         {
             spellSelectButtons[i] = GameObject.Find("Spell" + i.ToString()).GetComponent<Button>();
+            buttonToSpell[spellSelectButtons[i]] = spellName[i];
+
             spellSelectCooldownText[i] = spellSelectButtons[i].transform.FindChild("Cooldown").GetComponent<Text>();
+
             spellSelectNameText[i] = spellSelectButtons[i].transform.FindChild("Text").GetComponent<Text>();
+            spellSelectNameText[i].text = spellName[i];
+            spellSelectNameText[i].enabled = false;
+
+            Image icon = spellSelectButtons[i].transform.FindChild("Icon").GetComponent<Image>();
+            icon.enabled = false;
+            foreach (Sprite s in allIcons)
+            {
+                if (s.name == spellName[i])
+                {
+                    icon.sprite = s;
+                    icon.enabled = true;
+                    break;
+                }
+            }
+
             spellSelectButtons[i].onClick.AddListener(delegate{SpellButtonClicked();});
         }
     }
@@ -34,8 +56,6 @@ public partial class PlayerScript : Photon.PunBehaviour
         for (int i = 0; i < maxSpells; i++)
         {
             spellCooldown[i] -= Time.deltaTime;
-
-            spellSelectNameText[i].text = spellName[i];
 
             if (spellCooldown[i] <= 0)
             {
@@ -47,6 +67,21 @@ public partial class PlayerScript : Photon.PunBehaviour
                 spellSelectCooldownText[i].text = spellCooldown[i].ToString("F1");
             }
         }
+
+        if (SpellSelectScript.currentlyHoveredButton != null)
+        { // buttons have the SpellSelectItemScript.cs so this works
+            gameManager.tooltipParent.SetActive(true);
+            Text tooltipName = gameManager.tooltipName;
+            Text tooltipDescription = gameManager.tooltipDescription;
+
+            string name = buttonToSpell[SpellSelectScript.currentlyHoveredButton];
+            GameObject spellGO = Resources.Load<GameObject>("Spells/" + name);
+            Spell s = spellGO.GetComponent<Spell>();
+            tooltipName.text = name;
+            tooltipDescription.text = SpellSelectScript.GetTooltipText(s);
+        }
+        else
+            gameManager.tooltipParent.SetActive(false);
 
         foreach (Button b in spellSelectButtons)
             b.GetComponent<Image>().color = Color.white;
