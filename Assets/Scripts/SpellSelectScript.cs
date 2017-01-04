@@ -94,6 +94,10 @@ public class SpellSelectScript : MonoBehaviour
             {
                 tooltipDescription.text += "Duration: " + (s as InvisibilitySpell).cloakTime + " s\n";
             }
+            else if (s is BlindSpell)
+            {
+                tooltipDescription.text += "Duration: " + (s as BlindSpell).blindTime + " s\n";
+            }
 
             int numLines = tooltipDescription.text.Split('\n').Length - 1;
             tooltipCanvas.sizeDelta = new Vector2(tooltipCanvas.sizeDelta.x, 90 + 65 * numLines);
