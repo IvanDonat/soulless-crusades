@@ -77,6 +77,10 @@ public class NetworkGameManager : Photon.PunBehaviour
 
         foreach (PhotonPlayer p in PhotonNetwork.playerList)
         {
+            bool mine = false;
+            if (PhotonNetwork.player == p)
+                mine = true;
+
             GameObject go = Instantiate(scoreItem, scoreContent) as GameObject;
             go.name = p.NickName;
             go.GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
@@ -91,6 +95,9 @@ public class NetworkGameManager : Photon.PunBehaviour
                     r.GetComponent<Text>().text = "0";
                 else if (r.gameObject.name == "Rounds Won")
                     r.GetComponent<Text>().text = "0";
+
+                if (mine)
+                    r.GetComponent<Text>().color = Color.Lerp(r.GetComponent<Text>().color, Color.red, 0.5f);
             }
 
             scoreList.Add(go);
@@ -381,7 +388,7 @@ public class NetworkGameManager : Photon.PunBehaviour
     {
         Events.Add("Disconnecting.");
         PhotonNetwork.Disconnect();
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("Menu");
     }
 
     public void AndroidShowScore()
