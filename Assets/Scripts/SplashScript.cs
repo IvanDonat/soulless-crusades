@@ -18,7 +18,7 @@ public class SplashScript : MonoBehaviour
 
     private IEnumerator ShowLogo()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1.5f);
         sound.Play();
         logo.enabled = true;
 
@@ -30,13 +30,13 @@ public class SplashScript : MonoBehaviour
         while (logo.color.a > 0f)
         {
             Color c = logo.color;
-            c.a -= 0.005f;
+            c.a -= 0.002f;
             logo.color = c;
 
             yield return new WaitForEndOfFrame();
         }
 
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.45f);
         SceneManager.LoadScene("Menu");
     }
 }
