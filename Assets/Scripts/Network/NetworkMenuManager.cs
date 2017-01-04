@@ -209,7 +209,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public void StartGame()
     {
         PhotonNetwork.room.IsVisible = false;
-        PhotonNetwork.LoadLevel(1);
+        PhotonNetwork.LoadLevel("Game");
     }
 
     [PunRPC]
