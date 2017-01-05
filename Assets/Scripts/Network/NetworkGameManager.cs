@@ -190,32 +190,48 @@ public class NetworkGameManager : Photon.PunBehaviour
             timeBetweenRoundsCounter -= Time.deltaTime;
             if (timeBetweenRoundsCounter <= 0)
             {
-                photonView.RPC("StartNewRound", PhotonTargets.All);
+                int pointIndex = Random.Range(0, 7);
+                foreach (PhotonPlayer p in PhotonNetwork.playerList)
+                {
+                    photonView.RPC("StartNewRound", p, pointIndex % 8);
+                    pointIndex++;
+                }
+
                 timeBetweenRoundsCounter = timeBetweenRounds;
             }
         }
     }
 
     [PunRPC]
-    public void StartNewRound()
+    public void StartNewRound(int spawnpointIndex)
     {
         playingUI.SetActive(true);
         spectatorUI.SetActive(false);
         betweenRoundsUI.SetActive(false);
-        PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(Random.Range(-15f, 15f), 1, Random.Range(-15f, 15f)), Quaternion.identity, 0);
         terrainManager.StartRound();
         if(PhotonNetwork.isMasterClient)
             SetState(GameState.IN_ROUND);
         roundTime = 0f;
+
+        Vector3 spawn = GameObject.Find("Spawnpoint" + spawnpointIndex).transform.position;
+        PhotonNetwork.Instantiate(playerPrefab.name, spawn, Quaternion.identity, 0);
+
         Events.Add("Round started.");
     }
 
     private IEnumerator Wait(float sec)
     {
         yield return new WaitForSeconds(sec);
-        if(PhotonNetwork.isMasterClient)
-            photonView.RPC("StartNewRound", PhotonTargets.All);
 
+        if (PhotonNetwork.isMasterClient)
+        {
+            int pointIndex = Random.Range(0, 7);
+            foreach (PhotonPlayer p in PhotonNetwork.playerList)
+            {
+                photonView.RPC("StartNewRound", p, pointIndex % 8);
+                pointIndex++;
+            }
+        }
     }
 
     public GameObject GetPlayingUI()
