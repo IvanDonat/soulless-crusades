@@ -25,9 +25,6 @@ public class TerrainManager : Photon.PunBehaviour
     private int width, height;
     private float[,] heights;
 
-    private float rocksRadius = 20f;
-    private int rockAmount = 4;
-
     private float startRadius = 75f;
     private float[] radiusScaling = {1.0f, 0.9f, 0.8f, 0.75f, 0.7f, 0.65f, 0.60f, 0.5f, 0.45f, 0.4f, 0.35f, 0.3f};
     private float stageInterval = 15f; // how long is each stage
@@ -215,12 +212,12 @@ public class TerrainManager : Photon.PunBehaviour
         Random.InitState(seed);
 
         GameObject[] rocks = Resources.LoadAll<GameObject>("Rocks");
-        for (int i = 0; i < rockAmount; i++)
+        foreach (var spawnpos in GameObject.FindGameObjectsWithTag("RockSpawnpoint"))
         {
             Transform rock = rocks[Random.Range(0, rocks.Length - 1)].transform;
-
-            Vector3 pos = Random.onUnitSphere * rocksRadius;
-            pos.y = 40;
+            
+            Vector3 pos = spawnpos.transform.position;
+            pos.y = 40f;
 
             Quaternion rot = Quaternion.Euler(new Vector3(0, Random.Range(0, 359), 0));
 
