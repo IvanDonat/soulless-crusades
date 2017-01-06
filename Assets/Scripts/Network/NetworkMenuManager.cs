@@ -54,7 +54,6 @@ public class NetworkMenuManager : Photon.PunBehaviour
     void Start()
     {
         roomRefreshTimer = roomRefreshInterval;
-        Connect();
     }
 
     void Update()
