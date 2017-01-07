@@ -13,15 +13,15 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public float roomRefreshInterval = 0f;
     private float roomRefreshTimer;
 
-    public Text labelVersion, labelError, labelStatus, labelPlayerInt, labelRoomName,
+    public Text labelVersion, labelError, labelPlayerInt, labelRoomName,
                 labelPlayerNumber, maxPlayers, labelRoundsToWin, labelRoundsToWinInt;
     public InputField roomInputField, chatInput;
     public Toggle privateToggle, readyToggle;
     public Slider playerNumberSlider, roundsToWinSlider;
-    public Button kickPlayer, startGame;
+    public Button kickPlayer, startGame, goToLogin, goToRegister;
     public Scrollbar chatScroll;
     public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab, infoPanel,
-                        selectSpellsPanel;
+                        selectSpellsPanel, loginPanel, registerPanel;
 
     private Dictionary<PhotonPlayer, Toggle> readyCheckmarks = new Dictionary<PhotonPlayer, Toggle>();
 
@@ -32,8 +32,6 @@ public class NetworkMenuManager : Photon.PunBehaviour
     //Private lobby vars
     private PhotonPlayer selectedPlayer;
 
-    private const string strConnecting = "CONNECTING TO SERVER...";
-    private const string strConnected = "CONNECTED!";
     private const string strFailedToConnect = "SOULLESS CRUSADES FAILED TO ESTABLISH A CONNECTION TO SERVER!";
     private const string strDisconnected = "SOULLESS CRUSADES DISCONNECTED FROM SERVER!";
 
@@ -121,13 +119,27 @@ public class NetworkMenuManager : Photon.PunBehaviour
         if (PhotonNetwork.connected)
         {
             Camera.main.GetComponent<MenuCamera>().TransitionToMainMenu();
-            labelStatus.text = strConnected;
         }
         else
         {
             PhotonNetwork.ConnectUsingSettings(gameVersion);
-            labelStatus.text = strConnecting;
         }
+    }
+
+    public void GoToLogin()
+    {
+        loginPanel.SetActive(true);
+        goToLogin.interactable = false;
+        registerPanel.SetActive(false);
+        goToRegister.interactable = true;
+    }
+
+    public void GoToRegister()
+    {
+        loginPanel.SetActive(false);
+        goToLogin.interactable = true;
+        registerPanel.SetActive(true);
+        goToRegister.interactable = false;
     }
 
     public void Okay()
@@ -345,7 +357,6 @@ public class NetworkMenuManager : Photon.PunBehaviour
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToMainMenu();
         labelVersion.text = "Development build v" + gameVersion;
-        labelStatus.text = strConnected;
         PhotonNetwork.JoinLobby();
     }
 
