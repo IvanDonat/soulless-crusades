@@ -192,6 +192,12 @@ public class SpellSelectScript : MonoBehaviour
         {
             txt += "Duration: " + (s as BlindSpell).blindTime + " s\n";
         }
+        else if (s is GravityWellSpell)
+        {
+            txt += "Duration: " + (s as GravityWellSpell).lifetime + " s\n";
+            txt += "Radius: " + (s as GravityWellSpell).radius + " m\n";
+            txt += "Force: " + (s as GravityWellSpell).pullForce + "\n";
+        }
 
         return txt;
     }

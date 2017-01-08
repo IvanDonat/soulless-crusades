@@ -270,6 +270,13 @@ public class PlayerMovement : Photon.PunBehaviour
             state = PlayerState.IDLE;
     }
 
+    public void CancelMovementOrder()
+    {
+        // lighter version of stun; can still cast spells
+        // used by Gravity Well
+        hasMovementOrder = false;
+    }
+
     public void SetState(PlayerState st)
     {
         this.state = st;
