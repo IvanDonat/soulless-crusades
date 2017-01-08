@@ -14,8 +14,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
     private float roomRefreshTimer;
 
     public Text labelVersion, labelError, labelPlayerInt, labelRoomName,
-                labelPlayerNumber, maxPlayers, labelRoundsToWin, labelRoundsToWinInt;
-    public InputField roomInputField, chatInput;
+                labelPlayerNumber, maxPlayers, labelRoundsToWin, labelRoundsToWinInt, authStatus, regStatus;
+    public InputField roomInputField, chatInput, usernameInput, pwInput, emailRegInput, usernameRegInput, pwRegInput;
     public Toggle privateToggle, readyToggle;
     public Slider playerNumberSlider, roundsToWinSlider;
     public Button kickPlayer, startGame, goToLogin, goToRegister;
@@ -24,6 +24,9 @@ public class NetworkMenuManager : Photon.PunBehaviour
                         selectSpellsPanel, loginPanel, registerPanel;
 
     private Dictionary<PhotonPlayer, Toggle> readyCheckmarks = new Dictionary<PhotonPlayer, Toggle>();
+
+    private CloudRegionCode selectedRegion;
+    private bool isAuthError = false; //photon treats auth failiure like a dc
 
     //Default room options
     private string roomName = "";
@@ -51,6 +54,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     void Start()
     {
+        selectedRegion = CloudRegionCode.eu;
         roomRefreshTimer = roomRefreshInterval;
     }
 
@@ -113,17 +117,73 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public void Connect()
     {
-        loadingPanel.SetActive(true);
-        errorPanel.SetActive(false);
-
         if (PhotonNetwork.connected)
         {
+            loadingPanel.SetActive(true);
+            errorPanel.SetActive(false);
+
             Camera.main.GetComponent<MenuCamera>().TransitionToMainMenu();
         }
         else
         {
-            PhotonNetwork.ConnectUsingSettings(gameVersion);
+            if (usernameInput.text.Length == 0 || pwInput.text.Length == 0)
+            {
+                authStatus.text = "Username and password cannot be empty!";
+                return;
+            }
+
+            loadingPanel.SetActive(true);
+            errorPanel.SetActive(false);
+
+            PhotonNetwork.AuthValues = new AuthenticationValues();
+            PhotonNetwork.AuthValues.AuthType = CustomAuthenticationType.Custom;
+            PhotonNetwork.AuthValues.AddAuthParameter("username", usernameInput.text);
+            PhotonNetwork.AuthValues.AddAuthParameter("password", pwInput.text);
+            PhotonNetwork.ConnectToRegion(selectedRegion, gameVersion);
         }
+    }
+
+    public void SelectRegion(Dropdown target)
+    {
+        if (target.value == 0)
+        {
+            selectedRegion = CloudRegionCode.eu;
+        }
+        else if (target.value == 1)
+        {
+            selectedRegion = CloudRegionCode.us;
+        }
+        else if (target.value == 2)
+        {
+            selectedRegion = CloudRegionCode.asia;
+        }
+        else
+        {
+            selectedRegion = CloudRegionCode.sa;
+        }
+    }
+
+    public void Register()
+    {
+        regStatus.text = ""; //user sees a refresh every time he tries...
+        loadingPanel.SetActive(true);
+        StartCoroutine(Reg());
+    }
+
+    private IEnumerator Reg()
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("email", emailRegInput.text);
+        form.AddField("username", usernameRegInput.text);
+        form.AddField("password", pwRegInput.text);
+        WWW w = new WWW("https://soullesscrusades.000webhostapp.com/register.php", form);
+        yield return w;
+        //Debug.Log(w.error);
+        if (w.text == "1")
+            regStatus.text = "Registration successful. You can now login!";
+        else
+            regStatus.text = "Email or username already in use. Please modify your input.";
+        loadingPanel.SetActive(false);
     }
 
     public void GoToLogin()
@@ -260,6 +320,14 @@ public class NetworkMenuManager : Photon.PunBehaviour
         PhotonNetwork.player.SetCustomProperties(props, null);
     }
 
+    public override void OnCustomAuthenticationFailed(string debugMessage)
+    {
+        isAuthError = true;
+        loadingPanel.SetActive(false);
+        errorPanel.SetActive(false);
+        authStatus.text = "Username or password is invalid!";
+    }
+
     public override void OnJoinedRoom()
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToLobby();
@@ -358,6 +426,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
         Camera.main.GetComponent<MenuCamera>().TransitionToMainMenu();
         labelVersion.text = "Development build v" + gameVersion;
         PhotonNetwork.JoinLobby();
+        usernameInput.text = "";
+        pwInput.text = "";
     }
 
     public override void OnJoinedLobby()
@@ -375,10 +445,14 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public override void OnDisconnectedFromPhoton()
     {
-        labelError.text = strDisconnected;
-        loadingPanel.SetActive(false);
-        errorPanel.SetActive(true);
-        Camera.main.GetComponent<MenuCamera>().TransitionToLoadingGame();
+        if (!isAuthError)
+        {
+            labelError.text = strDisconnected;
+            loadingPanel.SetActive(false);
+            errorPanel.SetActive(true);
+            Camera.main.GetComponent<MenuCamera>().TransitionToLoadingGame();
+        }
+        isAuthError = false;
     }
 
     public override void OnMasterClientSwitched(PhotonPlayer newMasterClient)
