@@ -411,7 +411,7 @@ public class NetworkGameManager : Photon.PunBehaviour
     public void Disconnect()
     {
         Events.Add("Disconnecting.");
-        PhotonNetwork.Disconnect();
+        PhotonNetwork.LeaveRoom();
         SceneManager.LoadScene("Menu");
     }
 

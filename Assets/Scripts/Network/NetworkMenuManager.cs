@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class NetworkMenuManager : Photon.PunBehaviour 
@@ -280,7 +281,15 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public void StartGame()
     {
         PhotonNetwork.room.IsVisible = false;
-        PhotonNetwork.LoadLevel("Game");
+        //saddly can't use PhotonNetwork.LoadLevel and auto sync scenes due to
+        //it breaking more important things...
+        photonView.RPC("RpcStartGame", PhotonTargets.All); 
+    }
+
+    [PunRPC]
+    public void RpcStartGame()
+    {
+        SceneManager.LoadScene("Game");
     }
 
     [PunRPC]
