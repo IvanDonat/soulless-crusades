@@ -15,7 +15,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
     private float roomRefreshTimer;
 
     public Text labelVersion, labelError, labelPlayerInt, labelRoomName,
-                labelPlayerNumber, maxPlayers, labelRoundsToWin, labelRoundsToWinInt, authStatus, regStatus;
+                labelPlayerNumber, maxPlayers, labelRoundsToWin, labelRoundsToWinInt, labelAuthStatus, 
+                labelRegStatus, labelUser;
     public InputField roomInputField, chatInput, usernameInput, pwInput, emailRegInput, usernameRegInput, pwRegInput;
     public Toggle privateToggle, readyToggle;
     public Slider playerNumberSlider, roundsToWinSlider;
@@ -129,7 +130,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         {
             if (usernameInput.text.Length == 0 || pwInput.text.Length == 0)
             {
-                authStatus.text = "Username and password cannot be empty!";
+                labelAuthStatus.text = "Username and password cannot be empty!";
                 return;
             }
 
@@ -166,7 +167,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public void Register()
     {
-        regStatus.text = ""; //user sees a refresh every time he tries...
+        labelRegStatus.text = ""; //user sees a refresh every time he tries...
         loadingPanel.SetActive(true);
         StartCoroutine(Reg());
     }
@@ -181,9 +182,15 @@ public class NetworkMenuManager : Photon.PunBehaviour
         yield return w;
         //Debug.Log(w.error);
         if (w.text == "1")
-            regStatus.text = "Registration successful. You can now login!";
+        {
+            labelAuthStatus.text = "Registration successful. You can now login!";
+            emailRegInput.text = "";
+            usernameRegInput.text = "";
+            pwRegInput.text = "";
+            GoToLogin();
+        }
         else
-            regStatus.text = "Email or username already in use. Please modify your input.";
+            labelRegStatus.text = "Email or username already in use. Please modify your input.";
         loadingPanel.SetActive(false);
     }
 
@@ -334,7 +341,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         isAuthError = true;
         loadingPanel.SetActive(false);
         errorPanel.SetActive(false);
-        authStatus.text = "Username or password is invalid!";
+        labelAuthStatus.text = "Username or password is invalid!";
     }
 
     public override void OnJoinedRoom()
@@ -434,6 +441,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToMainMenu();
         labelVersion.text = "Development build v" + gameVersion;
+        labelUser.text = "Account settings for " + PhotonNetwork.player.NickName;
         PhotonNetwork.JoinLobby();
         usernameInput.text = "";
         pwInput.text = "";

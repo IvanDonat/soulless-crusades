@@ -11,7 +11,7 @@ public class SetPlayerName : MonoBehaviour
 
     void Start()
     {
-        string defaultName = ""; //ovdje mozemo napravit ako oces tipa guest + random(0,9999)
+        string defaultName = "";
         inputField = GetComponent<InputField>();
 
         if (PlayerPrefs.HasKey(playerNamePrefKey))
