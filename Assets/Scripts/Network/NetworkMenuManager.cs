@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -306,7 +307,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
         {
             Transform parent = GameObject.Find("Message List Parent").transform;
             GameObject go = Instantiate(chatMsgPrefab, parent);
-            go.GetComponentInChildren<Text>().text = string.Format("{0}: {1}", nick, msg);
+            go.GetComponentInChildren<Text>().text = string.Format("<color=#FFE798B4>[{0}]</color>  <color=orange>{1}</color>: {2}", 
+                DateTime.Now.ToString("HH:mm:ss"), nick, msg);
         }
 
         chatScroll.value = 0;
@@ -347,7 +349,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public override void OnJoinedRoom()
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToLobby();
-        labelRoomName.text = PhotonNetwork.room.Name;
+        labelRoomName.text = "Room: " + PhotonNetwork.room.Name;
         maxPlayers.text = "Max Players: " + PhotonNetwork.room.MaxPlayers;
         labelPlayerNumber.text = "Current player number: " + PhotonNetwork.room.PlayerCount;
         Transform parent = GameObject.Find("Player List Parent").transform;
