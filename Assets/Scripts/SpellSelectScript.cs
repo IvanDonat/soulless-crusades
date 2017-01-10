@@ -78,7 +78,7 @@ public class SpellSelectScript : MonoBehaviour
             tooltipDescription.text = GetTooltipText(s);
 
             int numLines = tooltipDescription.text.Split('\n').Length - 1;
-            tooltipCanvas.sizeDelta = new Vector2(tooltipCanvas.sizeDelta.x, 90 + 65 * numLines);
+            tooltipCanvas.sizeDelta = new Vector2(tooltipCanvas.sizeDelta.x, 110 + 67 * numLines);
         }
         else
             tooltipCanvas.gameObject.SetActive(false);
@@ -114,6 +114,23 @@ public class SpellSelectScript : MonoBehaviour
 
         buttonClicked.onClick.RemoveAllListeners();
         buttonClicked.onClick.AddListener(() => ClickedButtonSelectSpell());
+
+        CheckSpellNumber();
+        UpdateSpellManagerSpells();
+    }
+
+    public void DeselectAll()
+    {
+        foreach (Button b in selectedSpellButtons)
+        {
+            allSpellButtons.Add(b);
+            b.transform.SetParent(allSpellsParent, false);
+
+            b.onClick.RemoveAllListeners();
+            b.onClick.AddListener(() => ClickedButtonSelectSpell());
+        }
+
+        selectedSpellButtons.Clear();
 
         CheckSpellNumber();
         UpdateSpellManagerSpells();

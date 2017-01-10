@@ -421,6 +421,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
         Transform parent = GameObject.Find("Player List Parent").transform;
 
+        GetComponent<SpellSelectScript>().DeselectAll();
+
         foreach (RectTransform t in parent.GetComponentInChildren<RectTransform>())
         {
             if (t.transform != parent.transform)
