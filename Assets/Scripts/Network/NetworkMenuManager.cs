@@ -447,7 +447,6 @@ public class NetworkMenuManager : Photon.PunBehaviour
         labelVersion.text = "Development build v" + gameVersion;
         labelUser.text = "Account settings for " + PhotonNetwork.player.NickName;
         PhotonNetwork.JoinLobby();
-        usernameInput.text = "";
         pwInput.text = "";
     }
 
