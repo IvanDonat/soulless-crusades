@@ -166,6 +166,33 @@ public class NetworkMenuManager : Photon.PunBehaviour
         }
     }
 
+    //operations - "add", "substract", "get"
+    //if using operation get put null for ammount
+    public IEnumerator ModifyElo(string op, string amount)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("username", PhotonNetwork.player.NickName);
+        form.AddField("operation", op);
+        if (amount != null)
+            form.AddField("amount", amount);
+        WWW w = new WWW("https://soullesscrusades.000webhostapp.com/elo.php", form);
+        yield return w;
+        //Debug.Log(w.error);
+        //Debug.Log(w.text);
+        if (w.text == "updated")
+        {
+            Debug.Log("Elo update success");
+        }
+        else if (w.text == "-1")
+        {
+            Debug.Log("Elo update failed");
+        }
+        else
+        {
+            Debug.Log("Current elo: " + w.text);
+        }
+    }
+
     public void Register()
     {
         labelRegStatus.text = ""; //user sees a refresh every time he tries...
@@ -181,7 +208,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
         form.AddField("password", pwRegInput.text);
         WWW w = new WWW("https://soullesscrusades.000webhostapp.com/register.php", form);
         yield return w;
-        //Debug.Log(w.error);
+        Debug.Log(w.error);
+        Debug.Log(w.text);
         if (w.text == "1")
         {
             labelAuthStatus.text = "Registration successful. You can now login!";
