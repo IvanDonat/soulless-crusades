@@ -208,8 +208,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
         form.AddField("password", pwRegInput.text);
         WWW w = new WWW("https://soullesscrusades.000webhostapp.com/register.php", form);
         yield return w;
-        Debug.Log(w.error);
-        Debug.Log(w.text);
+        //Debug.Log(w.error);
+        //Debug.Log(w.text);
         if (w.text == "1")
         {
             labelAuthStatus.text = "Registration successful. You can now login!";
