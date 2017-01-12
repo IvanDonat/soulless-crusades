@@ -17,14 +17,15 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public Text labelVersion, labelError, labelPlayerInt, labelRoomName,
                 labelPlayerNumber, maxPlayers, labelRoundsToWin, labelRoundsToWinInt, labelAuthStatus, 
-                labelRegStatus, labelUser;
-    public InputField roomInputField, chatInput, usernameInput, pwInput, emailRegInput, usernameRegInput, pwRegInput;
+                labelRegStatus, labelUser, labelPrivateRoomInfo;
+    public InputField roomInputField, chatInput, usernameInput, pwInput, emailRegInput, usernameRegInput, pwRegInput,
+                        privateRoomField;
     public Toggle privateToggle, readyToggle;
     public Slider playerNumberSlider, roundsToWinSlider;
     public Button kickPlayer, startGame, goToLogin, goToRegister;
     public Scrollbar chatScroll;
     public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab, infoPanel,
-                        selectSpellsPanel, loginPanel, registerPanel;
+                        selectSpellsPanel, loginPanel, registerPanel, joinPrivateRoomPanel;
 
     private Dictionary<PhotonPlayer, Toggle> readyCheckmarks = new Dictionary<PhotonPlayer, Toggle>();
 
@@ -298,6 +299,28 @@ public class NetworkMenuManager : Photon.PunBehaviour
         PhotonNetwork.JoinRoom(roomName);
     }
 
+    public void JoinPrivateRoom()
+    {
+        PhotonNetwork.JoinRoom(privateRoomField.text);
+    }
+
+    public void ShowPrivateRoomJoin()
+    {
+        joinPrivateRoomPanel.SetActive(true);
+    }
+
+    public void ClosePrivateRoomJoin()
+    {
+        joinPrivateRoomPanel.SetActive(false);
+        privateRoomField.text = "";
+        labelPrivateRoomInfo.text = "";
+    }
+
+    public void OnModifiedPrivateRoomField(InputField inputField)
+    {
+        labelPrivateRoomInfo.text = "";
+    }
+
     public void SelectPlayer()
     {
         kickPlayer.interactable = true;
@@ -374,6 +397,14 @@ public class NetworkMenuManager : Photon.PunBehaviour
         labelAuthStatus.text = "Username or password is invalid!";
     }
 
+    public override void OnPhotonJoinRoomFailed(object[] codeAndMsg)
+    {
+        if (joinPrivateRoomPanel.activeInHierarchy)
+        {
+            labelPrivateRoomInfo.text = "Room is full or doesn't exist!";
+        }
+    }
+
     public override void OnJoinedRoom()
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToLobby();
@@ -381,6 +412,13 @@ public class NetworkMenuManager : Photon.PunBehaviour
         maxPlayers.text = "Max Players: " + PhotonNetwork.room.MaxPlayers;
         labelPlayerNumber.text = "Current player number: " + PhotonNetwork.room.PlayerCount;
         Transform parent = GameObject.Find("Player List Parent").transform;
+
+        if (joinPrivateRoomPanel.activeInHierarchy)
+        {
+            privateRoomField.text = "";
+            ClosePrivateRoomJoin();
+        }
+
         if (PhotonNetwork.isMasterClient)
         {
             startGame.gameObject.SetActive(true);
