@@ -21,6 +21,8 @@ public class PlayerMovement : Photon.PunBehaviour
 
     private float defaultFriction = 5f; // friction drops when hit by spell
     private float moveForce = 30f;
+    [System.NonSerialized]
+    public float moveForceMultiplier = 1f;
 
     private Rigidbody rbody;
     private PlayerScript playerScript;
@@ -182,7 +184,7 @@ public class PlayerMovement : Photon.PunBehaviour
             if (slowdownTime > 0)
                 force /= 2f;
 
-            rbody.AddForce(force * moveForce, ForceMode.Acceleration);
+            rbody.AddForce(force * moveForce * moveForceMultiplier, ForceMode.Acceleration);
         }
     }
 

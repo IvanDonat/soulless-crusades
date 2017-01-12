@@ -215,6 +215,11 @@ public class SpellSelectScript : MonoBehaviour
             txt += "Radius: " + (s as GravityWellSpell).radius + " m\n";
             txt += "Force: " + (s as GravityWellSpell).pullForce + "\n";
         }
+        else if (s is MobilitySpell)
+        {
+            txt += "Duration: " + (s as MobilitySpell).speedTime + " s\n";
+            txt += "Multiplier: " + (s as MobilitySpell).moveForceMultiplier + "\n";
+        }
 
         return txt;
     }
