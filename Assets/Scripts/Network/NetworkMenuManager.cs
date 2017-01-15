@@ -534,7 +534,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         GameObject go = Instantiate(listedPlayerPrefab, parent) as GameObject;
         go.name = "PlayerListItem " + player.NickName;
         go.GetComponentInChildren<Text>().text = player.NickName;
-        if(player.IsMasterClient)
+        if(player.IsMasterClient && !isCurrentRoomCompetitive)
             go.GetComponentInChildren<Text>().color = Color.Lerp(go.GetComponentInChildren<Text>().color, Color.red, 0.3f);
         go.GetComponent<PhotonPlayerContainer>().Set(player);
 
