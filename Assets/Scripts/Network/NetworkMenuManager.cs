@@ -44,6 +44,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     //Info msgs
     private const string strKicked = "You have been kicked from this session!";
+    private const string strHostLeft = "The host has abandoned the session.";
 
     //Competitive constants
     private const string COMP_PREFIX = "competitive_room";
@@ -609,8 +610,12 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public override void OnMasterClientSwitched(PhotonPlayer newMasterClient)
     {
-        if(!isCurrentRoomCompetitive)
+        if (!isCurrentRoomCompetitive)
+        {
             LeaveRoom();
+            infoPanel.SetActive(true);
+            infoPanel.GetComponentInChildren<Text>().text = strHostLeft;
+        }
     }
 
     void OnGUI()
