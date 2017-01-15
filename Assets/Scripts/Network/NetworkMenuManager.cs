@@ -8,7 +8,6 @@ using UnityEngine.UI;
 
 public class NetworkMenuManager : Photon.PunBehaviour 
 {
-
     public string gameVersion = "";
     public bool autoJoinLobby = true;
     public bool autoSyncScene = true;
@@ -284,6 +283,11 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public void OnRoomNameChangeValue(InputField inputField)
     {
         roomName = inputField.text;
+    }
+
+    public void OnTransitionToCreateRoom()
+    {
+        roomInputField.text = "Room" + UnityEngine.Random.Range(1000, 9999);
     }
 
     public void CreateRoom()
