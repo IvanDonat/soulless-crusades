@@ -37,12 +37,18 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     //Private lobby vars
     private PhotonPlayer selectedPlayer;
+    private bool isCurrentRoomCompetitive = false;
 
     private const string strFailedToConnect = "SOULLESS CRUSADES FAILED TO ESTABLISH A CONNECTION TO SERVER!";
     private const string strDisconnected = "SOULLESS CRUSADES DISCONNECTED FROM SERVER!";
 
     //Info msgs
     private const string strKicked = "You have been kicked from this session!";
+
+    //Competitive constants
+    private const string COMP_PREFIX = "competitive_room";
+    private const int COMP_MAXPLAYERS = 4;
+    private const int COMP_MAXWINS = 3;
 
     void Awake()
     {
@@ -76,6 +82,9 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
             foreach (RoomInfo ri in PhotonNetwork.GetRoomList())
             {
+                if (ri.Name.StartsWith(COMP_PREFIX))
+                    continue;
+
                 GameObject go = Instantiate(selectedRoomPrefab, parent) as GameObject;
                 go.name = "RoomListItem " + ri.Name;
 
@@ -115,6 +124,14 @@ public class NetworkMenuManager : Photon.PunBehaviour
                 startGame.interactable = true;
             else
                 startGame.interactable = false;
+
+            if (isCurrentRoomCompetitive)
+            {
+                if (allReady && readyCount == COMP_MAXPLAYERS)
+                {
+                    StartGame();
+                }
+            }
         }
     }
 
@@ -168,7 +185,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     //operations - "add", "substract", "get"
     //if using operation get put null for ammount
-    public IEnumerator ModifyElo(string op, string amount)
+    public static IEnumerator ModifyElo(string op, string amount)
     {
         WWWForm form = new WWWForm();
         form.AddField("username", PhotonNetwork.player.NickName);
@@ -284,6 +301,33 @@ public class NetworkMenuManager : Photon.PunBehaviour
     {
         roomName = inputField.text;
     }
+        
+    public void OnCompetitiveClicked()
+    {
+        List<RoomInfo> compRooms = new List<RoomInfo>();
+        foreach (RoomInfo room in PhotonNetwork.GetRoomList())
+        {
+            if (room.Name.StartsWith(COMP_PREFIX))
+            {
+                compRooms.Add(room);
+            }
+        }
+
+        if (compRooms.Count > 0)
+        {
+            // @TODO rooms should contain rank group in name once ranking is done
+            PhotonNetwork.JoinRoom(compRooms[0].Name);
+        }
+        else
+        {
+            // @TODO rooms should contain rank group in name once ranking is done
+            string name = COMP_PREFIX + UnityEngine.Random.Range(1, 10000);
+
+            PhotonNetwork.CreateRoom(name, new RoomOptions { MaxPlayers = COMP_MAXPLAYERS }, null);
+        }
+
+        isCurrentRoomCompetitive = true;
+    }
 
     public void OnTransitionToCreateRoom()
     {
@@ -295,17 +339,20 @@ public class NetworkMenuManager : Photon.PunBehaviour
         PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = numberOfPlayers, IsVisible = !privateToggle.isOn }, null);
         privateToggle.isOn = false;
         roomInputField.text = "";
+        isCurrentRoomCompetitive = false;
     }
 
     public void JoinRoom()
     {
         string roomName = EventSystem.current.currentSelectedGameObject.name.Substring("RoomListItem ".Length);
         PhotonNetwork.JoinRoom(roomName);
+        isCurrentRoomCompetitive = false;
     }
 
     public void JoinPrivateRoom()
     {
         PhotonNetwork.JoinRoom(privateRoomField.text);
+        isCurrentRoomCompetitive = false;
     }
 
     public void ShowPrivateRoomJoin()
@@ -344,7 +391,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public void StartGame()
     {
         PhotonNetwork.room.IsVisible = false;
-        //saddly can't use PhotonNetwork.LoadLevel and auto sync scenes due to
+        //sadly can't use PhotonNetwork.LoadLevel and auto sync scenes due to
         //it breaking more important things...
         photonView.RPC("RpcStartGame", PhotonTargets.All); 
     }
@@ -412,10 +459,14 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public override void OnJoinedRoom()
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToLobby();
-        labelRoomName.text = "Room: " + PhotonNetwork.room.Name;
         maxPlayers.text = "Max Players: " + PhotonNetwork.room.MaxPlayers;
         labelPlayerNumber.text = "Current player number: " + PhotonNetwork.room.PlayerCount;
         Transform parent = GameObject.Find("Player List Parent").transform;
+
+        if (isCurrentRoomCompetitive)
+            labelRoomName.text = "Competitive lobby";
+        else 
+            labelRoomName.text = "Room: " + PhotonNetwork.room.Name;
 
         if (joinPrivateRoomPanel.activeInHierarchy)
         {
@@ -443,6 +494,17 @@ public class NetworkMenuManager : Photon.PunBehaviour
                 AddPlayerListItem(p, parent);
         }
 
+        // comp override
+        if (isCurrentRoomCompetitive && PhotonNetwork.isMasterClient)
+        {
+            startGame.gameObject.SetActive(false);
+
+            var props = new ExitGames.Client.Photon.Hashtable();
+            props.Add("maxwins", COMP_MAXWINS);
+            PhotonNetwork.room.SetCustomProperties(props, null);
+            labelRoundsToWin.text = "Rounds to Win: " + COMP_MAXWINS;
+        }
+
         SetReady(false);
     }
 
@@ -460,7 +522,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
         foreach (RectTransform t in parent.GetComponentInChildren<RectTransform> ())
         {
-            if (t.gameObject.GetComponent<PhotonPlayerContainer>().Get().NickName == other.NickName)
+            if (t.gameObject.GetComponent<PhotonPlayerContainer>().Get().ID == other.ID)
                 Destroy(t.gameObject);
         }
 
@@ -476,7 +538,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
             go.GetComponentInChildren<Text>().color = Color.Lerp(go.GetComponentInChildren<Text>().color, Color.red, 0.3f);
         go.GetComponent<PhotonPlayerContainer>().Set(player);
 
-        if (PhotonNetwork.isMasterClient)
+        if (PhotonNetwork.isMasterClient && !isCurrentRoomCompetitive)
         {
             go.GetComponentInChildren<Button>().interactable = true;
             go.GetComponentInChildren<Button>().onClick.AddListener(() => { SelectPlayer(); });
@@ -547,7 +609,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public override void OnMasterClientSwitched(PhotonPlayer newMasterClient)
     {
-        LeaveRoom();
+        if(!isCurrentRoomCompetitive)
+            LeaveRoom();
     }
 
     void OnGUI()
