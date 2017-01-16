@@ -66,11 +66,10 @@ public class NetworkGameManager : Photon.PunBehaviour
     public GameObject deathParticles;
 
     public GameObject lensFlare;
-
+ 
+    // chat
     public GameObject chatWindow, chatMsgPrefab;
-
     public InputField chatInput;
-
     public Scrollbar chatScroll;
 
     void Start()
@@ -207,12 +206,28 @@ public class NetworkGameManager : Photon.PunBehaviour
             }
         }
 
-        if (Input.GetKey(KeyCode.Return) && chatInput.gameObject.activeInHierarchy)
+        if (Input.GetKeyDown(KeyCode.Return) && chatInput.gameObject.activeInHierarchy)
+        {
             SendMsg();
-        else if (Input.GetKey(KeyCode.Return))
-            chatInput.gameObject.SetActive(true);
-        else if (Input.GetKey(KeyCode.Escape))
             chatInput.gameObject.SetActive(false);
+        }
+        else if (Input.GetKeyDown(KeyCode.Return))
+        {
+            chatInput.gameObject.SetActive(true);
+            chatInput.text = "";
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            chatInput.gameObject.SetActive(false);
+            chatInput.text = "";
+        }
+
+        if (chatInput.gameObject.activeInHierarchy)
+        {
+            chatInput.ActivateInputField();
+        }
+
+        chatWindow.GetComponent<ScrollRect>().verticalNormalizedPosition = 0f;
     }
 
     [PunRPC]
@@ -375,7 +390,7 @@ public class NetworkGameManager : Photon.PunBehaviour
                 System.DateTime.Now.ToString("HH:mm:ss"), nick, msg);
         }
 
-        chatScroll.value = 0;
+        chatWindow.GetComponent<ScrollRect>().verticalNormalizedPosition = 0f;
     }
 
     public void SendMsg()
@@ -383,7 +398,6 @@ public class NetworkGameManager : Photon.PunBehaviour
         PhotonView photonView = PhotonView.Get(this);
         photonView.RPC("RpcSendText", PhotonTargets.All, PhotonNetwork.player.NickName, chatInput.text);
         chatInput.text = "";
-        chatInput.ActivateInputField();
     }
 
     public List<PhotonPlayer> GetSortedPlayerList()
@@ -430,6 +444,11 @@ public class NetworkGameManager : Photon.PunBehaviour
         float timeRatio = roundTime / 180f;
         timeRatio = Mathf.Clamp(timeRatio, 0f, .9f);
         return 1 - timeRatio;
+    }
+
+    public bool IsChatOpen()
+    {
+        return chatInput.gameObject.activeInHierarchy;
     }
 
     public override void OnPhotonPlayerDisconnected(PhotonPlayer other)
