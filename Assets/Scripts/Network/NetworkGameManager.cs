@@ -67,6 +67,12 @@ public class NetworkGameManager : Photon.PunBehaviour
 
     public GameObject lensFlare;
 
+    public GameObject chatWindow, chatMsgPrefab;
+
+    public InputField chatInput;
+
+    public Scrollbar chatScroll;
+
     void Start()
     {
         terrainManager = GameObject.FindWithTag("Terrain").GetComponent<TerrainManager>();
@@ -200,6 +206,13 @@ public class NetworkGameManager : Photon.PunBehaviour
                 timeBetweenRoundsCounter = timeBetweenRounds;
             }
         }
+
+        if (Input.GetKey(KeyCode.Return) && chatInput.gameObject.activeInHierarchy)
+            SendMsg();
+        else if (Input.GetKey(KeyCode.Return))
+            chatInput.gameObject.SetActive(true);
+        else if (Input.GetKey(KeyCode.Escape))
+            chatInput.gameObject.SetActive(false);
     }
 
     [PunRPC]
@@ -349,6 +362,28 @@ public class NetworkGameManager : Photon.PunBehaviour
     {
         Events.Add("You killed: " + victim.NickName);
         PlayerProperties.IncrementProperty(PlayerProperties.KILLS);        
+    }
+
+    [PunRPC]
+    public void RpcSendText(string nick, string msg)
+    {
+        if (msg != "")
+        {
+            Transform parent = GameObject.Find("Message List Parent").transform;
+            GameObject go = Instantiate(chatMsgPrefab, parent);
+            go.GetComponentInChildren<Text>().text = string.Format("<color=#FFE798B4>[{0}]</color>  <color=orange>{1}</color>: {2}",
+                System.DateTime.Now.ToString("HH:mm:ss"), nick, msg);
+        }
+
+        chatScroll.value = 0;
+    }
+
+    public void SendMsg()
+    {
+        PhotonView photonView = PhotonView.Get(this);
+        photonView.RPC("RpcSendText", PhotonTargets.All, PhotonNetwork.player.NickName, chatInput.text);
+        chatInput.text = "";
+        chatInput.ActivateInputField();
     }
 
     public List<PhotonPlayer> GetSortedPlayerList()
