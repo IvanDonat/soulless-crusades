@@ -394,6 +394,7 @@ public class NetworkGameManager : Photon.PunBehaviour
 
     private IEnumerator SetScroll()
     {
+        yield return new WaitForSeconds(0.05f);
         yield return new WaitForEndOfFrame();
         chatScroll.value = 0;
     }
