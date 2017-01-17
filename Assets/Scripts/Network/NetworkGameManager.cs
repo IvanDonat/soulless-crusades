@@ -68,7 +68,7 @@ public class NetworkGameManager : Photon.PunBehaviour
     public GameObject lensFlare;
  
     // chat
-    public GameObject chatWindow, chatMsgPrefab;
+    public GameObject chatMsgPrefab;
     public InputField chatInput;
     public Scrollbar chatScroll;
 
@@ -226,8 +226,6 @@ public class NetworkGameManager : Photon.PunBehaviour
         {
             chatInput.ActivateInputField();
         }
-
-        chatWindow.GetComponent<ScrollRect>().verticalNormalizedPosition = 0f;
     }
 
     [PunRPC]
@@ -386,11 +384,18 @@ public class NetworkGameManager : Photon.PunBehaviour
         {
             Transform parent = GameObject.Find("Message List Parent").transform;
             GameObject go = Instantiate(chatMsgPrefab, parent);
+            go.transform.localScale = new Vector3(1f, 1f, 1f);
             go.GetComponentInChildren<Text>().text = string.Format("<color=#FFE798B4>[{0}]</color>  <color=orange>{1}</color>: {2}",
                 System.DateTime.Now.ToString("HH:mm:ss"), nick, msg);
         }
 
-        chatWindow.GetComponent<ScrollRect>().verticalNormalizedPosition = 0f;
+        StartCoroutine(SetScroll());
+    }
+
+    private IEnumerator SetScroll()
+    {
+        yield return new WaitForEndOfFrame();
+        chatScroll.value = 0;
     }
 
     public void SendMsg()
