@@ -6,7 +6,6 @@ public class BlindSpell : Spell
 {
     public float speed = 3f;
     public float blindTime = 4f;
-    public float gravityScale = 0f;
 
     public Transform explosionTransform;
 
@@ -18,7 +17,6 @@ public class BlindSpell : Spell
     void Update()
     {
         transform.Translate(transform.forward * speed * Time.deltaTime, Space.World);
-        transform.Translate(Vector3.down * gravityScale * Time.deltaTime, Space.World); // linear movement
     }
 
     void OnTriggerEnter(Collider c)

@@ -33,7 +33,6 @@ public partial class PlayerScript : Photon.PunBehaviour
 
             spellSelectNameText[i] = spellSelectButtons[i].transform.FindChild("Text").GetComponent<Text>();
             spellSelectNameText[i].text = spellName[i];
-            spellSelectNameText[i].enabled = false;
 
             Image icon = spellSelectButtons[i].transform.FindChild("Icon").GetComponent<Image>();
             icon.enabled = false;
@@ -64,7 +63,10 @@ public partial class PlayerScript : Photon.PunBehaviour
             else
             {
                 spellSelectCooldownText[i].gameObject.SetActive(true);
-                spellSelectCooldownText[i].text = spellCooldown[i].ToString("F1");
+                if (spellCooldown[i] < 10)
+                    spellSelectCooldownText[i].text = spellCooldown[i].ToString("F1");
+                else
+                    spellSelectCooldownText[i].text = ((int)spellCooldown[i]).ToString();
             }
         }
 

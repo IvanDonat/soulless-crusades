@@ -6,6 +6,7 @@ public class MeteorSpell : Spell
 {
     public float speed = 3f;
     public float damage = 20;
+    public float radius = 10f;
     public float knockbackForce = 15f;
     public float dragResetTime = 1f;
     public float stunTime = 1f;
@@ -37,13 +38,16 @@ public class MeteorSpell : Spell
             {
                 Transform t = go.GetComponent<Transform>();
                 Vector3 knockBackDir = - transform.position + t.position;
-                if (knockBackDir.magnitude < 10f && !go.GetComponent<PhotonView>().isMine)
+                knockBackDir.y = go.transform.position.y;
+                float dist = knockBackDir.magnitude;
+                if (dist < radius && !go.GetComponent<PhotonView>().isMine)
                 {
-                    knockBackDir.y = go.transform.position.y;
                     knockBackDir.Normalize();
 
-                    go.GetComponent<PhotonView>().RPC("TakeDamage", go.GetComponent<PhotonView>().owner, photonView.owner, damage, stunTime);
-                    go.GetComponent<PhotonView>().RPC("DoKnockback", go.GetComponent<PhotonView>().owner, knockBackDir, knockbackForce, dragResetTime);
+                    float scale = Mathf.Lerp(1, 0, dist / radius);
+
+                    go.GetComponent<PhotonView>().RPC("TakeDamage", go.GetComponent<PhotonView>().owner, photonView.owner, damage * scale, stunTime * scale);
+                    go.GetComponent<PhotonView>().RPC("DoKnockback", go.GetComponent<PhotonView>().owner, knockBackDir, knockbackForce * scale, dragResetTime * scale);
                 }
             }
         }
