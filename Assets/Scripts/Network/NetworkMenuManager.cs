@@ -213,6 +213,13 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public void Register()
     {
+        if (!emailRegInput.text.Contains("@") ||
+           !emailRegInput.text.Contains("."))
+        {
+            labelRegStatus.text = "Invalid email address.";
+            return;
+        }
+
         labelRegStatus.text = ""; //user sees a refresh every time he tries...
         loadingPanel.SetActive(true);
         StartCoroutine(Reg());
