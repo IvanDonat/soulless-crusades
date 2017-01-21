@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,10 +19,11 @@ public class MenuCamera : MonoBehaviour
     private float stageSecondSmoothTime = .15f;
     private float xVelocity, yVelocity, zVelocity;
 
-    public Transform canvasLoadingGame;
+    public Transform canvasLogin;
     public Transform canvasMenu;
     public Transform canvasLobby;
     public Transform canvasCreateRoom;
+    public Transform canvasOptions;
 
     private Vector3 offsetFromCanvas = Vector3.back * 750;
 
@@ -92,10 +94,13 @@ public class MenuCamera : MonoBehaviour
         TransitionTo(canvasCreateRoom);
     }
 
-    //Tehnicki nam ne treba trenutno al ajmo rec da noob ima potato net i DC se u menu,
-    //a moglo bi i kasnije bit korisno za ostale disconecte ovisi kako budemo to
-    public void TransitionToLoadingGame()
+    public void TransitionToLogin()
     {
-        TransitionTo(canvasLoadingGame);
+        TransitionTo(canvasLogin);
+    }
+
+    internal void TransitionToOptions()
+    {
+        TransitionTo(canvasOptions);
     }
 }

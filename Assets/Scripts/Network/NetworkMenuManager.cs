@@ -21,10 +21,11 @@ public class NetworkMenuManager : Photon.PunBehaviour
                         privateRoomField;
     public Toggle privateToggle, readyToggle;
     public Slider playerNumberSlider, roundsToWinSlider;
-    public Button kickPlayer, startGame, goToLogin, goToRegister;
+    public Button kickPlayer, startGame, goToLogin, goToRegister, goToVideo, goToSound, goToControls;
     public Scrollbar chatScroll;
     public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab, infoPanel,
-                        selectSpellsPanel, loginPanel, registerPanel, joinPrivateRoomPanel;
+                        selectSpellsPanel, loginPanel, registerPanel, joinPrivateRoomPanel, videoPanel, soundPanel,
+                        controlsPanel;
 
     private Dictionary<PhotonPlayer, Toggle> readyCheckmarks = new Dictionary<PhotonPlayer, Toggle>();
 
@@ -454,6 +455,41 @@ public class NetworkMenuManager : Photon.PunBehaviour
         PhotonNetwork.player.SetCustomProperties(props, null);
     }
 
+    public void OptionsToVideo()
+    {
+        videoPanel.SetActive(true);
+        soundPanel.SetActive(false);
+        controlsPanel.SetActive(false);
+        goToVideo.interactable = false;
+        goToSound.interactable = true;
+        goToControls.interactable = true;
+    }
+
+    public void OptionsToSound()
+    {
+        videoPanel.SetActive(false);
+        soundPanel.SetActive(true);
+        controlsPanel.SetActive(false);
+        goToVideo.interactable = true;
+        goToSound.interactable = false;
+        goToControls.interactable = true;
+    }
+
+    public void OptionsToControls()
+    {
+        videoPanel.SetActive(false);
+        soundPanel.SetActive(false);
+        controlsPanel.SetActive(true);
+        goToVideo.interactable = true;
+        goToSound.interactable = true;
+        goToControls.interactable = false;
+    }
+
+    public void GoToOptions()
+    {
+        Camera.main.GetComponent<MenuCamera>().TransitionToOptions();
+    }
+
     public override void OnCustomAuthenticationFailed(string debugMessage)
     {
         isAuthError = true;
@@ -616,7 +652,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
             labelError.text = strDisconnected;
             loadingPanel.SetActive(false);
             errorPanel.SetActive(true);
-            Camera.main.GetComponent<MenuCamera>().TransitionToLoadingGame();
+            Camera.main.GetComponent<MenuCamera>().TransitionToLogin();
         }
         isAuthError = false;
     }
