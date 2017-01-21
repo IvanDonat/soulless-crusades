@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameCamera : MonoBehaviour
 {
     private Transform myPlayer;
-    Vector3 offset = new Vector3(0, 25, -25);
+    private Vector3 offset;
     Vector3 shakeOffset = Vector3.zero;
     private Vector3 camPos;
 
@@ -16,8 +16,7 @@ public class GameCamera : MonoBehaviour
 
     void Start()
     {
-        transform.position = offset;
-        camPos = transform.position;
+        offset = camPos = transform.position;
     }
 
     void LateUpdate()
