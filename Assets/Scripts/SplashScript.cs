@@ -23,7 +23,7 @@ public class SplashScript : MonoBehaviour
 
     private IEnumerator ShowLogo()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(.3f);
         sound.Play();
         logo.enabled = true;
 
