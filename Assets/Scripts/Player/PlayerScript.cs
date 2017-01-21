@@ -69,6 +69,7 @@ public partial class PlayerScript : Photon.PunBehaviour
         PlayerProperties.SetProperty(PlayerProperties.ALIVE, true);
 
         LinkSpellButtons();
+        movementScript.currentSpellColor = new Color(0, 0, 0, 0);
     }
 
     void Update()
@@ -154,11 +155,13 @@ public partial class PlayerScript : Photon.PunBehaviour
             GameObject spellGO = Resources.Load<GameObject>("Spells/" + spellName);
             currentSpellScript = spellGO.GetComponent<Spell>();
             Cursor.SetCursor(castCursor, Vector2.zero, CursorMode.Auto);
+            movementScript.currentSpellColor = currentSpellScript.castColor;
             audioSpellSelect.Play();
         }
         else
         {
             Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
+            movementScript.currentSpellColor = new Color(0, 0, 0, 0);
         }
     }
 
@@ -242,5 +245,6 @@ public partial class PlayerScript : Photon.PunBehaviour
         if(castCoroutine != null)
             StopCoroutine(castCoroutine);
         movementScript.CancelCast();
+        movementScript.currentSpellColor = new Color(0, 0, 0, 0);
     }
 }

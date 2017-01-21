@@ -30,6 +30,12 @@ public class PlayerMovement : Photon.PunBehaviour
     public Animation anim; 
     public Transform playerMarker;
 
+    public ParticleSystem castParticleSystem;
+    // this value is controller by PlayerScript
+    // the current color of the casting hand particles
+    [System.NonSerialized]
+    public Color currentSpellColor;
+
     private Vector3 targetPosition;
     private Quaternion targetRotation;
     private PlayerState state = PlayerState.IDLE;
@@ -60,6 +66,8 @@ public class PlayerMovement : Photon.PunBehaviour
         terrain = GameObject.FindGameObjectWithTag("Terrain").transform;
 
         playerMarker.gameObject.SetActive(photonView.isMine);
+
+        currentSpellColor = new Color(0, 0, 0, 0);
     }
 
     void Update()
@@ -88,6 +96,15 @@ public class PlayerMovement : Photon.PunBehaviour
             healthBar3D.gameObject.SetActive(true);
             nameBar3D.gameObject.SetActive(true);
         }
+
+        ParticleSystem.MainModule module = castParticleSystem.main;
+        module.startColor = currentSpellColor;
+
+        if (castParticleSystem.isPlaying && currentSpellColor.a < 0.1f)
+            castParticleSystem.Stop(false, ParticleSystemStopBehavior.StopEmitting);
+        else if (!castParticleSystem.isPlaying && currentSpellColor.a > 0.1f)
+            castParticleSystem.Play();
+
 
         if (!photonView.isMine)
         {
@@ -301,16 +318,21 @@ public class PlayerMovement : Photon.PunBehaviour
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
             stream.SendNext(state);
+            stream.SendNext(new Vector3(currentSpellColor.r, currentSpellColor.g, currentSpellColor.b));
+            stream.SendNext(currentSpellColor.a);
         }
         else
         {
             Vector3 syncPos = (Vector3) stream.ReceiveNext();
             Quaternion syncRot = (Quaternion) stream.ReceiveNext();
-            PlayerState syncState = (PlayerState) stream.ReceiveNext();
+            PlayerState syncState = (PlayerState)stream.ReceiveNext();
+            Vector3 castColor = (Vector3) stream.ReceiveNext();
+            float castAlpha = (float) stream.ReceiveNext();
 
             syncPosition = syncPos;
             syncRotation = syncRot;
             state = syncState;
+            currentSpellColor = new Color(castColor.x, castColor.y, castColor.z, castAlpha);
         }
     }
 
