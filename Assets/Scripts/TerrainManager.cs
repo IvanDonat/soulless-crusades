@@ -26,7 +26,7 @@ public class TerrainManager : Photon.PunBehaviour
     private float[,] heights;
 
     private float startRadius = 75f;
-    private float[] radiusScaling = {1.0f, 0.9f, 0.8f, 0.75f, 0.7f, 0.65f, 0.60f, 0.5f, 0.45f, 0.4f, 0.35f, 0.3f};
+    private float[] radiusScaling = {1.0f, 0.9f, 0.8f, 0.75f, 0.7f, 0.65f, 0.60f, 0.5f, 0.45f, 0.4f, 0.35f, 0.3f, 0.25f};
     private float stageInterval = 15f; // how long is each stage
     private float roundTimeElapsed = 0f;
     private int currentScalingIndex = 0;
