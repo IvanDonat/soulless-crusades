@@ -16,7 +16,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public Text labelVersion, labelError, labelPlayerInt, labelRoomName,
                 labelPlayerNumber, maxPlayers, labelRoundsToWin, labelRoundsToWinInt, labelAuthStatus, 
-                labelRegStatus, labelUser, labelPrivateRoomInfo;
+                labelRegStatus, labelUser, labelPrivateRoomInfo, labelTotalPlayers;
     public InputField roomInputField, chatInput, usernameInput, pwInput, emailRegInput, usernameRegInput, pwRegInput,
                         privateRoomField;
     public Toggle privateToggle, readyToggle;
@@ -97,6 +97,12 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
             roomRefreshTimer = roomRefreshInterval;
         }
+
+        // ^^
+        if (PhotonNetwork.countOfPlayers > 2)
+            labelTotalPlayers.text = "Total Players: " + PhotonNetwork.countOfPlayers;
+        else
+            labelTotalPlayers.text = "";
 
         if (PhotonNetwork.inRoom && Input.GetKey(KeyCode.Return))
         {
