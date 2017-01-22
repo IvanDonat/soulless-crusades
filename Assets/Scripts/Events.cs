@@ -22,11 +22,6 @@ public class Events : MonoBehaviour
     public Text textEvents;
     public Text textTimestamps;
 
-    void Start()
-    {
-
-    }
-
     void Update()
     {
         if (eventList.Count == 0)

@@ -285,8 +285,16 @@ public class NetworkGameManager : Photon.PunBehaviour
     }
 
     [PunRPC]
-    public void OnPlayerDeath(PhotonPlayer player, Vector3 deathPos)
+    public void OnPlayerDeath(PhotonPlayer player, Vector3 deathPos, PhotonPlayer killer)
     { // is called for everyone by dying player
+        
+        if (killer == PhotonNetwork.player)
+            PlayerProperties.IncrementProperty(PlayerProperties.KILLS);
+
+        if (killer != null)
+            Events.Add(killer.NickName + " killed " + player.NickName + "!");
+        else
+            Events.Add(player.NickName + " died");
 
         if(PhotonNetwork.isMasterClient && GetState() == GameState.IN_ROUND)
         {
@@ -318,7 +326,7 @@ public class NetworkGameManager : Photon.PunBehaviour
                 photonView.RPC("RoundOver", PhotonTargets.All, alivePlayer);
                 SetState(GameState.BETWEEN_ROUNDS);
             }
-        }
+        } 
 
         Instantiate(deathParticles, deathPos, new Quaternion(0,0,0,0));
 
@@ -368,14 +376,6 @@ public class NetworkGameManager : Photon.PunBehaviour
         winner.text = lastRoundWinner.NickName + " is the winner!";
         Events.Add(lastRoundWinner.NickName + " is the winner!");
         AndroidShowScore();
-    }
-
-
-    [PunRPC]
-    public void GotKill(PhotonPlayer victim)
-    {
-        Events.Add("You killed: " + victim.NickName);
-        PlayerProperties.IncrementProperty(PlayerProperties.KILLS);        
     }
 
     [PunRPC]
