@@ -67,17 +67,15 @@ public class NetworkMenuManager : Photon.PunBehaviour
     {
         selectedRegion = CloudRegionCode.eu;
         roomRefreshTimer = roomRefreshInterval;
+
+        pwInput.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Connect();});
+        usernameInput.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Connect();});
+
+        pwRegInput.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Register();});
     }
 
     void Update()
     {
-        if ((usernameInput.isFocused || pwInput.isFocused) && Input.GetKey(KeyCode.Return))
-        {
-            Connect();
-            usernameInput.DeactivateInputField(); //to stop it from multiple calls
-            pwInput.DeactivateInputField();
-        }
-
         roomRefreshTimer -= Time.deltaTime;
         if (roomRefreshTimer <= 0f)
         {
