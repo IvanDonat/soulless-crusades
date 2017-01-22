@@ -443,6 +443,11 @@ public class NetworkGameManager : Photon.PunBehaviour
         return gameTime;
     }
 
+    public static float GetRoundTime()
+    {
+        return roundTime;
+    }
+
     public float GetDragScalar()
     {
         // 1 at 0 sec
