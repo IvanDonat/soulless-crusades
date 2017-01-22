@@ -106,9 +106,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
             labelTotalPlayers.text = "";
 
         if (PhotonNetwork.inRoom && Input.GetKey(KeyCode.Return))
-        {
             SendMsg();
-        }
 
         if (PhotonNetwork.inRoom)
         {
@@ -671,5 +669,11 @@ public class NetworkMenuManager : Photon.PunBehaviour
     {
         if(PhotonNetwork.connected)
             GUILayout.Label(PhotonNetwork.connectionState + "\n" + PhotonNetwork.GetPing() + " ms");
+        if ((usernameInput.isFocused || pwInput.isFocused) && Input.GetKey(KeyCode.Return))
+        {
+            Connect();
+            usernameInput.DeactivateInputField(); //to stop it from multiple calls
+            pwInput.DeactivateInputField();
+        }
     }
 }
