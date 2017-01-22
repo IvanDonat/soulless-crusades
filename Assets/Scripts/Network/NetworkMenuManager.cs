@@ -71,6 +71,13 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     void Update()
     {
+        if ((usernameInput.isFocused || pwInput.isFocused) && Input.GetKey(KeyCode.Return))
+        {
+            Connect();
+            usernameInput.DeactivateInputField(); //to stop it from multiple calls
+            pwInput.DeactivateInputField();
+        }
+
         roomRefreshTimer -= Time.deltaTime;
         if (roomRefreshTimer <= 0f)
         {
@@ -167,6 +174,20 @@ public class NetworkMenuManager : Photon.PunBehaviour
             PhotonNetwork.AuthValues.AddAuthParameter("password", pwInput.text);
             PhotonNetwork.ConnectToRegion(selectedRegion, gameVersion);
         }
+    }
+
+    public void ConnectAsGuest()
+    {
+        Debug.LogError("UNFINISHED ConnectAsGuest\nAdd AuthParameter to Photon Server and webserver bool isguest to allow guest logins");
+
+        loadingPanel.SetActive(true);
+        errorPanel.SetActive(false);
+
+        PhotonNetwork.AuthValues = new AuthenticationValues();
+        PhotonNetwork.AuthValues.AuthType = CustomAuthenticationType.Custom;
+        PhotonNetwork.AuthValues.AddAuthParameter("username", "Guest" + UnityEngine.Random.Range(1000, 9999));
+        PhotonNetwork.AuthValues.AddAuthParameter("password", "");
+        PhotonNetwork.ConnectToRegion(selectedRegion, gameVersion);
     }
 
     public void SelectRegion(Dropdown target)
@@ -669,11 +690,5 @@ public class NetworkMenuManager : Photon.PunBehaviour
     {
         if(PhotonNetwork.connected)
             GUILayout.Label(PhotonNetwork.connectionState + "\n" + PhotonNetwork.GetPing() + " ms");
-        if ((usernameInput.isFocused || pwInput.isFocused) && Input.GetKey(KeyCode.Return))
-        {
-            Connect();
-            usernameInput.DeactivateInputField(); //to stop it from multiple calls
-            pwInput.DeactivateInputField();
-        }
     }
 }
