@@ -32,7 +32,7 @@ public class Events : MonoBehaviour
         }
         
         string events = "", stamps = "";
-        for (int i = Mathf.Max(eventList.Count - 6, 0); i < eventList.Count; i++)
+        for (int i = Mathf.Max(eventList.Count - 5, 0); i < eventList.Count; i++)
         {
             events += eventList[i].text + '\n';
 
