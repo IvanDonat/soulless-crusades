@@ -21,7 +21,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
                         privateRoomField;
     public Toggle privateToggle, readyToggle;
     public Slider playerNumberSlider, roundsToWinSlider;
-    public Button kickPlayer, startGame, goToLogin, goToRegister, goToVideo, goToSound, goToControls;
+    public Button kickPlayer, startGame, goToLogin, goToRegister, goToVideo, goToSound, goToControls, acSettings;
     public Scrollbar chatScroll;
     public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab, infoPanel,
                         selectSpellsPanel, loginPanel, registerPanel, joinPrivateRoomPanel, videoPanel, soundPanel,
@@ -178,15 +178,12 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public void ConnectAsGuest()
     {
-        Debug.LogError("UNFINISHED ConnectAsGuest\nAdd AuthParameter to Photon Server and webserver bool isguest to allow guest logins");
-
         loadingPanel.SetActive(true);
         errorPanel.SetActive(false);
+        acSettings.interactable = false;
+        acSettings.GetComponentInChildren<Text>().color = new Color32(136, 125, 89, 255);
+        usernameInput.text = "Guest" + UnityEngine.Random.Range(1000, 9999);
 
-        PhotonNetwork.AuthValues = new AuthenticationValues();
-        PhotonNetwork.AuthValues.AuthType = CustomAuthenticationType.Custom;
-        PhotonNetwork.AuthValues.AddAuthParameter("username", "Guest" + UnityEngine.Random.Range(1000, 9999));
-        PhotonNetwork.AuthValues.AddAuthParameter("password", "");
         PhotonNetwork.ConnectToRegion(selectedRegion, gameVersion);
     }
 
