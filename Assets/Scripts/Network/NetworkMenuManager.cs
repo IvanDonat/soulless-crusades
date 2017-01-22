@@ -184,6 +184,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         acSettings.GetComponentInChildren<Text>().color = new Color32(136, 125, 89, 255);
         usernameInput.text = "Guest" + UnityEngine.Random.Range(1000, 9999);
 
+        PhotonNetwork.AuthValues = new AuthenticationValues();
         PhotonNetwork.AuthValues.AuthType = CustomAuthenticationType.None;
         PhotonNetwork.ConnectToRegion(selectedRegion, gameVersion);
     }
@@ -241,6 +242,18 @@ public class NetworkMenuManager : Photon.PunBehaviour
            !emailRegInput.text.Contains("."))
         {
             labelRegStatus.text = "Invalid email address.";
+            return;
+        }
+
+        if (usernameRegInput.text.ToLower().StartsWith("guest"))
+        {
+            labelRegStatus.text = "Username can't start with Guest";
+            return;
+        }
+
+        if (usernameRegInput.text.Length < 3)
+        {
+            labelRegStatus.text = "Username too short";
             return;
         }
 

@@ -16,8 +16,11 @@ public class SetPlayerName : MonoBehaviour
 
         if (PlayerPrefs.HasKey(playerNamePrefKey))
         {
-            defaultName = PlayerPrefs.GetString(playerNamePrefKey);
-            inputField.text = defaultName;
+            if (!PlayerPrefs.GetString(playerNamePrefKey).StartsWith("Guest"))
+            {
+                defaultName = PlayerPrefs.GetString(playerNamePrefKey);
+                inputField.text = defaultName;
+            }
         }
 
         PhotonNetwork.playerName = defaultName;
