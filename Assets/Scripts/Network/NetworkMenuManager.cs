@@ -184,6 +184,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         acSettings.GetComponentInChildren<Text>().color = new Color32(136, 125, 89, 255);
         usernameInput.text = "Guest" + UnityEngine.Random.Range(1000, 9999);
 
+        PhotonNetwork.AuthValues.AuthType = CustomAuthenticationType.None;
         PhotonNetwork.ConnectToRegion(selectedRegion, gameVersion);
     }
 
