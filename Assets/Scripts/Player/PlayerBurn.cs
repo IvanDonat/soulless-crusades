@@ -19,7 +19,7 @@ public class PlayerBurn : Photon.PunBehaviour
     {
         if (onFire && photonView.isMine)
         {
-            playerScript.TakeDamage(null, 22f * Time.deltaTime, 0);
+            playerScript.TakeDamage(null, 30f * Time.deltaTime, 0);
         }
     }
 

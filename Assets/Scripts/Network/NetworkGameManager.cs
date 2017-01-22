@@ -505,7 +505,16 @@ public class NetworkGameManager : Photon.PunBehaviour
 
     void OnGUI()
     {
-        if(PhotonNetwork.connected)
-            GUILayout.Label(PhotonNetwork.connectionState + " " + PhotonNetwork.GetPing() + " ms");
+        GUI.color = Color.white;
+        GUI.Label(new Rect(3, 0, 100, 20), PhotonNetwork.connectionState.ToString());
+
+        if (PhotonNetwork.GetPing() >= 200)
+            GUI.color = Color.red;
+        else if (PhotonNetwork.GetPing() >= 100)
+            GUI.color = Color.yellow;
+        else
+            GUI.color = Color.white;
+
+        GUI.Label(new Rect(3, 15, 100, 20), PhotonNetwork.GetPing() + " ms");
     }
 }
