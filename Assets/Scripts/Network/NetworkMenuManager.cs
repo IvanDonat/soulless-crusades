@@ -29,6 +29,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     private Dictionary<PhotonPlayer, Toggle> readyCheckmarks = new Dictionary<PhotonPlayer, Toggle>();
 
+    public AudioSource chatTickSound;
+
     private CloudRegionCode selectedRegion;
     private bool isAuthError = false; //photon treats auth failiure like a dc
 
@@ -295,6 +297,12 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public void SendMsg()
     {
+        if (chatInput.text.Trim() == "")
+        {
+            chatInput.ActivateInputField();
+            return;
+        }
+
         PhotonView photonView = PhotonView.Get(this);
         photonView.RPC("RpcSendText", PhotonTargets.All, PhotonNetwork.player.NickName, chatInput.text);
         chatInput.text = "";
@@ -443,8 +451,17 @@ public class NetworkMenuManager : Photon.PunBehaviour
             GameObject go = Instantiate(chatMsgPrefab, parent);
             go.GetComponentInChildren<Text>().text = string.Format("<color=#FFE798B4>[{0}]</color>  <color=orange>{1}</color>: {2}", 
                 DateTime.Now.ToString("HH:mm:ss"), nick, msg);
+            chatTickSound.Play();
         }
 
+        StartCoroutine(ScrollChat());
+    }
+
+    private IEnumerator ScrollChat()
+    {
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
         chatScroll.value = 0;
     }
 
@@ -684,9 +701,26 @@ public class NetworkMenuManager : Photon.PunBehaviour
         }
     }
 
+    public void SocialDiscord()
+    {
+        Application.OpenURL("https://discord.gg/DZ2UkbC");
+    }
+
     void OnGUI()
     {
-        if(PhotonNetwork.connected)
-            GUILayout.Label(PhotonNetwork.connectionState + "\n" + PhotonNetwork.GetPing() + " ms");
+        GUI.color = Color.white;
+        GUI.Label(new Rect(3, 0, 100, 20), PhotonNetwork.connectionState.ToString());
+
+        if (PhotonNetwork.GetPing() >= 200)
+            GUI.color = Color.red;
+        else if (PhotonNetwork.GetPing() >= 100)
+            GUI.color = Color.yellow;
+        else
+            GUI.color = Color.white;
+
+        GUI.Label(new Rect(3, 15, 100, 20), PhotonNetwork.GetPing() + " ms");
+
+        GUI.color = Color.white;
+        GUI.Label(new Rect(3, Screen.height - 18, 250, 20), "©2017 IDP, RM, KB");
     }
 }

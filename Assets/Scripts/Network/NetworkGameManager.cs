@@ -71,6 +71,7 @@ public class NetworkGameManager : Photon.PunBehaviour
     public GameObject chatMsgPrefab;
     public InputField chatInput;
     public Scrollbar chatScroll;
+    public AudioSource chatTickSound;
 
     void Start()
     {
@@ -387,20 +388,28 @@ public class NetworkGameManager : Photon.PunBehaviour
             go.transform.localScale = new Vector3(1f, 1f, 1f);
             go.GetComponentInChildren<Text>().text = string.Format("<color=#FFE798B4>[{0}]</color>  <color=orange>{1}</color>: {2}",
                 System.DateTime.Now.ToString("HH:mm:ss"), nick, msg);
+            chatTickSound.Play();
         }
 
-        StartCoroutine(SetScroll());
+        StartCoroutine(ScrollChat());
     }
 
-    private IEnumerator SetScroll()
+    private IEnumerator ScrollChat()
     {
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
         chatScroll.value = 0;
     }
 
     public void SendMsg()
     {
+        if (chatInput.text.Trim() == "")
+        {
+            chatInput.ActivateInputField();
+            return;
+        }
+
         PhotonView photonView = PhotonView.Get(this);
         photonView.RPC("RpcSendText", PhotonTargets.All, PhotonNetwork.player.NickName, chatInput.text);
         chatInput.text = "";
