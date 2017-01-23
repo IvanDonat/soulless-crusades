@@ -30,6 +30,8 @@ public class PlayerMovement : Photon.PunBehaviour
     public Animation anim; 
     public Transform playerMarker;
 
+    public Transform hatParent;
+
     public ParticleSystem castParticleSystem;
     // this value is controller by PlayerScript
     // the current color of the casting hand particles
@@ -68,6 +70,19 @@ public class PlayerMovement : Photon.PunBehaviour
         playerMarker.gameObject.SetActive(photonView.isMine);
 
         currentSpellColor = new Color(0, 0, 0, 0);
+
+        // hat code is here but we don't have any hats
+        if(false) // put prefabs into Resources/Hats/ and remove if clause
+            SetHat();
+    }
+
+    private void SetHat()
+    {
+        GameObject[] allHats = Resources.LoadAll<GameObject>("Hats");
+        int index = Mathf.Abs(photonView.viewID) % allHats.Length; 
+        GameObject hat = Instantiate(allHats[index], Vector3.zero, Quaternion.identity) as GameObject;
+        hat.transform.SetParent(hatParent, false);
+        hat.transform.localPosition = Vector3.zero;
     }
 
     void Update()
