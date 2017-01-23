@@ -135,36 +135,11 @@ public class PlayerMovement : Photon.PunBehaviour
 
     private void HandleInput()
     {
-        if (Application.platform == RuntimePlatform.Android)
-        { // ANDROID
-            hasMovementOrder = false;
-            if(state == PlayerState.WALKING)
-                state = PlayerState.IDLE;
-
-            if (Input.GetMouseButton(0) && state != PlayerState.CASTING && state != PlayerState.STUNNED)
-            {
-                if (EventSystem.current.IsPointerOverGameObject())
-                    return;
-
-                if (playerScript.GetSpell() != null)
-                    return;
-
-                RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (terrain.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
-                {
-                    SetTargetPosition(hit.point);
-                    hasMovementOrder = true;
-                    rbody.drag = defaultFriction;
-                    state = PlayerState.WALKING;
-                }
-            }
-        }
-        else if (Input.GetMouseButtonDown(1) && state != PlayerState.CASTING && state != PlayerState.STUNNED)
-        { // PC
-            if (EventSystem.current.IsPointerOverGameObject())
-                return;
-
+        if (EventSystem.current.IsPointerOverGameObject())
+            return; 
+        
+        if (Input.GetMouseButtonDown(1) && state != PlayerState.CASTING && state != PlayerState.STUNNED)
+        {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (terrain.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
