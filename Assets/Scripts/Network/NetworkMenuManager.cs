@@ -36,7 +36,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     //Default room options
     private string roomName = "";
-    private byte numberOfPlayers = 2;
+    private byte numberOfPlayers = 4;
 
     //Private lobby vars
     private PhotonPlayer selectedPlayer;
@@ -389,7 +389,6 @@ public class NetworkMenuManager : Photon.PunBehaviour
     {
         PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = numberOfPlayers, IsVisible = !privateToggle.isOn }, null);
         privateToggle.isOn = false;
-        roomInputField.text = "";
         isCurrentRoomCompetitive = false;
     }
 
