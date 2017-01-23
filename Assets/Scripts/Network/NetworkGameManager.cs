@@ -477,9 +477,10 @@ public class NetworkGameManager : Photon.PunBehaviour
         {
             // @TODO handle this
             // @TODO maybe put a messageboxish thing
-            print("Everyone left. Disconnecting."); 
+            print("Everyone left. Disconnecting.");
             Disconnect();
         }
+        Events.Add(other.NickName + " has left.");
     }
 
     public void Disconnect()
