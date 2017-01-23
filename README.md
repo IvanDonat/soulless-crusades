@@ -1,5 +1,11 @@
-# soulless-crusades
+# Soulless Crusades
 A multiplayer brawl arena game.
+Fight in an arena with spells as the terrain falls apart and knockback increases.
 
-## Teaser Video:
-[<img src="https://camo.githubusercontent.com/4d3d8483120fad799236dc8ec221c7e8eb68f91b/68747470733a2f2f7075752e73682f746137326a2f326636366339336131652e706e67">](https://www.youtube.com/watch?v=h789Cm9fUSA)
+![](https://puu.sh/txq8r/5940c978ff.png =500x185)
+
+## Some Images
+
+![](https://puu.sh/txqpV/6c27e5af6b.PNG)
+![](https://puu.sh/txqpI/2530d133e1.PNG)
+![](https://puu.sh/txqIe/53fe1579e6.PNG)
