@@ -32,6 +32,9 @@ public class GravityWellSpell : Spell
 
     void FixedUpdate()
     {
+        if (!localPlayer)
+            return; //died
+
         timeAlive += Time.deltaTime;
         if (timeAlive >= lifetime)
             Destroy(gameObject);
