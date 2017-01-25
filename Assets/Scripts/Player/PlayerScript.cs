@@ -181,7 +181,7 @@ public partial class PlayerScript : Photon.PunBehaviour
         if (dmgDealer != null)
         { // null in case of lava
             var num = PhotonNetwork.Instantiate("Damage Numbers", transform.position, Quaternion.identity, 0);
-            num.GetPhotonView().RPC("RpcSetText", PhotonTargets.All, (int) dmg);
+            num.GetPhotonView().RPC("RpcSetText", PhotonTargets.All, PhotonNetwork.player, (int) dmg);
 
             lastDamageDealer = dmgDealer;
             movementScript.Stun(stunTime);
@@ -208,7 +208,7 @@ public partial class PlayerScript : Photon.PunBehaviour
     public void Heal(float amount)
     {
         var num = PhotonNetwork.Instantiate("Damage Numbers", transform.position, Quaternion.identity, 0);
-        num.GetPhotonView().RPC("RpcSetText", PhotonTargets.All, (int) -amount);
+        num.GetPhotonView().RPC("RpcSetText", PhotonTargets.All, PhotonNetwork.player, (int) -amount);
 
         health += amount;
         health = Mathf.Clamp(health, 0, maxHealth);

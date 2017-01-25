@@ -12,6 +12,8 @@ public class DamageNumbersScript : Photon.PunBehaviour
 
     private float speed = 1f;
 
+    private Transform player;
+
     void Awake()
     {
         text = gameObject.GetComponentInChildren<Text>();
@@ -23,6 +25,9 @@ public class DamageNumbersScript : Photon.PunBehaviour
 
         transform.Translate(Vector3.up * speed * Time.deltaTime, Space.World);
 
+        if (player)
+            transform.position = new Vector3(player.position.x, transform.position.y, player.position.z);
+
         text.color = new Color(text.color.r, text.color.g, text.color.b, 
             Mathf.Lerp(1, 0, time / lifetime));
 
@@ -31,7 +36,7 @@ public class DamageNumbersScript : Photon.PunBehaviour
     }
 
     [PunRPC]
-    public void RpcSetText(int dmg)
+    public void RpcSetText(PhotonPlayer owner, int dmg)
     {
         if (dmg == 0)
             Destroy(gameObject);
@@ -45,6 +50,15 @@ public class DamageNumbersScript : Photon.PunBehaviour
             dmg = -dmg; // negative amounts will mean healing, swap to positive
             text.text = dmg.ToString("D2");
             text.color = Color.green;
+        }
+
+        foreach (GameObject pl in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            if (pl.GetPhotonView().owner == owner)
+            {
+                player = pl.transform;
+                break;
+            }
         }
     }
 }
