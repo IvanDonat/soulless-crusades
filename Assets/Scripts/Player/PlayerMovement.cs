@@ -72,8 +72,8 @@ public class PlayerMovement : Photon.PunBehaviour
         currentSpellColor = new Color(0, 0, 0, 0);
 
         // hat code is here but we don't have any hats
-        if(false) // put prefabs into Resources/Hats/ and remove if clause
-            SetHat();
+        // put prefabs into Resources/Hats/ and remove if clause
+        //    SetHat();
     }
 
     private void SetHat()
