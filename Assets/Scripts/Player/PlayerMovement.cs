@@ -128,7 +128,10 @@ public class PlayerMovement : Photon.PunBehaviour
             return;
         }
 
-        HandleInput();
+        if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+            HandleInputMobile();
+        else
+            HandleInput();
 
         if (photonView.isMine && state == PlayerState.STUNNED)
         {
@@ -146,6 +149,34 @@ public class PlayerMovement : Photon.PunBehaviour
 
         if (DistanceToTarget() < 1f && state == PlayerState.WALKING)
             state = PlayerState.IDLE;
+    }
+
+    private void HandleInputMobile()
+    {
+        foreach (Touch t in Input.touches)
+            if (EventSystem.current.IsPointerOverGameObject(t.fingerId))
+                return; 
+
+        if (Input.GetMouseButtonDown(1) && state != PlayerState.CASTING && state != PlayerState.STUNNED)
+        {
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (terrain.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
+            {
+                SetTargetPosition(hit.point);
+                hasMovementOrder = true;
+                rbody.drag = defaultFriction;
+                GameObject.Instantiate(prefabParticlesOnClick, hit.point + Vector3.up * 0.1f, Quaternion.identity);
+                state = PlayerState.WALKING;
+                playerScript.SetSpell(null);
+            }
+        }
+
+        if (Input.GetMouseButtonDown(1) && state == PlayerState.CASTING)
+        {
+            playerScript.CancelCast();
+            state = PlayerState.IDLE;
+        }
     }
 
     private void HandleInput()
