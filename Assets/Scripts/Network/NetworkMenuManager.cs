@@ -19,13 +19,14 @@ public class NetworkMenuManager : Photon.PunBehaviour
                 labelRegStatus, labelUser, labelPrivateRoomInfo, labelTotalPlayers;
     public InputField roomInputField, chatInput, usernameInput, pwInput, emailRegInput, usernameRegInput, pwRegInput,
                         privateRoomField;
-    public Toggle privateToggle, readyToggle;
+    public Toggle privateToggle, readyToggle, windowedToggle;
     public Slider playerNumberSlider, roundsToWinSlider;
     public Button kickPlayer, startGame, goToLogin, goToRegister, goToVideo, goToSound, goToControls, acSettings;
     public Scrollbar chatScroll;
     public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab, infoPanel,
                         selectSpellsPanel, loginPanel, registerPanel, joinPrivateRoomPanel, videoPanel, soundPanel,
                         controlsPanel;
+    public Dropdown resolutions;
 
     private Dictionary<PhotonPlayer, Toggle> readyCheckmarks = new Dictionary<PhotonPlayer, Toggle>();
 
@@ -69,6 +70,20 @@ public class NetworkMenuManager : Photon.PunBehaviour
     {
         selectedRegion = CloudRegionCode.eu;
         roomRefreshTimer = roomRefreshInterval;
+
+        int i = 0;
+        foreach (Resolution res in Screen.resolutions) //for loop will slow this down much more than adding i
+        {
+            resolutions.options.Add(new Dropdown.OptionData() {
+                text = res.width + " x " + res.height + "       " + res.refreshRate + "Hz"
+            });
+
+            if (Screen.currentResolution.width == res.width && Screen.currentResolution.height == res.height)
+                resolutions.value = i;
+            i++;
+        }
+
+        windowedToggle.isOn = Screen.fullScreen;
 
         pwInput.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Connect();});
         usernameInput.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Connect();});
@@ -146,6 +161,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
                 }
             }
         }
+
+        Screen.fullScreen = windowedToggle.isOn;
     }
 
     public void Connect()
@@ -207,6 +224,12 @@ public class NetworkMenuManager : Photon.PunBehaviour
         {
             selectedRegion = CloudRegionCode.sa;
         }
+    }
+
+    public void SelectResolution(Dropdown target)
+    {
+        string res = target.GetComponentInChildren<Text>().text;
+        Screen.SetResolution(int.Parse(res.Split('x')[0]), int.Parse(res.Split(' ')[2]), Screen.fullScreen);
     }
 
     //operations - "add", "substract", "get"
