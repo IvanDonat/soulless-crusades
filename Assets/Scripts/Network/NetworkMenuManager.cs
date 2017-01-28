@@ -20,7 +20,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public InputField roomInputField, chatInput, usernameInput, pwInput, emailRegInput, usernameRegInput, pwRegInput,
                         privateRoomField;
     public Toggle privateToggle, readyToggle, windowedToggle;
-    public Slider playerNumberSlider, roundsToWinSlider;
+    public Slider playerNumberSlider, roundsToWinSlider, globalVolumeSlider;
     public Button kickPlayer, startGame, goToLogin, goToRegister, goToVideo, goToSound, goToControls, acSettings;
     public Scrollbar chatScroll;
     public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab, infoPanel,
@@ -84,6 +84,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
         }
 
         windowedToggle.isOn = Screen.fullScreen;
+        if (PlayerPrefs.HasKey("GlobalVolume"))
+            globalVolumeSlider.value = PlayerPrefs.GetFloat("GlobalVolume");
 
         pwInput.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Connect();});
         usernameInput.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Connect();});
@@ -358,6 +360,12 @@ public class NetworkMenuManager : Photon.PunBehaviour
         PhotonNetwork.LeaveRoom();
         infoPanel.SetActive(true);
         infoPanel.GetComponentInChildren<Text>().text = strKicked;
+    }
+
+    public void OnGlobalVolumeChangeValue(Slider slider)
+    {
+        AudioListener.volume = slider.value;
+        PlayerPrefs.SetFloat("GlobalVolume", slider.value);
     }
 
     public void OnMaxPlayersSliderChangeValue(Slider slider)
