@@ -39,7 +39,7 @@ public class Events : MonoBehaviour
             float gameTime = eventList[i].timeStamp;
             int minutes = (int)gameTime / 60;
             int seconds = (int)gameTime % 60;
-            stamps += minutes.ToString("D2") + ":" + seconds.ToString("D2") + '\n';
+            stamps += "<color=orange>[" + minutes.ToString("D2") + ":" + seconds.ToString("D2") + "]</color>" + '\n';
         }
 
         textEvents.text = events;
