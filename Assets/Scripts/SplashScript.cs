@@ -9,6 +9,8 @@ public class SplashScript : MonoBehaviour
     public Image logo;
     public AudioSource sound;
 
+    private bool shown = false;
+
     void Start()
     {
         logo.enabled = false;
@@ -17,31 +19,22 @@ public class SplashScript : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.Escape) || Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.Space))
+        if (logo.color.a <= 0.001f || Input.GetKey(KeyCode.Escape) || Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.Space))
             SceneManager.LoadScene("Menu");
+
+        if (!shown)
+            return;
+
+        Color c = logo.color;
+        c.a -= .3f * Time.deltaTime;
+        logo.color = c;
     }
 
     private IEnumerator ShowLogo()
     {
-        yield return new WaitForSeconds(.3f);
+        yield return new WaitForSeconds(.15f);
         sound.Play();
         logo.enabled = true;
-
-        StartCoroutine(FadeLogo());
-    }
-
-    private IEnumerator FadeLogo()
-    {
-        while (logo.color.a > 0f)
-        {
-            Color c = logo.color;
-            c.a -= 0.002f;
-            logo.color = c;
-
-            yield return new WaitForEndOfFrame();
-        }
-
-        yield return new WaitForSeconds(0.45f);
-        SceneManager.LoadScene("Menu");
+        shown = true;
     }
 }
