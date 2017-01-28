@@ -16,16 +16,16 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public Text labelVersion, labelError, labelPlayerInt, labelRoomName,
                 labelPlayerNumber, maxPlayers, labelRoundsToWin, labelRoundsToWinInt, labelAuthStatus, 
-                labelRegStatus, labelUser, labelPrivateRoomInfo, labelTotalPlayers;
+                labelRegStatus, labelUser, labelPrivateRoomInfo, labelTotalPlayers, labelRecoveryInfo;
     public InputField roomInputField, chatInput, usernameInput, pwInput, emailRegInput, usernameRegInput, pwRegInput,
-                        privateRoomField;
+                        privateRoomField, recoveryMailField;
     public Toggle privateToggle, readyToggle, windowedToggle;
     public Slider playerNumberSlider, roundsToWinSlider, globalVolumeSlider;
     public Button kickPlayer, startGame, goToLogin, goToRegister, goToVideo, goToSound, goToControls, acSettings;
     public Scrollbar chatScroll;
     public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab, infoPanel,
                         selectSpellsPanel, loginPanel, registerPanel, joinPrivateRoomPanel, videoPanel, soundPanel,
-                        controlsPanel;
+                        controlsPanel, recoveryPanel;
     public Dropdown resolutions;
 
     private Dictionary<PhotonPlayer, Toggle> readyCheckmarks = new Dictionary<PhotonPlayer, Toggle>();
@@ -563,6 +563,44 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public void GoToOptions()
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToOptions();
+    }
+
+    public void OpenRecovery()
+    {
+        recoveryPanel.SetActive(true);
+        recoveryMailField.ActivateInputField();
+    }
+
+    public void CloseRecovery()
+    {
+        recoveryPanel.SetActive(false);
+        recoveryMailField.text = "";
+        labelRecoveryInfo.text = "Enter the email address associated with your account. We will send you a password reset link shortly.";
+    }
+
+    public void SendRecoveryMail()
+    {
+        StartCoroutine(SendRecovery(recoveryMailField.text));
+        recoveryMailField.text = "";
+        recoveryMailField.ActivateInputField();
+    }
+
+    private IEnumerator SendRecovery(string mail)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("email", mail);
+        WWW w = new WWW("https://soullesscrusades.000webhostapp.com/lost_info.php", form);
+        yield return w;
+        //Debug.Log(w.error);
+        //Debug.Log(w.text);
+        if (w.text == "1")
+        {
+            labelRecoveryInfo.text = "Further instructions have been sent to your email address.";
+        }
+        else
+        {
+            labelRecoveryInfo.text = "There is no account associated with that email address.";
+        }
     }
 
     public override void OnCustomAuthenticationFailed(string debugMessage)
