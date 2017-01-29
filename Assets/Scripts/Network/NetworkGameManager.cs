@@ -39,6 +39,7 @@ public class NetworkGameManager : Photon.PunBehaviour
     public Text tooltipDescription;
 
     public Text roundOverText;
+    public Text roundOverTime;
 
     public Text miniScoresNames, miniScoresRounds;
 
@@ -187,14 +188,21 @@ public class NetworkGameManager : Photon.PunBehaviour
             }
 
             // mini scoreboard
-            miniScoresNames.text += p.NickName.Substring(0, Mathf.Min(7, p.NickName.Length)) + '\n';
+            miniScoresNames.text += p.NickName.Substring(0, Mathf.Min(9, p.NickName.Length)) + '\n';
             miniScoresRounds.text += p.CustomProperties[PlayerProperties.WINS] + "/" + winsForGameOver + '\n';
         }
 
-        if (GetState() == GameState.BETWEEN_ROUNDS && PhotonNetwork.isMasterClient)
+        if (GetState() == GameState.BETWEEN_ROUNDS)
         {
             timeBetweenRoundsCounter -= Time.deltaTime;
-            if (timeBetweenRoundsCounter <= 0)
+
+            int time = (int)timeBetweenRoundsCounter;
+            if (time < 0)
+                time = 0;
+            
+            roundOverTime.text = "New round starts in " + time + " seconds.";
+
+            if (PhotonNetwork.isMasterClient && timeBetweenRoundsCounter <= 0)
             {
                 int pointIndex = Random.Range(0, 7);
                 foreach (PhotonPlayer p in PhotonNetwork.playerList)
@@ -202,8 +210,6 @@ public class NetworkGameManager : Photon.PunBehaviour
                     photonView.RPC("StartNewRound", p, pointIndex % 8);
                     pointIndex++;
                 }
-
-                timeBetweenRoundsCounter = timeBetweenRounds;
             }
         }
 
@@ -238,7 +244,9 @@ public class NetworkGameManager : Photon.PunBehaviour
         terrainManager.StartRound();
         if(PhotonNetwork.isMasterClient)
             SetState(GameState.IN_ROUND);
+        
         roundTime = 0f;
+        timeBetweenRoundsCounter = timeBetweenRounds;
 
         Vector3 spawn = GameObject.Find("Spawnpoint" + spawnpointIndex).transform.position;
         PhotonNetwork.Instantiate(playerPrefab.name, spawn, Quaternion.identity, 0);
@@ -335,7 +343,7 @@ public class NetworkGameManager : Photon.PunBehaviour
     [PunRPC]
     public void RoundOver(PhotonPlayer winner)
     {
-        roundOverText.text = winner.NickName + "\n\nWon this round!";
+        roundOverText.text = winner.NickName + "\nwon this round!";
         Events.Add(winner.NickName + " won this round!");
 
         if (PhotonNetwork.player == winner)
