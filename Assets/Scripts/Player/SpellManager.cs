@@ -114,12 +114,17 @@ public partial class PlayerScript : Photon.PunBehaviour
 
     private void SpellButtonClicked(int index)
     {
+        if (currentSpellName != null && indexSpellSelected == index)
+        {
+            StartCastingSpell();
+            return;
+        }
+
         if (spellName[index] != "" && spellCooldown[index] <= 0)
         {
             SetSpell(spellName[index]);
+            indexSpellSelected = index;
         }
-
-        indexSpellSelected = index;
     }
 
     private void SpellButtonClicked()

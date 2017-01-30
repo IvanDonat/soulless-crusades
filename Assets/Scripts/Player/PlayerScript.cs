@@ -96,26 +96,7 @@ public partial class PlayerScript : Photon.PunBehaviour
         if (currentSpellName != null && Input.GetMouseButtonDown(0) && spellCooldown[indexSpellSelected] <= 0
             && movementScript.GetState() != PlayerState.CASTING && movementScript.GetState() != PlayerState.STUNNED)
         {
-            RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (terrain.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
-            {
-                Vector3 aimPos = hit.point;
-                aimPos -= Camera.main.transform.forward * (transform.position.y - aimPos.y); // move towards camera by a bit
-                aimPos.y = transform.position.y;
-
-                Vector3 aimDir = aimPos - transform.position;
-                aimDir.Normalize();
-
-                if(castCoroutine != null)
-                    CancelCast();
-                castCoroutine = CastWithDelay(currentSpellName, indexSpellSelected, currentSpellScript.GetCooldown(), currentSpellScript.GetCastTime(), hit.point, aimPos, aimDir);
-                StartCoroutine(castCoroutine);
-
-                movementScript.CastSpell(currentSpellScript.GetCastTime(), aimPos);
-
-                SetSpell(null);
-            }
+            StartCastingSpell();
         }
 
         if (shieldTimeLeft >= 0f)
@@ -125,6 +106,30 @@ public partial class PlayerScript : Photon.PunBehaviour
             blindTimeLeft -= Time.deltaTime;
         else
             gameManager.lensFlare.SetActive(false);     
+    }
+
+    public void StartCastingSpell()
+    {
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (terrain.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
+        {
+            Vector3 aimPos = hit.point;
+            aimPos -= Camera.main.transform.forward * (transform.position.y - aimPos.y); // move towards camera by a bit
+            aimPos.y = transform.position.y;
+
+            Vector3 aimDir = aimPos - transform.position;
+            aimDir.Normalize();
+
+            if(castCoroutine != null)
+                CancelCast();
+            castCoroutine = CastWithDelay(currentSpellName, indexSpellSelected, currentSpellScript.GetCooldown(), currentSpellScript.GetCastTime(), hit.point, aimPos, aimDir);
+            StartCoroutine(castCoroutine);
+
+            movementScript.CastSpell(currentSpellScript.GetCastTime(), aimPos);
+
+            SetSpell(null);
+        }
     }
 
     private IEnumerator CastWithDelay(string spell, int spellIndex, float cooldown, float time, Vector3 mousePos, Vector3 aimPos, Vector3 aimDir)
