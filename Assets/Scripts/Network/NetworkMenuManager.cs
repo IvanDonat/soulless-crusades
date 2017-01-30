@@ -608,7 +608,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         isAuthError = true;
         loadingPanel.SetActive(false);
         errorPanel.SetActive(false);
-        labelAuthStatus.text = "Username or password is invalid!";
+        labelAuthStatus.text = debugMessage;
     }
 
     public override void OnPhotonJoinRoomFailed(object[] codeAndMsg)
