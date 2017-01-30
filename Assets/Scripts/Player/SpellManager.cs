@@ -94,9 +94,6 @@ public partial class PlayerScript : Photon.PunBehaviour
         if (gameManager.IsChatOpen())
             return;
 
-        if (Input.GetMouseButton(1))
-            return;
-
         if (Input.GetKeyDown(KeyCode.Q))
             SpellButtonClicked(0);
         if (Input.GetKeyDown(KeyCode.W))
@@ -114,14 +111,26 @@ public partial class PlayerScript : Photon.PunBehaviour
 
     private void SpellButtonClicked(int index)
     {
+        if (Input.GetMouseButton(1) || movementScript.GetState() == PlayerState.CASTING || movementScript.GetState() == PlayerState.STUNNED)
+        {
+            audioAccessDenied.Play();
+            return;
+        }
+
         if (currentSpellName != null && indexSpellSelected == index)
         {
             StartCastingSpell();
             return;
         }
 
-        if (spellName[index] != "" && spellCooldown[index] <= 0)
+        if (spellName[index] != "")
         {
+            if (spellCooldown[index] > 0)
+            {
+                audioAccessDenied.Play();
+                return;
+            }
+
             SetSpell(spellName[index]);
             indexSpellSelected = index;
         }

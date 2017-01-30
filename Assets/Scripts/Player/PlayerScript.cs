@@ -37,6 +37,7 @@ public partial class PlayerScript : Photon.PunBehaviour
     private float blindTimeLeft = 0f;
 
     public AudioSource audioSpellSelect;
+    public AudioSource audioAccessDenied;
 
     public Text nameBar;
 
@@ -78,13 +79,11 @@ public partial class PlayerScript : Photon.PunBehaviour
             return;
 
         UpdateSpells();
-        PlayerProperties.SetProperty(PlayerProperties.HEALTH, (int) health);
 
         if (Input.GetKeyDown(KeyCode.Escape))
             SetSpell(null);
 
         healthBar.value = Mathf.Lerp(healthBar.value, health / maxHealth, Time.deltaTime * 20f);
-        //healthBar3D.value = Mathf.Lerp(healthBar3D.value, (int)PhotonNetwork.player.CustomProperties[PlayerProperties.HEALTH] / (float)maxHealth, Time.deltaTime * 5f);
         healthBarNum.text = (Convert.ToInt32(healthBar.value * 100)).ToString().Aggregate(string.Empty, (c, i) => c + i + ' ') 
             + "/ " + maxHealth.ToString().Aggregate(string.Empty, (c, i) => c + i + ' ');
         if (healthBar.value < 1 / 100f)
@@ -173,6 +172,16 @@ public partial class PlayerScript : Photon.PunBehaviour
     public string GetSpell()
     {
         return currentSpellName;
+    }
+
+    public float GetHealth()
+    {
+        return health;
+    }
+
+    public float GetMaxHealth()
+    {
+        return maxHealth;
     }
 
     [PunRPC]

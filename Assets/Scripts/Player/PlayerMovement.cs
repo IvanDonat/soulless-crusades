@@ -18,6 +18,7 @@ public class PlayerMovement : Photon.PunBehaviour
 
     public Slider healthBar3D;
     public Text nameBar3D;
+    private float syncedHealth = 100f; // serialized between clients
 
     private float defaultFriction = 5f; // friction drops when hit by spell
     private float moveForce = 30f;
@@ -87,7 +88,9 @@ public class PlayerMovement : Photon.PunBehaviour
 
     void Update()
     {
-        healthBar3D.value = Mathf.Lerp(healthBar3D.value, (int)photonView.owner.CustomProperties[PlayerProperties.HEALTH] / 100f, Time.deltaTime * 5f);
+        if (photonView.isMine)
+            syncedHealth = playerScript.GetHealth(); // otherwise synced by serialize
+        healthBar3D.value = Mathf.Lerp(healthBar3D.value, syncedHealth / playerScript.GetMaxHealth(), Time.deltaTime * 5f);
 
         if (state == PlayerState.IDLE)
             anim.CrossFade("Idle", 0.5f);
@@ -343,6 +346,7 @@ public class PlayerMovement : Photon.PunBehaviour
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
             stream.SendNext(state);
+            stream.SendNext(playerScript.GetHealth());
             stream.SendNext(new Vector3(currentSpellColor.r, currentSpellColor.g, currentSpellColor.b));
             stream.SendNext(currentSpellColor.a);
         }
@@ -351,12 +355,14 @@ public class PlayerMovement : Photon.PunBehaviour
             Vector3 syncPos = (Vector3) stream.ReceiveNext();
             Quaternion syncRot = (Quaternion) stream.ReceiveNext();
             PlayerState syncState = (PlayerState)stream.ReceiveNext();
+            float syncHealth = (float)stream.ReceiveNext();
             Vector3 castColor = (Vector3) stream.ReceiveNext();
             float castAlpha = (float) stream.ReceiveNext();
 
             syncPosition = syncPos;
             syncRotation = syncRot;
             state = syncState;
+            syncedHealth = syncHealth;
             currentSpellColor = new Color(castColor.x, castColor.y, castColor.z, castAlpha);
         }
     }
