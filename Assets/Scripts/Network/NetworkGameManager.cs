@@ -86,6 +86,9 @@ public class NetworkGameManager : Photon.PunBehaviour
 
         tooltipParent.SetActive(false);
 
+        gameTime = 0f;
+        roundTime = 0f;
+
         StartCoroutine(Wait(8.5f));
 
         scorePanelRect = scorePanel.GetComponent<RectTransform>();

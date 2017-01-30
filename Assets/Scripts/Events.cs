@@ -61,4 +61,9 @@ public class Events : MonoBehaviour
     {
         eventList.Add(e);
     }
+
+    public static void Clear()
+    {
+        eventList.Clear();
+    }
 }
