@@ -217,6 +217,9 @@ public partial class PlayerScript : Photon.PunBehaviour
     [PunRPC]
     public void Blind(float time)
     {
+        if (shieldTimeLeft >= 0f)
+            return;
+
         blindTimeLeft += time;
         gameManager.lensFlare.SetActive(true);
     }
