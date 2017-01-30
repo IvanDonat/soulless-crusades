@@ -23,6 +23,9 @@ public class BlindSpell : Spell
     {
         if (c.tag == "Player" && c.GetComponent<PhotonView>().isMine)
             return;
+        
+        if (c.tag == "Spell" && c.GetComponent<PhotonView>().isMine)
+            return;
 
         if (photonView.isMine)
         {
