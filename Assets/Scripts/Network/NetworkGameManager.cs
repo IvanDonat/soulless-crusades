@@ -52,7 +52,7 @@ public class NetworkGameManager : Photon.PunBehaviour
     private GameState gameState = GameState.WARMUP;
 
     // between rounds
-    private const float timeBetweenRounds = 5f;
+    private const float timeBetweenRounds = 10f;
     private float timeBetweenRoundsCounter;
 
     // tracks wins for each player, UNSYNCED FOR EVERYONE ELSE!!
