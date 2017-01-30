@@ -158,13 +158,13 @@ public partial class PlayerScript : Photon.PunBehaviour
         {
             GameObject spellGO = Resources.Load<GameObject>("Spells/" + spellName);
             currentSpellScript = spellGO.GetComponent<Spell>();
-            Cursor.SetCursor(castCursor, Vector2.zero, CursorMode.Auto);
+            Cursor.SetCursor(castCursor, new Vector2(castCursor.width / 2, castCursor.height / 2), CursorMode.Auto);
             movementScript.currentSpellColor = currentSpellScript.castColor;
             audioSpellSelect.Play();
         }
         else
         {
-            Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
+            Cursor.SetCursor(castCursor, new Vector2(castCursor.width / 2, castCursor.height / 2), CursorMode.Auto);
             movementScript.currentSpellColor = new Color(0, 0, 0, 0);
         }
     }
