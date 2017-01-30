@@ -94,6 +94,9 @@ public partial class PlayerScript : Photon.PunBehaviour
         if (gameManager.IsChatOpen())
             return;
 
+        if (Input.GetMouseButton(1))
+            return;
+
         if (Input.GetKeyDown(KeyCode.Q))
             SpellButtonClicked(0);
         if (Input.GetKeyDown(KeyCode.W))

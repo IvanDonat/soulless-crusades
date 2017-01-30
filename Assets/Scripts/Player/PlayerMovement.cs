@@ -157,7 +157,7 @@ public class PlayerMovement : Photon.PunBehaviour
             if (EventSystem.current.IsPointerOverGameObject(t.fingerId))
                 return; 
 
-        if (Input.GetMouseButtonDown(1) && state != PlayerState.CASTING && state != PlayerState.STUNNED)
+        if (Input.GetMouseButton(1) && state != PlayerState.CASTING && state != PlayerState.STUNNED)
         {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -166,9 +166,11 @@ public class PlayerMovement : Photon.PunBehaviour
                 SetTargetPosition(hit.point);
                 hasMovementOrder = true;
                 rbody.drag = defaultFriction;
-                GameObject.Instantiate(prefabParticlesOnClick, hit.point + Vector3.up * 0.1f, Quaternion.identity);
                 state = PlayerState.WALKING;
                 playerScript.SetSpell(null);
+
+                if(Input.GetMouseButtonDown(1))
+                    GameObject.Instantiate(prefabParticlesOnClick, hit.point + Vector3.up * 0.1f, Quaternion.identity);
             }
         }
 
@@ -184,7 +186,7 @@ public class PlayerMovement : Photon.PunBehaviour
         if (EventSystem.current.IsPointerOverGameObject())
             return; 
         
-        if (Input.GetMouseButtonDown(1) && state != PlayerState.CASTING && state != PlayerState.STUNNED)
+        if (Input.GetMouseButton(1) && state != PlayerState.CASTING && state != PlayerState.STUNNED)
         {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -193,9 +195,11 @@ public class PlayerMovement : Photon.PunBehaviour
                 SetTargetPosition(hit.point);
                 hasMovementOrder = true;
                 rbody.drag = defaultFriction;
-                GameObject.Instantiate(prefabParticlesOnClick, hit.point + Vector3.up * 0.1f, Quaternion.identity);
                 state = PlayerState.WALKING;
                 playerScript.SetSpell(null);
+
+                if(Input.GetMouseButtonDown(1))
+                    GameObject.Instantiate(prefabParticlesOnClick, hit.point + Vector3.up * 0.1f, Quaternion.identity);
             }
         }
 
