@@ -229,6 +229,8 @@ public partial class PlayerScript : Photon.PunBehaviour
         
         gameManager.GetPlayingUI().SetActive(false);
         gameManager.GetSpectatorUI().SetActive(true);
+
+        gameManager.lensFlare.SetActive(false);
         
         if(!isGameOver)
         {
