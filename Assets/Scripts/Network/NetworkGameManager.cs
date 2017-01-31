@@ -166,33 +166,36 @@ public class NetworkGameManager : Photon.PunBehaviour
         miniScoresNames.text = "";
         miniScoresRounds.text = "";
 
-        foreach (PhotonPlayer p in PhotonNetwork.playerList)
+        if (GetState() != GameState.GAME_OVER)
         {
-            // major scoreboard
-            foreach (GameObject go in scoreList)
+            foreach (PhotonPlayer p in PhotonNetwork.playerList)
             {
-                if (go.name != p.NickName)
-                    continue;
-
-                foreach (RectTransform r in go.GetComponentsInChildren<RectTransform>())
+                // major scoreboard
+                foreach (GameObject go in scoreList)
                 {
-                    if(p.CustomProperties[PlayerProperties.KILLS] == null)
-                        return;
+                    if (go.name != p.NickName)
+                        continue;
 
-                    if (r.gameObject.name == "Name")
-                        r.GetComponent<Text>().text = p.NickName;
-                    else if (r.gameObject.name == "Kills")
-                        r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.KILLS].ToString();
-                    else if (r.gameObject.name == "Deaths")
-                        r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.DEATHS].ToString();
-                    else if (r.gameObject.name == "Rounds Won")
-                        r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.WINS].ToString();
+                    foreach (RectTransform r in go.GetComponentsInChildren<RectTransform>())
+                    {
+                        if (p.CustomProperties[PlayerProperties.KILLS] == null)
+                            return;
+
+                        if (r.gameObject.name == "Name")
+                            r.GetComponent<Text>().text = p.NickName;
+                        else if (r.gameObject.name == "Kills")
+                            r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.KILLS].ToString();
+                        else if (r.gameObject.name == "Deaths")
+                            r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.DEATHS].ToString();
+                        else if (r.gameObject.name == "Rounds Won")
+                            r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.WINS].ToString();
+                    }
                 }
-            }
 
-            // mini scoreboard
-            miniScoresNames.text += p.NickName.Substring(0, Mathf.Min(9, p.NickName.Length)) + '\n';
-            miniScoresRounds.text += p.CustomProperties[PlayerProperties.WINS] + "/" + winsForGameOver + '\n';
+                // mini scoreboard
+                miniScoresNames.text += p.NickName.Substring(0, Mathf.Min(9, p.NickName.Length)) + '\n';
+                miniScoresRounds.text += p.CustomProperties[PlayerProperties.WINS] + "/" + winsForGameOver + '\n';
+            }
         }
 
         if (GetState() == GameState.BETWEEN_ROUNDS)
