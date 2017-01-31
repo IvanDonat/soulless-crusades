@@ -487,7 +487,7 @@ public class NetworkGameManager : Photon.PunBehaviour
 
     public override void OnPhotonPlayerDisconnected(PhotonPlayer other)
     {
-        if (PhotonNetwork.playerList.Length == 1)
+        if (PhotonNetwork.playerList.Length == 1 && GetState() != GameState.GAME_OVER)
         {
             // @TODO handle this
             // @TODO maybe put a messageboxish thing
