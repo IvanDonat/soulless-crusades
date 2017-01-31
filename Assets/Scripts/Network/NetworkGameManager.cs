@@ -216,7 +216,7 @@ public class NetworkGameManager : Photon.PunBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Return) && chatInput.gameObject.activeInHierarchy)
+        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && chatInput.gameObject.activeInHierarchy)
         {
             SendMsg();
             chatInput.gameObject.SetActive(false);

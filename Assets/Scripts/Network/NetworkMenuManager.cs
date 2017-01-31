@@ -135,7 +135,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         else
             labelTotalPlayers.text = "";
 
-        if (PhotonNetwork.inRoom && Input.GetKey(KeyCode.Return))
+        if (PhotonNetwork.inRoom && (Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.KeypadEnter)))
             SendMsg();
 
         if (PhotonNetwork.inRoom)
