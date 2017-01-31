@@ -164,7 +164,7 @@ public partial class PlayerScript : Photon.PunBehaviour
         }
         else
         {
-            Cursor.SetCursor(castCursor, new Vector2(castCursor.width / 2, castCursor.height / 2), CursorMode.Auto);
+            Cursor.SetCursor(defaultCursor, new Vector2(32, 32), CursorMode.Auto);
             movementScript.currentSpellColor = new Color(0, 0, 0, 0);
         }
     }
