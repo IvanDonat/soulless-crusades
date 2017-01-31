@@ -28,6 +28,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
                         controlsPanel, recoveryPanel;
     public Dropdown resolutions;
 
+    private bool loadedResolutions = false;
+
     private Dictionary<PhotonPlayer, Toggle> readyCheckmarks = new Dictionary<PhotonPlayer, Toggle>();
 
     public AudioSource chatTickSound;
@@ -71,17 +73,21 @@ public class NetworkMenuManager : Photon.PunBehaviour
         selectedRegion = CloudRegionCode.eu;
         roomRefreshTimer = roomRefreshInterval;
 
-        int i = 0;
+        int i = 0, saved_index = -1;
+        Resolution curr = Screen.currentResolution;
         foreach (Resolution res in Screen.resolutions) //for loop will slow this down much more than adding i
         {
             resolutions.options.Add(new Dropdown.OptionData() {
                 text = res.width + " x " + res.height + "       " + res.refreshRate + "Hz"
             });
 
-            if (Screen.currentResolution.width == res.width && Screen.currentResolution.height == res.height)
-                resolutions.value = i;
+            if (curr.width == res.width && curr.height == res.height && curr.refreshRate == res.refreshRate)
+                saved_index = i;
             i++;
         }
+        if (saved_index >= 0)
+            resolutions.value = saved_index;
+        loadedResolutions = true;
 
         windowedToggle.isOn = Screen.fullScreen;
         if (PlayerPrefs.HasKey("GlobalVolume"))
@@ -230,8 +236,10 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public void SelectResolution(Dropdown target)
     {
-        string res = target.GetComponentInChildren<Text>().text;
-        Screen.SetResolution(int.Parse(res.Split('x')[0]), int.Parse(res.Split(' ')[2]), Screen.fullScreen);
+        if (!loadedResolutions)
+            return;
+        Resolution res = Screen.resolutions[target.value];
+        Screen.SetResolution(res.width, res.height, Screen.fullScreen);
     }
 
     //operations - "add", "substract", "get"
