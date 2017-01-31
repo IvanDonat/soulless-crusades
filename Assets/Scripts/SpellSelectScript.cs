@@ -112,7 +112,6 @@ public class SpellSelectScript : MonoBehaviour
         selectedSpellButtons.Remove(buttonClicked);
         buttonClicked.transform.SetParent(allSpellsParent, false);
 
-
         int alphabeticalIndex = 0;
         foreach(Button b in allSpellButtons)
         {
@@ -134,6 +133,14 @@ public class SpellSelectScript : MonoBehaviour
         {
             allSpellButtons.Add(b);
             b.transform.SetParent(allSpellsParent, false);
+
+            int alphabeticalIndex = 0;
+            foreach(Button but in allSpellButtons)
+            {
+                if (but.transform.name.CompareTo(b.transform.name) == -1)
+                    alphabeticalIndex++;
+            }
+            b.transform.SetSiblingIndex(alphabeticalIndex);
 
             b.onClick.RemoveAllListeners();
             b.onClick.AddListener(() => ClickedButtonSelectSpell());
