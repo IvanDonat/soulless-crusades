@@ -314,9 +314,9 @@ public class NetworkGameManager : Photon.PunBehaviour
             PlayerProperties.IncrementProperty(PlayerProperties.KILLS);
 
         if (killer != null)
-            Events.Add(killer.NickName + " killed " + player.NickName + "!");
+            Events.Add("<color=green>" + killer.NickName + "</color>" + " killed " + "<color=green>" + player.NickName + "</color>" + "!");
         else
-            Events.Add(player.NickName + " died");
+            Events.Add("<color=green>" + player.NickName + "</color>" + " died");
 
         if(PhotonNetwork.isMasterClient && GetState() == GameState.IN_ROUND)
         {
@@ -357,8 +357,8 @@ public class NetworkGameManager : Photon.PunBehaviour
     [PunRPC]
     public void RoundOver(PhotonPlayer winner)
     {
-        roundOverText.text = winner.NickName + "\nwon this round!";
-        Events.Add(winner.NickName + " won this round!");
+        roundOverText.text = "<color=green>" + winner.NickName + "</color>" + "\nwon this round!";
+        Events.Add("<color=green>" + winner.NickName + "</color>" + " won this round!");
 
         if (PhotonNetwork.player == winner)
             PlayerProperties.IncrementProperty(PlayerProperties.WINS); 
@@ -395,8 +395,8 @@ public class NetworkGameManager : Photon.PunBehaviour
         playingUI.SetActive(false);
         gameOverUI.SetActive(true);
 
-        winner.text = lastRoundWinner.NickName + " is the winner!";
-        Events.Add(lastRoundWinner.NickName + " is the winner!");
+        winner.text = "<color=green>" + lastRoundWinner.NickName + "</color>" + " is the winner!";
+        Events.Add("<color=green>" + lastRoundWinner.NickName + "</color>" + " is the winner!");
         AndroidShowScore();
     }
 
@@ -502,7 +502,7 @@ public class NetworkGameManager : Photon.PunBehaviour
             print("Everyone left. Disconnecting.");
             Disconnect();
         }
-        Events.Add(other.NickName + " has left.");
+        Events.Add("<color=green>" + other.NickName + "</color>" + " has left.");
     }
 
     public void Disconnect()
