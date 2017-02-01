@@ -79,6 +79,7 @@ public class NetworkGameManager : Photon.PunBehaviour
 
     void Start()
     {
+        Events.Clear();
         terrainManager = GameObject.FindWithTag("Terrain").GetComponent<TerrainManager>();
         StartCoroutine(terrainManager.ProjectArcaneCircle());
 
