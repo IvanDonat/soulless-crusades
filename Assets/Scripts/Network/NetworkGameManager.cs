@@ -43,6 +43,9 @@ public class NetworkGameManager : Photon.PunBehaviour
 
     public Text miniScoresNames, miniScoresRounds;
 
+    public GameObject infoPanel;
+    public Text information;
+
     public Slider castingBar;
 
     private List<GameObject> scoreList = new List<GameObject>();
@@ -497,12 +500,17 @@ public class NetworkGameManager : Photon.PunBehaviour
     {
         if (PhotonNetwork.playerList.Length == 1 && GetState() != GameState.GAME_OVER)
         {
-            // @TODO handle this
-            // @TODO maybe put a messageboxish thing
-            print("Everyone left. Disconnecting.");
-            Disconnect();
+            infoPanel.SetActive(true);
+            information.text = "Everyone left. Exiting to main menu...";
+            StartCoroutine(DisconnectDelay());
         }
         Events.Add("<color=green>" + other.NickName + "</color>" + " has left.");
+    }
+
+    private IEnumerator DisconnectDelay()
+    {
+        yield return new WaitForSeconds(3f);
+        Disconnect();
     }
 
     public void Disconnect()
