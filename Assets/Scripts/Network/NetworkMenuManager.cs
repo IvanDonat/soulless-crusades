@@ -26,9 +26,10 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab, infoPanel,
                         selectSpellsPanel, loginPanel, registerPanel, joinPrivateRoomPanel, videoPanel, soundPanel,
                         controlsPanel, recoveryPanel;
-    public Dropdown resolutions;
+    public Dropdown resolutions, quality;
 
     private bool loadedResolutions = false;
+    private bool loadedQuality = false;
 
     private Dictionary<PhotonPlayer, Toggle> readyCheckmarks = new Dictionary<PhotonPlayer, Toggle>();
 
@@ -73,7 +74,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         selectedRegion = CloudRegionCode.eu;
         roomRefreshTimer = roomRefreshInterval;
 
-        int i = 0, saved_index = -1;
+        int i = 0, savedResolution = -1;
         Resolution curr = Screen.currentResolution;
         foreach (Resolution res in Screen.resolutions) //for loop will slow this down much more than adding i
         {
@@ -82,12 +83,28 @@ public class NetworkMenuManager : Photon.PunBehaviour
             });
 
             if (curr.width == res.width && curr.height == res.height && curr.refreshRate == res.refreshRate)
-                saved_index = i;
+                savedResolution = i;
             i++;
         }
-        if (saved_index >= 0)
-            resolutions.value = saved_index;
+        if (savedResolution >= 0)
+            resolutions.value = savedResolution;
         loadedResolutions = true;
+
+        int r = 0, savedQuality = -1;
+        string currentQuality = QualitySettings.names[QualitySettings.GetQualityLevel()];
+        foreach(string s in QualitySettings.names)
+        {
+            quality.options.Add(new Dropdown.OptionData() {
+                text = s
+            });
+
+            if (currentQuality == s)
+                savedQuality = r;
+            r++;
+        }
+        if (savedQuality>= 0)
+            quality.value = savedQuality;
+        loadedQuality = true;
 
         windowedToggle.isOn = Screen.fullScreen;
         if (PlayerPrefs.HasKey("GlobalVolume"))
@@ -240,6 +257,13 @@ public class NetworkMenuManager : Photon.PunBehaviour
             return;
         Resolution res = Screen.resolutions[target.value];
         Screen.SetResolution(res.width, res.height, Screen.fullScreen);
+    }
+
+    public void SelectQuality(Dropdown target)
+    {
+        if (!loadedQuality)
+            return;
+        QualitySettings.SetQualityLevel(target.value);
     }
 
     //operations - "add", "substract", "get"
