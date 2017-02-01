@@ -324,6 +324,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         goToLogin.interactable = false;
         registerPanel.SetActive(false);
         goToRegister.interactable = true;
+        EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void GoToRegister()
@@ -332,6 +333,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         goToLogin.interactable = true;
         registerPanel.SetActive(true);
         goToRegister.interactable = false;
+        EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void Okay()
@@ -546,6 +548,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         goToVideo.interactable = false;
         goToSound.interactable = true;
         goToControls.interactable = true;
+        EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void OptionsToSound()
@@ -556,6 +559,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         goToVideo.interactable = true;
         goToSound.interactable = false;
         goToControls.interactable = true;
+        EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void OptionsToControls()
@@ -566,6 +570,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         goToVideo.interactable = true;
         goToSound.interactable = true;
         goToControls.interactable = false;
+        EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void GoToOptions()
