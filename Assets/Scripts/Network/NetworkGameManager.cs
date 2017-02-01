@@ -156,9 +156,17 @@ public class NetworkGameManager : Photon.PunBehaviour
         roundTimeText.text = minutes.ToString("D2") + ":" + seconds.ToString("D2");
 
         if (Input.GetKey(KeyCode.Tab) || GetState() == GameState.BETWEEN_ROUNDS || androidShowScore == true)
+        {
             scorePanel.transform.Translate(0, -500f * Time.deltaTime, 0);
+            hideScore.SetActive(true);
+            showScore.SetActive(false);
+        }
         else
+        {
             scorePanel.transform.Translate(0, 500f * Time.deltaTime, 0);
+            hideScore.SetActive(false);
+            showScore.SetActive(true);
+        }
 
         scorePanelRect.anchoredPosition = new Vector2(0, Mathf.Clamp(scorePanelRect.anchoredPosition.y, -160f, 99f));
 
@@ -506,15 +514,11 @@ public class NetworkGameManager : Photon.PunBehaviour
 
     public void AndroidShowScore()
     {
-        hideScore.SetActive(true);
-        showScore.SetActive(false);
         androidShowScore = true;
     }
 
     public void AndroidHideScore()
     {
-        showScore.SetActive(true);
-        hideScore.SetActive(false);
         androidShowScore = false;
     }
 
