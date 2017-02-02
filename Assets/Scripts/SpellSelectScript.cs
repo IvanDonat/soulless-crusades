@@ -210,6 +210,7 @@ public class SpellSelectScript : MonoBehaviour
         {
             txt += "Spike lifetime: " + (s as SpikeSpell).duration + " s\n";
             txt += "Slowdown duration: " + (s as SpikeSpell).slowdownTime + " s\n";
+            txt += "Damage per second: " + (s as SpikeSpell).damagePerSec + "\n";
         }
         else if (s is MeteorSpell)
         {

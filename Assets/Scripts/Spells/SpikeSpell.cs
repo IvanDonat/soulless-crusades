@@ -6,10 +6,14 @@ public class SpikeSpell : Spell
 {
     public float duration = 10f;
     public float slowdownTime = 5f;
+    public float damagePerSec = 1f;
     public Collider spikeCollider;
     public Renderer spikeRenderer;
 
     private bool isActive = false;
+    private bool isPlayerIn = false;
+
+    private PlayerScript localPlayer;
 
     void Start()
     {
@@ -25,6 +29,15 @@ public class SpikeSpell : Spell
             Vector3 newPos = castMousePos + Vector3.down * 3f;
             photonView.RPC("Activate", PhotonTargets.All, newPos);
         }
+
+        foreach (GameObject go in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            if (go.GetComponent<PhotonView>().isMine)
+            {
+                localPlayer = go.GetComponent<PlayerScript>();
+                break;
+            }
+        }
     }
 
     void Update()
@@ -33,6 +46,9 @@ public class SpikeSpell : Spell
         {
             transform.Translate(Vector3.up * Time.deltaTime * 10f, Space.World);
         }
+
+        if (isActive && isPlayerIn && localPlayer)
+            localPlayer.TakeDamage(null, damagePerSec * Time.deltaTime, 0f);
     }
 
     [PunRPC]
@@ -68,6 +84,9 @@ public class SpikeSpell : Spell
         {
             c.GetComponent<PhotonView>().RPC("SetSlowdown", c.GetComponent<PhotonView>().owner, slowdownTime);
         }
+
+        if (c.tag == "Player" && c.GetComponent<PhotonView>().isMine)
+            isPlayerIn = true;
     }
 
     void OnTriggerExit(Collider c)
@@ -75,6 +94,10 @@ public class SpikeSpell : Spell
         if (photonView.isMine && c.tag == "Player")
         {
             c.GetComponent<PhotonView>().RPC("SetSlowdown", c.GetComponent<PhotonView>().owner, slowdownTime);
+            isPlayerIn = false;
         }
+
+        if (c.tag == "Player" && c.GetComponent<PhotonView>().isMine)
+            isPlayerIn = false;
     }
 }
