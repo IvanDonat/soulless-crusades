@@ -16,7 +16,7 @@ public class GravityWellSpell : Spell
     {
         if (photonView.isMine)
         {   
-            castMousePos.y = myPlayer.position.y;
+            castMousePos.y = myPlayer.position.y - 0.2f;
             photonView.RPC("SetPosition", PhotonTargets.All, castMousePos);
         }
 
@@ -41,7 +41,6 @@ public class GravityWellSpell : Spell
 
         Vector3 playerPos = localPlayer.GetRigidbody().position;
         Vector3 pullDir = transform.position - playerPos;
-        pullDir.y = playerPos.y;
         if (pullDir.magnitude <= radius)
         {
             pullDir.Normalize();
