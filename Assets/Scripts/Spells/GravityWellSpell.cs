@@ -41,6 +41,7 @@ public class GravityWellSpell : Spell
 
         Vector3 playerPos = localPlayer.GetRigidbody().position;
         Vector3 pullDir = transform.position - playerPos;
+        pullDir.y = playerPos.y;
         if (pullDir.magnitude <= radius)
         {
             pullDir.Normalize();
