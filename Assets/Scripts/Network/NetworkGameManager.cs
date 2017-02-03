@@ -218,7 +218,7 @@ public class NetworkGameManager : Photon.PunBehaviour
             if (time < 0)
                 time = 0;
             
-            roundOverTime.text = "New round starts in " + time + " seconds.";
+            roundOverTime.text = "New round starts in " + (time+1) + " seconds.";
 
             if (PhotonNetwork.isMasterClient && timeBetweenRoundsCounter <= 0)
             {
