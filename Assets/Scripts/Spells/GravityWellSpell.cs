@@ -48,7 +48,15 @@ public class GravityWellSpell : Spell
 
             float dist = (transform.position - playerPos).magnitude;
             if (dist < 2f) // dont overshoot
+            {
                 pullDir *= dist;
+
+                if (dist < .5f)
+                {
+                    if (localPlayer.GetState() == PlayerState.WALKING)
+                        localPlayer.SetState(PlayerState.IDLE);
+                }
+            }
 
             localPlayer.CancelMovementOrder();
             localPlayer.GetRigidbody().AddForce(pullDir, ForceMode.Acceleration);
