@@ -668,7 +668,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToLobby();
         maxPlayers.text = "Max Players: " + PhotonNetwork.room.MaxPlayers;
-        labelPlayerNumber.text = "Current player number: " + PhotonNetwork.room.PlayerCount;
+        labelPlayerNumber.text = "Player count: " + PhotonNetwork.room.PlayerCount;
         Transform parent = GameObject.Find("Player List Parent").transform;
 
         if (isCurrentRoomCompetitive)
@@ -718,14 +718,13 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public override void OnPhotonPlayerConnected(PhotonPlayer other)
     {
-        labelPlayerNumber.text = "Current player number: " + PhotonNetwork.room.PlayerCount;
+        labelPlayerNumber.text = "Player count: " + PhotonNetwork.room.PlayerCount;
         Transform parent = GameObject.Find("Player List Parent").transform;
         AddPlayerListItem(other, parent);
     }
 
     public override void OnPhotonPlayerDisconnected(PhotonPlayer other)
     {
-        labelPlayerNumber.text = "Current player number: " + PhotonNetwork.room.PlayerCount;
         Transform parent = GameObject.Find("Player List Parent").transform;
 
         foreach (RectTransform t in parent.GetComponentInChildren<RectTransform> ())
@@ -734,7 +733,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
                 Destroy(t.gameObject);
         }
 
-        labelPlayerNumber.text = "Current player number: " + PhotonNetwork.room.PlayerCount;
+        labelPlayerNumber.text = "Player count: " + PhotonNetwork.room.PlayerCount;
     }
 
     private void AddPlayerListItem(PhotonPlayer player, Transform parent)
