@@ -77,6 +77,9 @@ public class NetworkGameManager : Photon.PunBehaviour
     public Scrollbar chatScroll;
     public AudioSource chatTickSound;
 
+    public AudioSource startingMusic;
+    public AudioSource fightingMusic;
+
     void Start()
     {
         Events.Clear();
@@ -285,6 +288,8 @@ public class NetworkGameManager : Photon.PunBehaviour
                 pointIndex++;
             }
         }
+
+        fightingMusic.Play();
     }
 
     public GameObject GetPlayingUI()
