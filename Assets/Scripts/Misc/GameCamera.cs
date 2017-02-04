@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GameCamera : MonoBehaviour
 {
+    public bool isFrozen = false;
+
     private Transform myPlayer;
     private Vector3 offset;
     Vector3 shakeOffset = Vector3.zero;
@@ -21,6 +23,12 @@ public class GameCamera : MonoBehaviour
 
     void LateUpdate()
     {
+        if (isFrozen)
+        {
+            transform.position = Vector3.Lerp(transform.position, offset + Vector3.forward * 3f, Time.deltaTime * 3f);
+            return;
+        }
+
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         Camera.main.fieldOfView = Mathf.Clamp(Camera.main.fieldOfView - scroll * 20, 35, 70);
 

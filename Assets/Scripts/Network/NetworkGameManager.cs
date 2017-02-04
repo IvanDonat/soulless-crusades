@@ -16,6 +16,7 @@ public enum GameState
 public class NetworkGameManager : Photon.PunBehaviour 
 {
     public Transform playerPrefab;
+    public Transform gameOverDummyPlayer;
 
     public Text gameTimeText;
     public Text roundTimeText;
@@ -398,6 +399,12 @@ public class NetworkGameManager : Photon.PunBehaviour
                 player.GetComponent<PlayerScript>().Die(true);
             }
         }
+
+        Transform dummy = Instantiate(gameOverDummyPlayer, new Vector3(0f, 4.76f, 0f), Quaternion.identity) as Transform;
+        dummy.Rotate(new Vector3(0, 180, 0));
+        dummy.GetComponentInChildren<Text>().text = lastRoundWinner.NickName;
+
+        Camera.main.GetComponent<GameCamera>().isFrozen = true;
 
         betweenRoundsUI.SetActive(false);
         spectatorUI.SetActive(false);
