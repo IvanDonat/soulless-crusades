@@ -21,11 +21,10 @@ public class NetworkMenuManager : Photon.PunBehaviour
                         privateRoomField, recoveryMailField;
     public Toggle privateToggle, readyToggle, windowedToggle;
     public Slider playerNumberSlider, roundsToWinSlider, globalVolumeSlider, musicVolumeSlider;
-    public Button kickPlayer, startGame, goToLogin, goToRegister, goToVideo, goToSound, goToControls, acSettings;
+    public Button kickPlayer, startGame, goToLogin, goToRegister, acSettings;
     public Scrollbar chatScroll;
     public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab, infoPanel,
-                        selectSpellsPanel, loginPanel, registerPanel, joinPrivateRoomPanel, videoPanel, soundPanel,
-                        controlsPanel, recoveryPanel;
+                        selectSpellsPanel, loginPanel, registerPanel, joinPrivateRoomPanel, recoveryPanel;
     public Dropdown resolutions, quality;
 
     private bool loadedResolutions = false;
@@ -570,39 +569,6 @@ public class NetworkMenuManager : Photon.PunBehaviour
         var props = new ExitGames.Client.Photon.Hashtable();
         props.Add("ready", ready);
         PhotonNetwork.player.SetCustomProperties(props, null);
-    }
-
-    public void OptionsToVideo()
-    {
-        videoPanel.SetActive(true);
-        soundPanel.SetActive(false);
-        controlsPanel.SetActive(false);
-        goToVideo.interactable = false;
-        goToSound.interactable = true;
-        goToControls.interactable = true;
-        EventSystem.current.SetSelectedGameObject(null);
-    }
-
-    public void OptionsToSound()
-    {
-        videoPanel.SetActive(false);
-        soundPanel.SetActive(true);
-        controlsPanel.SetActive(false);
-        goToVideo.interactable = true;
-        goToSound.interactable = false;
-        goToControls.interactable = true;
-        EventSystem.current.SetSelectedGameObject(null);
-    }
-
-    public void OptionsToControls()
-    {
-        videoPanel.SetActive(false);
-        soundPanel.SetActive(false);
-        controlsPanel.SetActive(true);
-        goToVideo.interactable = true;
-        goToSound.interactable = true;
-        goToControls.interactable = false;
-        EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void GoToOptions()
