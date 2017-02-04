@@ -8,19 +8,32 @@ public class SplashScript : MonoBehaviour
 {
     public Image logo;
     public AudioSource sound;
+    public Text storyIntro;
+    public AudioSource storySound;
 
     private bool shown = false;
+    private bool storyShown = false;
+
+    private float storySpeed = .045f;
 
     void Start()
     {
         logo.enabled = false;
-        StartCoroutine(ShowLogo());
+        storyIntro.enabled = false;
+        StartCoroutine(ShowStoryIntro());
     }
 
     void Update()
     {
         if (logo.color.a <= 0.001f || Input.GetKey(KeyCode.Escape) || Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.Space))
             SceneManager.LoadScene("Menu");
+
+        if (!storyShown)
+            return;
+
+        Color ca = storyIntro.color;
+        ca.a -= storySpeed * Time.deltaTime;
+        storyIntro.color = ca;
 
         if (!shown)
             return;
@@ -36,5 +49,16 @@ public class SplashScript : MonoBehaviour
         sound.Play();
         logo.enabled = true;
         shown = true;
+    }
+
+    private IEnumerator ShowStoryIntro()
+    {
+        yield return new WaitForSeconds(.15f);
+        storySound.Play();
+        storyIntro.enabled = true;
+        storyShown = true;
+        yield return new WaitForSeconds(22f);
+        storySpeed = 1f;
+        StartCoroutine(ShowLogo());
     }
 }
