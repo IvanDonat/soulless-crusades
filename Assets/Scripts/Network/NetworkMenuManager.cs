@@ -223,8 +223,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
     {
         loadingPanel.SetActive(true);
         errorPanel.SetActive(false);
-        acSettings.interactable = false;
-        acSettings.GetComponentInChildren<Text>().color = new Color32(136, 125, 89, 255);
+        //acSettings.interactable = false;
+        //acSettings.GetComponentInChildren<Text>().color = new Color32(136, 125, 89, 255);
         usernameInput.text = "Guest" + UnityEngine.Random.Range(1000, 9999);
 
         PhotonNetwork.AuthValues = new AuthenticationValues();
@@ -750,7 +750,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToMainMenu();
         labelVersion.text = "Development build v" + gameVersion;
-        labelUser.text = "Account settings for " + PhotonNetwork.player.NickName;
+        labelUser.text = "Welcome " + PhotonNetwork.player.NickName;
         PhotonNetwork.JoinLobby();
         pwInput.text = "";
     }
