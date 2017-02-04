@@ -6,6 +6,8 @@ public class ShieldSpell : Spell
 {
     public float shieldTime = 5f;
 
+    Quaternion rot = Quaternion.identity;
+
     void Start()
     {
         foreach (GameObject p in GameObject.FindGameObjectsWithTag("Player"))
@@ -22,6 +24,12 @@ public class ShieldSpell : Spell
         }
 
         StartCoroutine(DestroySpell());
+    }
+
+    void Update()
+    {
+        rot = Quaternion.Euler(rot.eulerAngles.x, rot.eulerAngles.y + 270 * Time.deltaTime, rot.eulerAngles.z);
+        transform.rotation = rot;
     }
 
     private IEnumerator DestroySpell()
