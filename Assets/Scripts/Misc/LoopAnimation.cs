@@ -9,6 +9,6 @@ public class LoopAnimation : MonoBehaviour
 
     void Update()
     {
-        anim.CrossFade(clipName, 0f);
+        anim.CrossFade(clipName, .3f);
     }
 }

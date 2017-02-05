@@ -2,25 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulScript : MonoBehaviour {
-
+public class SoulScript : MonoBehaviour 
+{
+    
     public Vector3 goToPos;
-    private float distance;
     public GameObject soulExplosion;
-
-	void Start () {
+    
+    void Start () 
+    {
         soulExplosion.SetActive(false);
         transform.position = new Vector3(Random.Range(50f, 100f), Random.Range(10f, 20f), Random.Range(50f, 100f));
-        distance = (goToPos - transform.position).magnitude;
-	}
-	
-	void Update () {
+    }
+    
+    void Update () 
+    {
         transform.position = Vector3.Lerp(transform.position, goToPos, Time.deltaTime);
 
-        if (distance < 5f)
+        if ((goToPos - transform.position).magnitude < .5f)
         {
             gameObject.GetComponent<ParticleSystem>().Stop();
             soulExplosion.SetActive(true);
         }
-	}
+    }
 }
