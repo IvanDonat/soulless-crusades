@@ -17,6 +17,7 @@ public class NetworkGameManager : Photon.PunBehaviour
 {
     public Transform playerPrefab;
     public Transform gameOverDummyPlayer;
+    public Transform soulPrefab;
 
     public Text gameTimeText;
     public Text roundTimeText;
@@ -403,6 +404,9 @@ public class NetworkGameManager : Photon.PunBehaviour
         Transform dummy = Instantiate(gameOverDummyPlayer, new Vector3(0f, 4.76f, 0f), Quaternion.identity) as Transform;
         dummy.Rotate(new Vector3(0, 180, 0));
         dummy.GetComponentInChildren<Text>().text = lastRoundWinner.NickName;
+
+        Transform soul = Instantiate(soulPrefab);
+        soul.GetComponent<SoulScript>().goToPos = dummy.transform.position;
 
         Camera.main.GetComponent<GameCamera>().isFrozen = true;
 
