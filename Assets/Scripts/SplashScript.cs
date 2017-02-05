@@ -21,6 +21,7 @@ public class SplashScript : MonoBehaviour
         logo.enabled = false;
         storyIntro.enabled = false;
         StartCoroutine(ShowStoryIntro());
+        Application.runInBackground = true;
     }
 
     void Update()
