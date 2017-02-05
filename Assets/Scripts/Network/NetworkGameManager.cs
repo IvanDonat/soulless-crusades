@@ -81,6 +81,7 @@ public class NetworkGameManager : Photon.PunBehaviour
 
     public AudioSource startingMusic;
     public AudioSource fightingMusic;
+    public AudioSource endMusic;
 
     void Start()
     {
@@ -409,6 +410,8 @@ public class NetworkGameManager : Photon.PunBehaviour
         soul.GetComponent<SoulScript>().goToPos = dummy.transform.position;
 
         Camera.main.GetComponent<GameCamera>().isFrozen = true;
+        fightingMusic.Stop();
+        endMusic.Play();
 
         betweenRoundsUI.SetActive(false);
         spectatorUI.SetActive(false);
