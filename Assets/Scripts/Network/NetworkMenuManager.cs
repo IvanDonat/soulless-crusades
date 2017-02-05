@@ -648,7 +648,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         Transform parent = GameObject.Find("Player List Parent").transform;
 
         if (isCurrentRoomCompetitive)
-            labelRoomName.text = "Competitive lobby";
+            labelRoomName.text = "Quickplay";
         else 
             labelRoomName.text = "Room: " + PhotonNetwork.room.Name;
 
