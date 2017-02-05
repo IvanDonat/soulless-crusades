@@ -805,6 +805,11 @@ public class NetworkMenuManager : Photon.PunBehaviour
         Application.OpenURL("https://discord.gg/DZ2UkbC");
     }
 
+    public void OpenTutorial()
+    {
+        Application.OpenURL("https://puu.sh/tPW2j/a66f7fbfce.png");
+    }
+
     void OnGUI()
     {
         GUI.color = Color.white;
