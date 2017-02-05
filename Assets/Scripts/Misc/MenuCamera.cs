@@ -24,6 +24,8 @@ public class MenuCamera : MonoBehaviour
     public Transform canvasLobby;
     public Transform canvasCreateRoom;
     public Transform canvasOptions;
+    public Transform canvasCredits;
+    public Transform canvasTutorial;
 
     private Vector3 offsetFromCanvas = Vector3.back * 750;
 
@@ -97,6 +99,16 @@ public class MenuCamera : MonoBehaviour
     public void TransitionToLogin()
     {
         TransitionTo(canvasLogin);
+    }
+
+    public void TransitionToCredits()
+    {
+        TransitionTo(canvasCredits);
+    }
+
+    public void TransitionToTutorial()
+    {
+        TransitionTo(canvasTutorial);
     }
 
     internal void TransitionToOptions()

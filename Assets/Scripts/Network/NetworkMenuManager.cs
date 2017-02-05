@@ -576,6 +576,11 @@ public class NetworkMenuManager : Photon.PunBehaviour
         Camera.main.GetComponent<MenuCamera>().TransitionToOptions();
     }
 
+    public void GoToCredits()
+    {
+        Camera.main.GetComponent<MenuCamera>().TransitionToCredits();
+    }
+
     public void OpenRecovery()
     {
         recoveryPanel.SetActive(true);
