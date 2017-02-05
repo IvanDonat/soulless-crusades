@@ -332,7 +332,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         //Debug.Log(w.text);
         if (w.text == "1")
         {
-            labelAuthStatus.text = "Registration successful. You can now login!";
+            labelAuthStatus.text = "Before logging in you must confirm your email address.";
             emailRegInput.text = "";
             usernameRegInput.text = "";
             pwRegInput.text = "";
@@ -579,6 +579,11 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public void GoToCredits()
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToCredits();
+    }
+
+    public void GoToTutorial()
+    {
+        Camera.main.GetComponent<MenuCamera>().TransitionToTutorial();
     }
 
     public void OpenRecovery()
