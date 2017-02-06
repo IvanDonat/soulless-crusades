@@ -480,6 +480,7 @@ public class NetworkGameManager : Photon.PunBehaviour
             Debug.LogError("non master client tried to set state");
     }
 
+    private GameState cachedGameState = GameState.WARMUP;
     public GameState GetState()
     {
         if (PhotonNetwork.isMasterClient)
@@ -488,7 +489,12 @@ public class NetworkGameManager : Photon.PunBehaviour
         }
         else
         {
-            return (GameState)PhotonNetwork.room.CustomProperties[GAME_STATE];
+            GameState gs = (GameState)PhotonNetwork.room.CustomProperties[GAME_STATE];
+
+            if (gs != null)
+                cachedGameState = gs;
+
+            return cachedGameState;
         }
     }
 
