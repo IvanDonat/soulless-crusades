@@ -489,10 +489,8 @@ public class NetworkGameManager : Photon.PunBehaviour
         }
         else
         {
-            GameState gs = (GameState)PhotonNetwork.room.CustomProperties[GAME_STATE];
-
-            if (gs != null)
-                cachedGameState = gs;
+            if (PhotonNetwork.room.CustomProperties[GAME_STATE] != null)
+                cachedGameState = (GameState) PhotonNetwork.room.CustomProperties[GAME_STATE];
 
             return cachedGameState;
         }
