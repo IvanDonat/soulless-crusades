@@ -4,37 +4,37 @@ using UnityEngine;
 
 public class TutorialScript : MonoBehaviour
 {
-    private Vector2 newSize;
-    private Vector2 oldSize;
+    private Vector2 largeSize;
+    private Vector2 normalSize;
     private bool isLarge = false;
     private RectTransform rectTransform;
 
     void Start()
     {
         rectTransform = gameObject.GetComponent<RectTransform>();
-        oldSize = rectTransform.sizeDelta;
-        newSize = new Vector2(Screen.width - 60, Screen.height - 40);
+        normalSize = rectTransform.sizeDelta;
     }
 
     void Update()
     {
+        float ratio = normalSize.y / normalSize.x;
+        float largeHeight = normalSize.y * 1.4f;
+        largeSize = new Vector2(largeHeight / ratio, largeHeight);
+
         if (isLarge)
         {
-            rectTransform.sizeDelta = Vector2.Lerp(rectTransform.sizeDelta, newSize, Time.deltaTime * 2);
+            rectTransform.sizeDelta = Vector2.Lerp(rectTransform.sizeDelta, largeSize, Time.deltaTime * 2);
             transform.localPosition = Vector3.Lerp(transform.localPosition, new Vector3(0f, 0f, 0f), Time.deltaTime * 5);
         }
         else
         {
-            rectTransform.sizeDelta = Vector2.Lerp(rectTransform.sizeDelta, oldSize, Time.deltaTime * 2);
+            rectTransform.sizeDelta = Vector2.Lerp(rectTransform.sizeDelta, normalSize, Time.deltaTime * 2);
             transform.localPosition = Vector3.Lerp(transform.localPosition, new Vector3(0f, -20f, 0f), Time.deltaTime * 5);
         }
     }
 
     public void ImageSize()
     {
-        if (isLarge)
-            isLarge = false;
-        else
-            isLarge = true;
+        isLarge = !isLarge;
     }
 }
