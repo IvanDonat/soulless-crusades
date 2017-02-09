@@ -8,32 +8,86 @@ using UnityEngine.UI;
 
 public class NetworkMenuManager : Photon.PunBehaviour 
 {
+    [Header("Game Values")]
     public string gameVersion = "";
     public bool autoJoinLobby = true;
     public bool autoSyncScene = true;
     public float roomRefreshInterval = 0f;
+
+    [Header("Main Menu Canvas")]
+    public Button buttonAccountSettings;
+    public GameObject prefabRoomItem;
+    public GameObject panelMenuInfo;
+    public GameObject panelJoinPrivateRoom;
+    public InputField inputFieldPrivateRoom;
+    public Text labelVersion;
+    public Text labelUser;
+    public Text labelTotalPlayers;
+    public Text labelPrivateRoomInfo;
+
+    [Header("Options Canvas")]
+    public Dropdown dropdownResolution;
+    public Dropdown dropdownQuality;
+    public Slider sliderGlobalVolume;
+    public Slider sliderMusicVolume;
+    public Toggle toggleWindowed;
+
+    [Header("Lobby Canvas")]
+    public Button buttonKickPlayer;
+    public Button buttonStartGame;
+    public GameObject prefabChatMsg;
+    public GameObject prefabLobbyPlayer;
+    public GameObject panelSelectSpells;
+    public InputField inputFieldChat;
+    public Scrollbar scrollChat;
+    public Text labelRoomName;
+    public Text labelPlayerCount;
+    public Text labelMaxCount;
+    public Text labelRoundsToWin;
+    public Toggle toggleReady;
+
+    [Header("Create Room Canvas")]
+    public InputField inputFieldRoom;
+    public Slider sliderRoundsToWin;
+    public Text labelPlayerCountSet;
+    public Text labelRoundsToWinSet;
+    public Toggle togglePrivate;
+
+    [Header("Login Canvas")]
+    public Button buttonGoLogin;
+    public Button buttonGoReg;
+    public GameObject panelLoading;
+    public GameObject panelAuthError;
+    public GameObject panelLogin;
+    public GameObject panelRegister;
+    public GameObject panelRecovery;
+    public InputField inputFieldUsername;
+    public InputField inputFieldPw;
+    public InputField inputFieldEmailReg;
+    public InputField inputFieldUsernameReg;
+    public InputField inputFieldPwReg;
+    public InputField inputFieldRecoveryEmail;
+    public Text labelLoginError;
+    public Text labelAuthStatus;
+    public Text labelRegStatus;
+    public Text labelRecoveryInfo;
+
+    [Header("Misc")]
+    public AudioSource chatTickSound;
+
+    //Private Variables
+
+    //Main Menu Canvas
     private float roomRefreshTimer;
 
-    public Text labelVersion, labelError, labelPlayerInt, labelRoomName,
-                labelPlayerNumber, maxPlayers, labelRoundsToWin, labelRoundsToWinInt, labelAuthStatus, 
-                labelRegStatus, labelUser, labelPrivateRoomInfo, labelTotalPlayers, labelRecoveryInfo;
-    public InputField roomInputField, chatInput, usernameInput, pwInput, emailRegInput, usernameRegInput, pwRegInput,
-                        privateRoomField, recoveryMailField;
-    public Toggle privateToggle, readyToggle, windowedToggle;
-    public Slider playerNumberSlider, roundsToWinSlider, globalVolumeSlider, musicVolumeSlider;
-    public Button kickPlayer, startGame, goToLogin, goToRegister, acSettings;
-    public Scrollbar chatScroll;
-    public GameObject loadingPanel, errorPanel, selectedRoomPrefab, listedPlayerPrefab, chatMsgPrefab, infoPanel,
-                        selectSpellsPanel, loginPanel, registerPanel, joinPrivateRoomPanel, recoveryPanel;
-    public Dropdown resolutions, quality;
-
+    //Options Canvas
     private bool loadedResolutions = false;
     private bool loadedQuality = false;
 
+    //Lobby Canvas
     private Dictionary<PhotonPlayer, Toggle> readyCheckmarks = new Dictionary<PhotonPlayer, Toggle>();
 
-    public AudioSource chatTickSound;
-
+    //Login Canvas
     private CloudRegionCode selectedRegion;
     private bool isAuthError = false; //photon treats auth failiure like a dc
 
@@ -45,6 +99,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
     private PhotonPlayer selectedPlayer;
     private bool isCurrentRoomCompetitive = false;
 
+    //Auth info msgs
     private const string strFailedToConnect = "SOULLESS CRUSADES FAILED TO ESTABLISH A CONNECTION TO SERVER!";
     private const string strDisconnected = "SOULLESS CRUSADES DISCONNECTED FROM SERVER!";
 
@@ -77,7 +132,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         Resolution curr = Screen.currentResolution;
         foreach (Resolution res in Screen.resolutions) //for loop will slow this down much more than adding i
         {
-            resolutions.options.Add(new Dropdown.OptionData() {
+            dropdownResolution.options.Add(new Dropdown.OptionData() {
                 text = res.width + " x " + res.height + "       " + res.refreshRate + "Hz"
             });
 
@@ -86,14 +141,14 @@ public class NetworkMenuManager : Photon.PunBehaviour
             i++;
         }
         if (savedResolution >= 0)
-            resolutions.value = savedResolution;
+            dropdownResolution.value = savedResolution;
         loadedResolutions = true;
 
         int r = 0, savedQuality = -1;
         string currentQuality = QualitySettings.names[QualitySettings.GetQualityLevel()];
         foreach(string s in QualitySettings.names)
         {
-            quality.options.Add(new Dropdown.OptionData() {
+            dropdownQuality.options.Add(new Dropdown.OptionData() {
                 text = s
             });
 
@@ -102,19 +157,19 @@ public class NetworkMenuManager : Photon.PunBehaviour
             r++;
         }
         if (savedQuality>= 0)
-            quality.value = savedQuality;
+            dropdownQuality.value = savedQuality;
         loadedQuality = true;
 
-        windowedToggle.isOn = Screen.fullScreen;
+        toggleWindowed.isOn = Screen.fullScreen;
         if (PlayerPrefs.HasKey("GlobalVolume"))
-            globalVolumeSlider.value = PlayerPrefs.GetFloat("GlobalVolume");
+            sliderGlobalVolume.value = PlayerPrefs.GetFloat("GlobalVolume");
         if (PlayerPrefs.HasKey("MusicVolume"))
-            musicVolumeSlider.value = PlayerPrefs.GetFloat("MusicVolume");
+            sliderMusicVolume.value = PlayerPrefs.GetFloat("MusicVolume");
 
-        pwInput.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Connect();});
-        usernameInput.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Connect();});
+        inputFieldPw.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Connect();});
+        inputFieldUsername.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Connect();});
 
-        pwRegInput.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Register();});
+        inputFieldPwReg.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Register();});
     }
 
     void Update()
@@ -135,7 +190,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
                 if (ri.Name.StartsWith(COMP_PREFIX))
                     continue;
 
-                GameObject go = Instantiate(selectedRoomPrefab, parent) as GameObject;
+                GameObject go = Instantiate(prefabRoomItem, parent) as GameObject;
                 go.name = "RoomListItem " + ri.Name;
 
                 go.transform.FindChild("RoomNameText").GetComponent<Text>().text = string.Format(ri.Name);
@@ -175,9 +230,9 @@ public class NetworkMenuManager : Photon.PunBehaviour
             }
 
             if (allReady && readyCount >= 2)
-                startGame.interactable = true;
+                buttonStartGame.interactable = true;
             else
-                startGame.interactable = false;
+                buttonStartGame.interactable = false;
 
             if (isCurrentRoomCompetitive)
             {
@@ -188,44 +243,44 @@ public class NetworkMenuManager : Photon.PunBehaviour
             }
         }
 
-        Screen.fullScreen = windowedToggle.isOn;
+        Screen.fullScreen = toggleWindowed.isOn;
     }
 
     public void Connect()
     {
         if (PhotonNetwork.connected)
         {
-            loadingPanel.SetActive(true);
-            errorPanel.SetActive(false);
+            panelLoading.SetActive(true);
+            panelAuthError.SetActive(false);
 
             Camera.main.GetComponent<MenuCamera>().TransitionToMainMenu();
         }
         else
         {
-            if (usernameInput.text.Length == 0 || pwInput.text.Length == 0)
+            if (inputFieldUsername.text.Length == 0 || inputFieldPw.text.Length == 0)
             {
                 labelAuthStatus.text = "Username and password cannot be empty!";
                 return;
             }
 
-            loadingPanel.SetActive(true);
-            errorPanel.SetActive(false);
+            panelLoading.SetActive(true);
+            panelAuthError.SetActive(false);
 
             PhotonNetwork.AuthValues = new AuthenticationValues();
             PhotonNetwork.AuthValues.AuthType = CustomAuthenticationType.Custom;
-            PhotonNetwork.AuthValues.AddAuthParameter("username", usernameInput.text);
-            PhotonNetwork.AuthValues.AddAuthParameter("password", pwInput.text);
+            PhotonNetwork.AuthValues.AddAuthParameter("username", inputFieldUsername.text);
+            PhotonNetwork.AuthValues.AddAuthParameter("password", inputFieldPw.text);
             PhotonNetwork.ConnectToRegion(selectedRegion, gameVersion);
         }
     }
 
     public void ConnectAsGuest()
     {
-        loadingPanel.SetActive(true);
-        errorPanel.SetActive(false);
+        panelLoading.SetActive(true);
+        panelAuthError.SetActive(false);
         //acSettings.interactable = false;
         //acSettings.GetComponentInChildren<Text>().color = new Color32(136, 125, 89, 255);
-        usernameInput.text = "Guest" + UnityEngine.Random.Range(1000, 9999);
+        inputFieldUsername.text = "Guest" + UnityEngine.Random.Range(1000, 9999);
 
         PhotonNetwork.AuthValues = new AuthenticationValues();
         PhotonNetwork.AuthValues.AuthType = CustomAuthenticationType.None;
@@ -296,36 +351,36 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public void Register()
     {
-        if (!emailRegInput.text.Contains("@") ||
-           !emailRegInput.text.Contains("."))
+        if (!inputFieldEmailReg.text.Contains("@") ||
+           !inputFieldEmailReg.text.Contains("."))
         {
             labelRegStatus.text = "Invalid email address.";
             return;
         }
 
-        if (usernameRegInput.text.ToLower().StartsWith("guest"))
+        if (inputFieldUsernameReg.text.ToLower().StartsWith("guest"))
         {
             labelRegStatus.text = "Username can't start with Guest";
             return;
         }
 
-        if (usernameRegInput.text.Length < 3)
+        if (inputFieldUsernameReg.text.Length < 3)
         {
             labelRegStatus.text = "Username too short";
             return;
         }
 
         labelRegStatus.text = ""; //user sees a refresh every time he tries...
-        loadingPanel.SetActive(true);
+        panelLoading.SetActive(true);
         StartCoroutine(Reg());
     }
 
     private IEnumerator Reg()
     {
         WWWForm form = new WWWForm();
-        form.AddField("email", emailRegInput.text);
-        form.AddField("username", usernameRegInput.text);
-        form.AddField("password", pwRegInput.text);
+        form.AddField("email", inputFieldEmailReg.text);
+        form.AddField("username", inputFieldUsernameReg.text);
+        form.AddField("password", inputFieldPwReg.text);
         WWW w = new WWW("https://soullesscrusades.000webhostapp.com/register.php", form);
         yield return w;
         //Debug.Log(w.error);
@@ -333,51 +388,51 @@ public class NetworkMenuManager : Photon.PunBehaviour
         if (w.text == "1")
         {
             labelAuthStatus.text = "Before logging in you must confirm your email address.";
-            emailRegInput.text = "";
-            usernameRegInput.text = "";
-            pwRegInput.text = "";
+            inputFieldEmailReg.text = "";
+            inputFieldUsernameReg.text = "";
+            inputFieldPwReg.text = "";
             GoToLogin();
         }
         else
             labelRegStatus.text = "Email or username already in use. Please modify your input.";
-        loadingPanel.SetActive(false);
+        panelLoading.SetActive(false);
     }
 
     public void GoToLogin()
     {
-        loginPanel.SetActive(true);
-        goToLogin.interactable = false;
-        registerPanel.SetActive(false);
-        goToRegister.interactable = true;
+        panelLogin.SetActive(true);
+        buttonGoLogin.interactable = false;
+        panelRegister.SetActive(false);
+        buttonGoReg.interactable = true;
         EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void GoToRegister()
     {
-        loginPanel.SetActive(false);
-        goToLogin.interactable = true;
-        registerPanel.SetActive(true);
-        goToRegister.interactable = false;
+        panelLogin.SetActive(false);
+        buttonGoLogin.interactable = true;
+        panelRegister.SetActive(true);
+        buttonGoReg.interactable = false;
         EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void Okay()
     {
-        infoPanel.SetActive(false);
+        panelMenuInfo.SetActive(false);
     }
 
     public void SendMsg()
     {
-        if (chatInput.text.Trim() == "")
+        if (inputFieldChat.text.Trim() == "")
         {
-            chatInput.ActivateInputField();
+            inputFieldChat.ActivateInputField();
             return;
         }
 
         PhotonView photonView = PhotonView.Get(this);
-        photonView.RPC("RpcSendText", PhotonTargets.All, PhotonNetwork.player.NickName, chatInput.text);
-        chatInput.text = "";
-        chatInput.ActivateInputField();
+        photonView.RPC("RpcSendText", PhotonTargets.All, PhotonNetwork.player.NickName, inputFieldChat.text);
+        inputFieldChat.text = "";
+        inputFieldChat.ActivateInputField();
     }
 
     public void Exit()
@@ -393,8 +448,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public void KickedFromRoom()
     {
         PhotonNetwork.LeaveRoom();
-        infoPanel.SetActive(true);
-        infoPanel.GetComponentInChildren<Text>().text = strKicked;
+        panelMenuInfo.SetActive(true);
+        panelMenuInfo.GetComponentInChildren<Text>().text = strKicked;
     }
 
     public void OnGlobalVolumeChangeValue(Slider slider)
@@ -411,13 +466,13 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public void OnMaxPlayersSliderChangeValue(Slider slider)
     {
-        labelPlayerInt.text = slider.value.ToString();
+        labelPlayerCountSet.text = slider.value.ToString();
         numberOfPlayers = (byte)slider.value;
     }
 
     public void OnRoundsToWinSliderChangeValue(Slider slider)
     {
-        labelRoundsToWinInt.text = slider.value.ToString();
+        labelRoundsToWinSet.text = slider.value.ToString();
     }
 
     public void OnRoomNameChangeValue(InputField inputField)
@@ -454,13 +509,13 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public void OnTransitionToCreateRoom()
     {
-        roomInputField.text = "Room" + UnityEngine.Random.Range(1000, 9999);
+        inputFieldRoom.text = "Room" + UnityEngine.Random.Range(1000, 9999);
     }
 
     public void CreateRoom()
     {
-        PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = numberOfPlayers, IsVisible = !privateToggle.isOn }, null);
-        privateToggle.isOn = false;
+        PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = numberOfPlayers, IsVisible = !togglePrivate.isOn }, null);
+        togglePrivate.isOn = false;
         isCurrentRoomCompetitive = false;
     }
 
@@ -473,19 +528,19 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public void JoinPrivateRoom()
     {
-        PhotonNetwork.JoinRoom(privateRoomField.text);
+        PhotonNetwork.JoinRoom(inputFieldPrivateRoom.text);
         isCurrentRoomCompetitive = false;
     }
 
     public void ShowPrivateRoomJoin()
     {
-        joinPrivateRoomPanel.SetActive(true);
+        panelJoinPrivateRoom.SetActive(true);
     }
 
     public void ClosePrivateRoomJoin()
     {
-        joinPrivateRoomPanel.SetActive(false);
-        privateRoomField.text = "";
+        panelJoinPrivateRoom.SetActive(false);
+        inputFieldPrivateRoom.text = "";
         labelPrivateRoomInfo.text = "";
     }
 
@@ -496,18 +551,18 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public void SelectPlayer()
     {
-        kickPlayer.interactable = true;
+        buttonKickPlayer.interactable = true;
         selectedPlayer = EventSystem.current.currentSelectedGameObject.transform.parent.GetComponent<PhotonPlayerContainer>().Get();
     }
 
     public void OpenSpellList()
     {
-        selectSpellsPanel.SetActive(true);
+        panelSelectSpells.SetActive(true);
     }
 
     public void CloseSpellList()
     {
-        selectSpellsPanel.SetActive(false);
+        panelSelectSpells.SetActive(false);
     }
 
     public void StartGame()
@@ -530,7 +585,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         if (msg != "")
         {
             Transform parent = GameObject.Find("Message List Parent").transform;
-            GameObject go = Instantiate(chatMsgPrefab, parent);
+            GameObject go = Instantiate(prefabChatMsg, parent);
             go.GetComponentInChildren<Text>().text = string.Format("<color=#FFE798B4>[{0}]</color>  <color=orange>{1}</color>: {2}", 
                 DateTime.Now.ToString("HH:mm:ss"), nick, msg);
             chatTickSound.Play();
@@ -544,7 +599,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
-        chatScroll.value = 0;
+        scrollChat.value = 0;
     }
 
     public void KickPlayer()
@@ -588,22 +643,22 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public void OpenRecovery()
     {
-        recoveryPanel.SetActive(true);
-        recoveryMailField.ActivateInputField();
+        panelRecovery.SetActive(true);
+        inputFieldRecoveryEmail.ActivateInputField();
     }
 
     public void CloseRecovery()
     {
-        recoveryPanel.SetActive(false);
-        recoveryMailField.text = "";
+        panelRecovery.SetActive(false);
+        inputFieldRecoveryEmail.text = "";
         labelRecoveryInfo.text = "Enter the email address associated with your account. We will send you a password reset link shortly.";
     }
 
     public void SendRecoveryMail()
     {
-        StartCoroutine(SendRecovery(recoveryMailField.text));
-        recoveryMailField.text = "";
-        recoveryMailField.ActivateInputField();
+        StartCoroutine(SendRecovery(inputFieldRecoveryEmail.text));
+        inputFieldRecoveryEmail.text = "";
+        inputFieldRecoveryEmail.ActivateInputField();
     }
 
     private IEnumerator SendRecovery(string mail)
@@ -627,14 +682,14 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public override void OnCustomAuthenticationFailed(string debugMessage)
     {
         isAuthError = true;
-        loadingPanel.SetActive(false);
-        errorPanel.SetActive(false);
+        panelLoading.SetActive(false);
+        panelAuthError.SetActive(false);
         labelAuthStatus.text = debugMessage;
     }
 
     public override void OnPhotonJoinRoomFailed(object[] codeAndMsg)
     {
-        if (joinPrivateRoomPanel.activeInHierarchy)
+        if (panelJoinPrivateRoom.activeInHierarchy)
         {
             labelPrivateRoomInfo.text = "Room is full or doesn't exist!";
         }
@@ -643,8 +698,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public override void OnJoinedRoom()
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToLobby();
-        maxPlayers.text = "Max Players: " + PhotonNetwork.room.MaxPlayers;
-        labelPlayerNumber.text = "Player count: " + PhotonNetwork.room.PlayerCount;
+        labelMaxCount.text = "Max Players: " + PhotonNetwork.room.MaxPlayers;
+        labelPlayerCount.text = "Player count: " + PhotonNetwork.room.PlayerCount;
         Transform parent = GameObject.Find("Player List Parent").transform;
 
         if (isCurrentRoomCompetitive)
@@ -652,28 +707,28 @@ public class NetworkMenuManager : Photon.PunBehaviour
         else 
             labelRoomName.text = "Room: " + PhotonNetwork.room.Name;
 
-        if (joinPrivateRoomPanel.activeInHierarchy)
+        if (panelJoinPrivateRoom.activeInHierarchy)
         {
-            privateRoomField.text = "";
+            inputFieldPrivateRoom.text = "";
             ClosePrivateRoomJoin();
         }
 
         if (PhotonNetwork.isMasterClient)
         {
-            startGame.gameObject.SetActive(true);
+            buttonStartGame.gameObject.SetActive(true);
             AddPlayerListItem(PhotonNetwork.player, parent);
-            kickPlayer.onClick.AddListener(() => { KickPlayer(); });
+            buttonKickPlayer.onClick.AddListener(() => { KickPlayer(); });
 
             var props = new ExitGames.Client.Photon.Hashtable();
-            props.Add("maxwins", (int) roundsToWinSlider.value);
+            props.Add("maxwins", (int) sliderRoundsToWin.value);
             PhotonNetwork.room.SetCustomProperties(props, null);
-            labelRoundsToWin.text = "Rounds to Win: " + (int) roundsToWinSlider.value;
+            labelRoundsToWin.text = "Rounds to Win: " + (int) sliderRoundsToWin.value;
         }
         else
         {
             labelRoundsToWin.text = "Rounds to Win: " + PhotonNetwork.room.CustomProperties["maxwins"].ToString();
 
-            startGame.gameObject.SetActive(false);
+            buttonStartGame.gameObject.SetActive(false);
             foreach (PhotonPlayer p in PhotonNetwork.playerList)
                 AddPlayerListItem(p, parent);
         }
@@ -681,7 +736,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         // comp override
         if (isCurrentRoomCompetitive && PhotonNetwork.isMasterClient)
         {
-            startGame.gameObject.SetActive(false);
+            buttonStartGame.gameObject.SetActive(false);
 
             var props = new ExitGames.Client.Photon.Hashtable();
             props.Add("maxwins", COMP_MAXWINS);
@@ -694,7 +749,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public override void OnPhotonPlayerConnected(PhotonPlayer other)
     {
-        labelPlayerNumber.text = "Player count: " + PhotonNetwork.room.PlayerCount;
+        labelPlayerCount.text = "Player count: " + PhotonNetwork.room.PlayerCount;
         Transform parent = GameObject.Find("Player List Parent").transform;
         AddPlayerListItem(other, parent);
     }
@@ -709,12 +764,12 @@ public class NetworkMenuManager : Photon.PunBehaviour
                 Destroy(t.gameObject);
         }
 
-        labelPlayerNumber.text = "Player count: " + PhotonNetwork.room.PlayerCount;
+        labelPlayerCount.text = "Player count: " + PhotonNetwork.room.PlayerCount;
     }
 
     private void AddPlayerListItem(PhotonPlayer player, Transform parent)
     {
-        GameObject go = Instantiate(listedPlayerPrefab, parent) as GameObject;
+        GameObject go = Instantiate(prefabLobbyPlayer, parent) as GameObject;
         go.name = "PlayerListItem " + player.NickName;
         go.GetComponentInChildren<Text>().text = player.NickName;
         if(player.IsMasterClient && !isCurrentRoomCompetitive)
@@ -752,8 +807,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
                 Destroy(t.gameObject);
         }
 
-        selectSpellsPanel.SetActive(true);
-        readyToggle.isOn = false;
+        panelSelectSpells.SetActive(true);
+        toggleReady.isOn = false;
     }
 
     public override void OnConnectedToMaster()
@@ -762,7 +817,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         labelVersion.text = "build v" + gameVersion;
         labelUser.text = "Welcome " + PhotonNetwork.player.NickName;
         PhotonNetwork.JoinLobby();
-        pwInput.text = "";
+        inputFieldPw.text = "";
     }
 
     public override void OnJoinedLobby()
@@ -773,18 +828,18 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     public override void OnFailedToConnectToPhoton(DisconnectCause cause)
     {
-        labelError.text = strFailedToConnect;
-        loadingPanel.SetActive(false);
-        errorPanel.SetActive(true);
+        labelLoginError.text = strFailedToConnect;
+        panelLoading.SetActive(false);
+        panelAuthError.SetActive(true);
     }
 
     public override void OnDisconnectedFromPhoton()
     {
         if (!isAuthError)
         {
-            labelError.text = strDisconnected;
-            loadingPanel.SetActive(false);
-            errorPanel.SetActive(true);
+            labelLoginError.text = strDisconnected;
+            panelLoading.SetActive(false);
+            panelAuthError.SetActive(true);
             Camera.main.GetComponent<MenuCamera>().TransitionToLogin();
         }
         isAuthError = false;
@@ -795,8 +850,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
         if (!isCurrentRoomCompetitive)
         {
             LeaveRoom();
-            infoPanel.SetActive(true);
-            infoPanel.GetComponentInChildren<Text>().text = strHostLeft;
+            panelMenuInfo.SetActive(true);
+            panelMenuInfo.GetComponentInChildren<Text>().text = strHostLeft;
         }
     }
 
