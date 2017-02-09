@@ -14,7 +14,6 @@ public class TutorialScript : MonoBehaviour
         rectTransform = gameObject.GetComponent<RectTransform>();
         oldSize = rectTransform.sizeDelta;
         newSize = new Vector2(Screen.width - 60, Screen.height - 40);
-        print(isLarge);
     }
 
     void Update()
