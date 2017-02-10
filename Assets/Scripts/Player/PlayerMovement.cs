@@ -14,11 +14,22 @@ public enum PlayerState
 
 public class PlayerMovement : Photon.PunBehaviour
 {
+    [Header("Model")]
     public Transform model; // 3d model
 
+    [Header("Gizmo")]
     public Slider healthBar3D;
     public Text nameBar3D;
     private float syncedHealth = 100f; // serialized between clients
+
+    [Header("Aesthetics")]
+    public Animation anim; 
+    public Transform playerMarker;
+    public Transform hatParent;
+
+    [Header("Effects")]
+    public ParticleSystem castParticleSystem;
+    public Transform prefabParticlesOnClick;
 
     private float defaultFriction = 5f; // friction drops when hit by spell
     private float moveForce = 30f;
@@ -28,12 +39,6 @@ public class PlayerMovement : Photon.PunBehaviour
     private Rigidbody rbody;
     private PlayerScript playerScript;
 
-    public Animation anim; 
-    public Transform playerMarker;
-
-    public Transform hatParent;
-
-    public ParticleSystem castParticleSystem;
     // this value is controller by PlayerScript
     // the current color of the casting hand particles
     [System.NonSerialized]
@@ -48,8 +53,6 @@ public class PlayerMovement : Photon.PunBehaviour
     private IEnumerator resetDragCoroutine;
 
     private Transform terrain;
-
-    public Transform prefabParticlesOnClick;
 
     private float slowdownTime = 0f;
     private float cloakTime = 0f;

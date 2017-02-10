@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MobilitySpell : Spell 
 {
+    [Header("Spell specific")]
+
     public float speedTime = 5f;
     public float moveForceMultiplier = 1.5f;
 

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class InvisibilitySpell : Spell
 {
+    [Header("Spell specific")]
+
     public float cloakTime = 5f;
     public Transform cloakParticles;
 

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class HealSpell : Spell
 {
+    [Header("Spell specific")]
+
     public float healAmount = 10f;
     public float healAnimLen = 2f;
 

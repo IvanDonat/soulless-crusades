@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BlindSpell : Spell
 {
+    [Header("Spell specific")]
+
     public float speed = 3f;
     public float blindTime = 4f;
 

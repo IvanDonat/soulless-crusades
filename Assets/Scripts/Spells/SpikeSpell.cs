@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class SpikeSpell : Spell 
 {
+    [Header("Spell specific")]
+
     public float duration = 10f;
     public float slowdownTime = 5f;
     public float damagePerSec = 1f;

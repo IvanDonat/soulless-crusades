@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TeleportSpell : Spell
 {
+    [Header("Spell specific")]
+
     public Transform teleportParticles;
 
     void Start()

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MeteorSpell : Spell 
 {
+    [Header("Spell specific")]
+
     public float speed = 3f;
     public float damage = 20;
     public float radius = 10f;

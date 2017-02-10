@@ -15,17 +15,14 @@ public enum GameState
 
 public class NetworkGameManager : Photon.PunBehaviour 
 {
+    [Header("Player Prefabs")]
     public Transform playerPrefab;
     public Transform gameOverDummyPlayer;
     public Transform soulPrefab;
 
-    public Text gameTimeText;
-    public Text roundTimeText;
-    private static float gameTime = 0;
-    private static float roundTime = 0;
-
     private TerrainManager terrainManager;
 
+    [Header("UI Canvases")]
     public GameObject sharedUI;
     public GameObject playingUI;
     public GameObject spectatorUI;
@@ -36,9 +33,18 @@ public class NetworkGameManager : Photon.PunBehaviour
     public Transform scoreContent;
     public GameObject scoreItem;
 
+
+    [Header("Tooltip")]
     public GameObject tooltipParent;
     public Text tooltipName;
     public Text tooltipDescription;
+
+
+    [Header("UI Elements")]
+    public Text gameTimeText;
+    public Text roundTimeText;
+    private static float gameTime = 0;
+    private static float roundTime = 0;
 
     public Text roundOverText;
     public Text roundOverTime;
@@ -69,16 +75,18 @@ public class NetworkGameManager : Photon.PunBehaviour
 
     public Text winner;
 
-    public GameObject deathParticles;
 
+    [Header("Effects")]
+    public GameObject deathParticles;
     public GameObject lensFlare;
- 
-    // chat
+
+    [Header("Chat")]
     public GameObject chatMsgPrefab;
     public InputField chatInput;
     public Scrollbar chatScroll;
     public AudioSource chatTickSound;
 
+    [Header("Audio")]
     public AudioSource startingMusic;
     public AudioSource fightingMusic;
     public AudioSource endMusic;

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ShieldSpell : Spell
 {
+    [Header("Spell specific")]
+
     public float shieldTime = 5f;
 
     Quaternion rot = Quaternion.identity;

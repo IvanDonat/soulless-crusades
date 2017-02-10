@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GravityWellSpell : Spell 
 {
+    [Header("Spell specific")]
+
     public float pullForce = 40f;
     public float radius = 3f;
     public float lifetime = 8f;

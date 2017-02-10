@@ -9,6 +9,8 @@ public class Spell : Photon.PunBehaviour
 
     protected NetworkGameManager gameManager;
 
+    [Header("Generic")]
+
     public Color castColor = Color.white;
 
     public float castTime = 0.3f;

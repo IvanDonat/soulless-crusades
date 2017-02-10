@@ -36,9 +36,11 @@ public partial class PlayerScript : Photon.PunBehaviour
 
     private float blindTimeLeft = 0f;
 
+    [Header("Audio")]
     public AudioSource audioSpellSelect;
     public AudioSource audioAccessDenied;
 
+    [Header("Gizmo")]
     public Text nameBar;
 
     void Start()
