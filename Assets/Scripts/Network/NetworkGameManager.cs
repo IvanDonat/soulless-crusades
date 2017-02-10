@@ -187,42 +187,8 @@ public class NetworkGameManager : Photon.PunBehaviour
         }
 
         scorePanelRect.anchoredPosition = new Vector2(0, Mathf.Clamp(scorePanelRect.anchoredPosition.y, -160f, 99f));
+        UpdateScores();
 
-
-        miniScoresNames.text = "";
-        miniScoresRounds.text = "";
-
-        if (GetState() != GameState.GAME_OVER)
-        {
-            foreach (PhotonPlayer p in PhotonNetwork.playerList)
-            {
-                // major scoreboard
-                foreach (GameObject go in scoreList)
-                {
-                    if (go.name != p.NickName)
-                        continue;
-
-                    foreach (RectTransform r in go.GetComponentsInChildren<RectTransform>())
-                    {
-                        if (p.CustomProperties[PlayerProperties.KILLS] == null)
-                            return;
-
-                        if (r.gameObject.name == "Name")
-                            r.GetComponent<Text>().text = p.NickName;
-                        else if (r.gameObject.name == "Kills")
-                            r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.KILLS].ToString();
-                        else if (r.gameObject.name == "Deaths")
-                            r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.DEATHS].ToString();
-                        else if (r.gameObject.name == "Rounds Won")
-                            r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.WINS].ToString();
-                    }
-                }
-
-                // mini scoreboard
-                miniScoresNames.text += p.NickName.Substring(0, Mathf.Min(9, p.NickName.Length)) + '\n';
-                miniScoresRounds.text += p.CustomProperties[PlayerProperties.WINS] + "/" + winsForGameOver + '\n';
-            }
-        }
 
         if (GetState() == GameState.BETWEEN_ROUNDS)
         {
@@ -264,6 +230,44 @@ public class NetworkGameManager : Photon.PunBehaviour
         if (chatInput.gameObject.activeInHierarchy)
         {
             chatInput.ActivateInputField();
+        }
+    }
+
+    private void UpdateScores()
+    {
+        miniScoresNames.text = "";
+        miniScoresRounds.text = "";
+
+        foreach (PhotonPlayer p in PhotonNetwork.playerList)
+        {
+            // major scoreboard
+            foreach (GameObject go in scoreList)
+            {
+                if (go.name != p.NickName)
+                    continue;
+
+                foreach (RectTransform r in go.GetComponentsInChildren<RectTransform>())
+                {
+                    if (p.CustomProperties[PlayerProperties.KILLS] == null)
+                        return;
+
+                    if (r.gameObject.name == "Name")
+                        r.GetComponent<Text>().text = p.NickName;
+                    else if (r.gameObject.name == "Kills")
+                        r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.KILLS].ToString();
+                    else if (r.gameObject.name == "Deaths")
+                        r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.DEATHS].ToString();
+                    else if (r.gameObject.name == "Rounds Won")
+                        r.GetComponent<Text>().text = p.CustomProperties[PlayerProperties.WINS].ToString();
+                }
+            }
+
+            // mini scoreboard
+            if (GetState() != GameState.GAME_OVER)
+            {
+                miniScoresNames.text += p.NickName.Substring(0, Mathf.Min(9, p.NickName.Length)) + '\n';
+                miniScoresRounds.text += p.CustomProperties[PlayerProperties.WINS] + "/" + winsForGameOver + '\n';
+            }
         }
     }
 
