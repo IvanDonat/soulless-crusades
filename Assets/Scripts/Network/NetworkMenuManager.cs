@@ -814,7 +814,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public override void OnConnectedToMaster()
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToMainMenu();
-        labelVersion.text = "build v" + gameVersion;
+        labelVersion.text = "beta v" + gameVersion;
         labelUser.text = "Welcome " + PhotonNetwork.player.NickName;
         PhotonNetwork.JoinLobby();
         inputFieldPw.text = "";
