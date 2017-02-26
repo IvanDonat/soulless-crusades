@@ -61,12 +61,15 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public GameObject panelLogin;
     public GameObject panelRegister;
     public GameObject panelRecovery;
+    public GameObject panelContact;
     public InputField inputFieldUsername;
     public InputField inputFieldPw;
     public InputField inputFieldEmailReg;
     public InputField inputFieldUsernameReg;
     public InputField inputFieldPwReg;
     public InputField inputFieldRecoveryEmail;
+    public InputField inputFieldContact;
+    public InputField inputFieldContactText;
     public Text labelLoginError;
     public Text labelAuthStatus;
     public Text labelRegStatus;
@@ -274,7 +277,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         }
     }
 
-    public void ConnectAsGuest()
+    /*public void ConnectAsGuest()
     {
         panelLoading.SetActive(true);
         panelAuthError.SetActive(false);
@@ -285,7 +288,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         PhotonNetwork.AuthValues = new AuthenticationValues();
         PhotonNetwork.AuthValues.AuthType = CustomAuthenticationType.None;
         PhotonNetwork.ConnectToRegion(selectedRegion, gameVersion);
-    }
+    }*/
 
     public void SelectRegion(Dropdown target)
     {
@@ -387,7 +390,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         //Debug.Log(w.text);
         if (w.text == "1")
         {
-            labelAuthStatus.text = "Before logging in you must confirm your email address.";
+            labelAuthStatus.text = "We have sent you an email with further instructions.";
             inputFieldEmailReg.text = "";
             inputFieldUsernameReg.text = "";
             inputFieldPwReg.text = "";
@@ -654,6 +657,36 @@ public class NetworkMenuManager : Photon.PunBehaviour
         labelRecoveryInfo.text = "Enter the email address associated with your account. We will send you a password reset link shortly.";
     }
 
+    public void CloseContactUs()
+    {
+        panelContact.SetActive(false);
+        inputFieldContact.text = "";
+        inputFieldContactText.text = "";
+    }
+
+    public void OpenContactUs()
+    {
+        panelContact.SetActive(true);
+    }
+
+    public void SendContactUs()
+    {
+        StartCoroutine(SendContact());
+        inputFieldContact.text = "Sent";
+        inputFieldContactText.text = "";
+    }
+
+    private IEnumerator SendContact()
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("email", inputFieldContact.text);
+        form.AddField("text", inputFieldContactText.text);
+        WWW w = new WWW("https://soullesscrusades.000webhostapp.com/contact.php", form);
+        yield return w;
+        //Debug.Log(w.error);
+        //Debug.Log(w.text);
+    }
+
     public void SendRecoveryMail()
     {
         StartCoroutine(SendRecovery(inputFieldRecoveryEmail.text));
@@ -814,7 +847,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public override void OnConnectedToMaster()
     {
         Camera.main.GetComponent<MenuCamera>().TransitionToMainMenu();
-        labelVersion.text = "beta v" + gameVersion;
+        labelVersion.text = "v" + gameVersion;
         labelUser.text = "Welcome " + PhotonNetwork.player.NickName;
         PhotonNetwork.JoinLobby();
         inputFieldPw.text = "";
