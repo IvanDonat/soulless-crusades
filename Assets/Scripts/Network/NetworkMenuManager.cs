@@ -62,6 +62,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public GameObject panelRegister;
     public GameObject panelRecovery;
     public GameObject panelContact;
+    public GameObject panelUpdate;
     public InputField inputFieldUsername;
     public InputField inputFieldPw;
     public InputField inputFieldEmailReg;
@@ -74,6 +75,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
     public Text labelAuthStatus;
     public Text labelRegStatus;
     public Text labelRecoveryInfo;
+    public Text labelVersionInfo;
 
     [Header("Misc")]
     public AudioSource chatTickSound;
@@ -124,6 +126,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
         PhotonNetwork.networkingPeer.DebugOut = ExitGames.Client.Photon.DebugLevel.WARNING;
         PhotonNetwork.logLevel = PhotonLogLevel.ErrorsOnly;
+
+        StartCoroutine(CheckVersion());
     }
 
     void Start()
@@ -247,6 +251,19 @@ public class NetworkMenuManager : Photon.PunBehaviour
         }
 
         Screen.fullScreen = toggleWindowed.isOn;
+    }
+
+    private IEnumerator CheckVersion()
+    {
+        WWW www = new WWW("https://soullesscrusades.000webhostapp.com/version.txt");
+        yield return www;
+        string ver = www.text;
+
+        if (ver != gameVersion)
+        {
+            panelUpdate.SetActive(true);
+            labelVersionInfo.text = "Latest version: " + ver + "\nYour version: " + gameVersion;
+        }
     }
 
     public void Connect()
