@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class NetworkMenuManager : Photon.PunBehaviour 
+public class NetworkMenuManager : Photon.PunBehaviour
 {
     [Header("Game Values")]
     public string gameVersion = "";
@@ -139,7 +139,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
         Resolution curr = Screen.currentResolution;
         foreach (Resolution res in Screen.resolutions) //for loop will slow this down much more than adding i
         {
-            dropdownResolution.options.Add(new Dropdown.OptionData() {
+            dropdownResolution.options.Add(new Dropdown.OptionData()
+            {
                 text = res.width + " x " + res.height + "       " + res.refreshRate + "Hz"
             });
 
@@ -153,9 +154,10 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
         int r = 0, savedQuality = -1;
         string currentQuality = QualitySettings.names[QualitySettings.GetQualityLevel()];
-        foreach(string s in QualitySettings.names)
+        foreach (string s in QualitySettings.names)
         {
-            dropdownQuality.options.Add(new Dropdown.OptionData() {
+            dropdownQuality.options.Add(new Dropdown.OptionData()
+            {
                 text = s
             });
 
@@ -163,7 +165,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
                 savedQuality = r;
             r++;
         }
-        if (savedQuality>= 0)
+        if (savedQuality >= 0)
             dropdownQuality.value = savedQuality;
         loadedQuality = true;
 
@@ -173,10 +175,10 @@ public class NetworkMenuManager : Photon.PunBehaviour
         if (PlayerPrefs.HasKey("MusicVolume"))
             sliderMusicVolume.value = PlayerPrefs.GetFloat("MusicVolume");
 
-        inputFieldPw.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Connect();});
-        inputFieldUsername.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Connect();});
+        inputFieldPw.onEndEdit.AddListener(delegate { if (Input.GetKey(KeyCode.Return)) Connect(); });
+        inputFieldUsername.onEndEdit.AddListener(delegate { if (Input.GetKey(KeyCode.Return)) Connect(); });
 
-        inputFieldPwReg.onEndEdit.AddListener(delegate{if(Input.GetKey(KeyCode.Return)) Register();});
+        inputFieldPwReg.onEndEdit.AddListener(delegate { if (Input.GetKey(KeyCode.Return)) Register(); });
     }
 
     void Update()
@@ -236,7 +238,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
                 readyCheckmarks[p].isOn = isReady;
             }
 
-            if (allReady && readyCount >= 2)
+            if (allReady && readyCount >= 1)
                 buttonStartGame.interactable = true;
             else
                 buttonStartGame.interactable = false;
@@ -255,7 +257,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
     private IEnumerator CheckVersion()
     {
-        WWW www = new WWW("https://soullesscrusades.000webhostapp.com/version.txt");
+        WWW www = new WWW("https://scduk.000webhostapp.com/version.txt");
         yield return www;
         string ver = www.text;
 
@@ -294,7 +296,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         }
     }
 
-    /*public void ConnectAsGuest()
+    public void ConnectAsGuest()
     {
         panelLoading.SetActive(true);
         panelAuthError.SetActive(false);
@@ -305,7 +307,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         PhotonNetwork.AuthValues = new AuthenticationValues();
         PhotonNetwork.AuthValues.AuthType = CustomAuthenticationType.None;
         PhotonNetwork.ConnectToRegion(selectedRegion, gameVersion);
-    }*/
+    }
 
     public void SelectRegion(Dropdown target)
     {
@@ -351,7 +353,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         form.AddField("operation", op);
         if (amount != null)
             form.AddField("amount", amount);
-        WWW w = new WWW("https://soullesscrusades.000webhostapp.com/elo.php", form);
+        WWW w = new WWW("https://scduk.000webhostapp.com/elo.php", form);
         yield return w;
         //Debug.Log(w.error);
         //Debug.Log(w.text);
@@ -401,7 +403,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         form.AddField("email", inputFieldEmailReg.text);
         form.AddField("username", inputFieldUsernameReg.text);
         form.AddField("password", inputFieldPwReg.text);
-        WWW w = new WWW("https://soullesscrusades.000webhostapp.com/register.php", form);
+        WWW w = new WWW("https://scduk.000webhostapp.com/register.php", form);
         yield return w;
         //Debug.Log(w.error);
         //Debug.Log(w.text);
@@ -499,7 +501,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
     {
         roomName = inputField.text;
     }
-        
+
     public void OnCompetitiveClicked()
     {
         List<RoomInfo> compRooms = new List<RoomInfo>();
@@ -590,7 +592,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         PhotonNetwork.room.IsVisible = false;
         //sadly can't use PhotonNetwork.LoadLevel and auto sync scenes due to
         //it breaking more important things...
-        photonView.RPC("RpcStartGame", PhotonTargets.All); 
+        photonView.RPC("RpcStartGame", PhotonTargets.All);
     }
 
     [PunRPC]
@@ -606,7 +608,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         {
             Transform parent = GameObject.Find("Message List Parent").transform;
             GameObject go = Instantiate(prefabChatMsg, parent);
-            go.GetComponentInChildren<Text>().text = string.Format("<color=#FFE798B4>[{0}]</color>  <color=orange>{1}</color>: {2}", 
+            go.GetComponentInChildren<Text>().text = string.Format("<color=#FFE798B4>[{0}]</color>  <color=orange>{1}</color>: {2}",
                 DateTime.Now.ToString("HH:mm:ss"), nick, msg);
             chatTickSound.Play();
         }
@@ -674,36 +676,6 @@ public class NetworkMenuManager : Photon.PunBehaviour
         labelRecoveryInfo.text = "Enter the email address associated with your account. We will send you a password reset link shortly.";
     }
 
-    public void CloseContactUs()
-    {
-        panelContact.SetActive(false);
-        inputFieldContact.text = "";
-        inputFieldContactText.text = "";
-    }
-
-    public void OpenContactUs()
-    {
-        panelContact.SetActive(true);
-    }
-
-    public void SendContactUs()
-    {
-        StartCoroutine(SendContact());
-        inputFieldContact.text = "Sent";
-        inputFieldContactText.text = "";
-    }
-
-    private IEnumerator SendContact()
-    {
-        WWWForm form = new WWWForm();
-        form.AddField("email", inputFieldContact.text);
-        form.AddField("text", inputFieldContactText.text);
-        WWW w = new WWW("https://soullesscrusades.000webhostapp.com/contact.php", form);
-        yield return w;
-        //Debug.Log(w.error);
-        //Debug.Log(w.text);
-    }
-
     public void SendRecoveryMail()
     {
         StartCoroutine(SendRecovery(inputFieldRecoveryEmail.text));
@@ -715,7 +687,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
     {
         WWWForm form = new WWWForm();
         form.AddField("email", mail);
-        WWW w = new WWW("https://soullesscrusades.000webhostapp.com/lost_info.php", form);
+        WWW w = new WWW("https://scduk.000webhostapp.com/lost_info.php", form);
         yield return w;
         //Debug.Log(w.error);
         //Debug.Log(w.text);
@@ -754,7 +726,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
 
         if (isCurrentRoomCompetitive)
             labelRoomName.text = "Quickplay";
-        else 
+        else
             labelRoomName.text = "Room: " + PhotonNetwork.room.Name;
 
         if (panelJoinPrivateRoom.activeInHierarchy)
@@ -770,9 +742,9 @@ public class NetworkMenuManager : Photon.PunBehaviour
             buttonKickPlayer.onClick.AddListener(() => { KickPlayer(); });
 
             var props = new ExitGames.Client.Photon.Hashtable();
-            props.Add("maxwins", (int) sliderRoundsToWin.value);
+            props.Add("maxwins", (int)sliderRoundsToWin.value);
             PhotonNetwork.room.SetCustomProperties(props, null);
-            labelRoundsToWin.text = "Rounds to Win: " + (int) sliderRoundsToWin.value;
+            labelRoundsToWin.text = "Rounds to Win: " + (int)sliderRoundsToWin.value;
         }
         else
         {
@@ -808,7 +780,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
     {
         Transform parent = GameObject.Find("Player List Parent").transform;
 
-        foreach (RectTransform t in parent.GetComponentInChildren<RectTransform> ())
+        foreach (RectTransform t in parent.GetComponentInChildren<RectTransform>())
         {
             if (t.gameObject.GetComponent<PhotonPlayerContainer>().Get().ID == other.ID)
                 Destroy(t.gameObject);
@@ -822,7 +794,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
         GameObject go = Instantiate(prefabLobbyPlayer, parent) as GameObject;
         go.name = "PlayerListItem " + player.NickName;
         go.GetComponentInChildren<Text>().text = player.NickName;
-        if(player.IsMasterClient && !isCurrentRoomCompetitive)
+        if (player.IsMasterClient && !isCurrentRoomCompetitive)
             go.GetComponentInChildren<Text>().color = Color.Lerp(go.GetComponentInChildren<Text>().color, Color.red, 0.3f);
         go.GetComponent<PhotonPlayerContainer>().Set(player);
 
