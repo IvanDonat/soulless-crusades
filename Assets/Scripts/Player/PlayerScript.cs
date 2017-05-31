@@ -10,7 +10,7 @@ public partial class PlayerScript : Photon.PunBehaviour
 {
     private NetworkGameManager gameManager;
     private PlayerMovement movementScript;
-    private Transform terrain;
+    public Collider raycastPlane;
 
     private float maxHealth = 100;
     private float health;
@@ -56,7 +56,6 @@ public partial class PlayerScript : Photon.PunBehaviour
         }
 
         movementScript = transform.GetComponent<PlayerMovement>();
-        terrain = GameObject.FindGameObjectWithTag("Terrain").transform;
 
         gameManager = GameObject.FindWithTag("GameController").GetComponent<NetworkGameManager>();
 
@@ -113,7 +112,7 @@ public partial class PlayerScript : Photon.PunBehaviour
     {
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (terrain.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
+        if (raycastPlane.Raycast(ray, out hit, Mathf.Infinity))
         {
             Vector3 aimPos = hit.point;
             aimPos -= Camera.main.transform.forward * (transform.position.y - aimPos.y); // move towards camera by a bit

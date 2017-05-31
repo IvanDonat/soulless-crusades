@@ -16,6 +16,7 @@ public class PlayerMovement : Photon.PunBehaviour
 {
     [Header("Model")]
     public Transform model; // 3d model
+    public Collider raycastPlane;
 
     [Header("Gizmo")]
     public Slider healthBar3D;
@@ -167,7 +168,7 @@ public class PlayerMovement : Photon.PunBehaviour
         {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (terrain.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
+            if (raycastPlane.Raycast(ray, out hit, Mathf.Infinity))
             {
                 SetTargetPosition(hit.point);
                 hasMovementOrder = true;
@@ -196,7 +197,7 @@ public class PlayerMovement : Photon.PunBehaviour
         {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (terrain.GetComponent<Collider>().Raycast(ray, out hit, Mathf.Infinity))
+            if (raycastPlane.Raycast(ray, out hit, Mathf.Infinity))
             {
                 SetTargetPosition(hit.point);
                 hasMovementOrder = true;

@@ -29,9 +29,9 @@ public partial class PlayerScript : Photon.PunBehaviour
             spellSelectButtons[i] = GameObject.Find("Spell" + i.ToString()).GetComponent<Button>();
             buttonToSpell[spellSelectButtons[i]] = spellName[i];
 
-            spellSelectCooldownText[i] = spellSelectButtons[i].transform.FindChild("Cooldown").GetComponent<Text>();
+            spellSelectCooldownText[i] = spellSelectButtons[i].transform.Find("Cooldown").GetComponent<Text>();
 
-            Image icon = spellSelectButtons[i].transform.FindChild("Icon").GetComponent<Image>();
+            Image icon = spellSelectButtons[i].transform.Find("Icon").GetComponent<Image>();
             icon.enabled = false;
             foreach (Sprite s in allIcons)
             {

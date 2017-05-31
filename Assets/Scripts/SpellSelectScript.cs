@@ -37,7 +37,7 @@ public class SpellSelectScript : MonoBehaviour
             buttonTransform.name = obj.name;
             buttonTransform.SetParent(allSpellsParent, false);
 
-            Image icon = buttonTransform.FindChild("Icon").GetComponent<Image>();
+            Image icon = buttonTransform.Find("Icon").GetComponent<Image>();
             icon.enabled = false;
             foreach (Sprite s in allIcons)
             {

@@ -202,8 +202,8 @@ public class NetworkMenuManager : Photon.PunBehaviour
                 GameObject go = Instantiate(prefabRoomItem, parent) as GameObject;
                 go.name = "RoomListItem " + ri.Name;
 
-                go.transform.FindChild("RoomNameText").GetComponent<Text>().text = string.Format(ri.Name);
-                go.transform.FindChild("RoomPlayersText").GetComponent<Text>().text = string.Format(ri.PlayerCount + "/" + ri.MaxPlayers);
+                go.transform.Find("RoomNameText").GetComponent<Text>().text = string.Format(ri.Name);
+                go.transform.Find("RoomPlayersText").GetComponent<Text>().text = string.Format(ri.PlayerCount + "/" + ri.MaxPlayers);
 
                 go.GetComponent<Button>().onClick.AddListener(() => { JoinRoom(); });
             }
