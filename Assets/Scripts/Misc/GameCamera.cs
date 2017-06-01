@@ -9,7 +9,7 @@ public class GameCamera : MonoBehaviour
     private Transform myPlayer;
     private Vector3 offset;
     Vector3 shakeOffset = Vector3.zero;
-    private Vector3 camPos;
+    public Vector3 camPos;
 
     private float speed = 10f;
     private float mouseDeadzone = 0.05f;
