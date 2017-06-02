@@ -12,10 +12,16 @@ public class TeleportSpell : Spell
     {
         if (photonView.isMine)
         {
-            Vector3 pos = castMousePos;
-            pos.y += 1.2f;
-            photonView.RPC("TeleportPlayer", PhotonTargets.All, PhotonNetwork.player, pos);
-            myPlayer.GetComponent<PlayerScript>().shieldTimeLeft += .3f;
+            if(castMousePos != null && myPlayer != null)
+            {
+                Vector3 pos = castMousePos;
+                pos.y += 1.2f;
+                
+                photonView.RPC("TeleportPlayer", PhotonTargets.All, PhotonNetwork.player, pos);
+                myPlayer.GetComponent<PlayerScript>().shieldTimeLeft += .3f;
+            }
+            else
+                photonView.RPC("TeleportPlayer", PhotonTargets.All, PhotonNetwork.player, transform.position);   // called by TerrainManager to tp             
         }
     }
 

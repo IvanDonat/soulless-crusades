@@ -38,6 +38,8 @@ public class TerrainManager : Photon.PunBehaviour
 	{
         currentScalingIndex = -1;
         roundTimeElapsed = 0f;
+        moveCamera = false;
+        Camera.main.GetComponent<GameCamera>().overridden = false;
     }
 
     void Update()
@@ -55,7 +57,7 @@ public class TerrainManager : Photon.PunBehaviour
 
                 if (photonView.isMine) //fixat ovo da teleporta pravilno
                 {
-                    photonView.RPC("TeleportPlayer", PhotonTargets.All, PhotonNetwork.player, new Vector3(Random.Range(-10f, 10f), 10f, Random.Range(-10f, 10f)));
+                    PhotonNetwork.Instantiate("Spells/Teleport", new Vector3(Random.Range(-10f, 10f), 15f, Random.Range(-10f, 10f)), Quaternion.identity, 0);
                 }
             }
 
@@ -105,7 +107,7 @@ public class TerrainManager : Photon.PunBehaviour
         if (moveCamera)
         {
             Camera.main.transform.rotation = Quaternion.Lerp(Camera.main.transform.rotation, Quaternion.Euler(60, 0, 0), Time.deltaTime);
-            Camera.main.GetComponent<GameCamera>().camPos = Vector3.Lerp(Camera.main.GetComponent<GameCamera>().camPos, new Vector3(0f, 25f, -15f), Time.deltaTime); //sredit ovo 
+            Camera.main.GetComponent<GameCamera>().camPos = Vector3.Lerp(Camera.main.GetComponent<GameCamera>().camPos, new Vector3(0f, 25f, -15f), Time.deltaTime);
         }
     }
 
@@ -153,6 +155,7 @@ public class TerrainManager : Photon.PunBehaviour
             terrainParts[i].gameObject.SetActive(false);
 
         moveCamera = true;
+        Camera.main.GetComponent<GameCamera>().overridden = true;
     }
 
 	public void ReloadTerrain()

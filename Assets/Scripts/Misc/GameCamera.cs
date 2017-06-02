@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameCamera : MonoBehaviour
 {
     public bool isFrozen = false;
+    public bool overridden = false;
 
     private Transform myPlayer;
     private Vector3 offset;
@@ -60,8 +61,10 @@ public class GameCamera : MonoBehaviour
         camPos.x = Mathf.Clamp(camPos.x, minX + offset.x, maxX + offset.x);
         camPos.z = Mathf.Clamp(camPos.z, minZ + offset.z, maxZ + offset.z);
 
-        transform.position = camPos;
         transform.position += shakeOffset;
+        
+        if(overridden) return;
+        transform.position = camPos;
     }
 
     public IEnumerator Shake(float intensity, float time)
