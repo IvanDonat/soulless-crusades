@@ -38,8 +38,13 @@ public class TerrainManager : Photon.PunBehaviour
 	{
         currentScalingIndex = -1;
         roundTimeElapsed = 0f;
+        StartCoroutine(DelayCamBlock());
+    }
+
+    private IEnumerator DelayCamBlock()
+    {
+        yield return new WaitForSeconds(3f);
         moveCamera = false;
-        Camera.main.GetComponent<GameCamera>().overridden = false;
     }
 
     void Update()
@@ -108,6 +113,7 @@ public class TerrainManager : Photon.PunBehaviour
         {
             Camera.main.transform.rotation = Quaternion.Lerp(Camera.main.transform.rotation, Quaternion.Euler(60, 0, 0), Time.deltaTime);
             Camera.main.GetComponent<GameCamera>().camPos = Vector3.Lerp(Camera.main.GetComponent<GameCamera>().camPos, new Vector3(0f, 25f, -15f), Time.deltaTime);
+            Camera.main.GetComponent<GameCamera>().offset = Vector3.Lerp(Camera.main.GetComponent<GameCamera>().offset, new Vector3(0f, 25f, -15f), Time.deltaTime);
         }
     }
 
@@ -155,7 +161,6 @@ public class TerrainManager : Photon.PunBehaviour
             terrainParts[i].gameObject.SetActive(false);
 
         moveCamera = true;
-        Camera.main.GetComponent<GameCamera>().overridden = true;
     }
 
 	public void ReloadTerrain()

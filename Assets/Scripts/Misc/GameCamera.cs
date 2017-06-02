@@ -5,10 +5,9 @@ using UnityEngine;
 public class GameCamera : MonoBehaviour
 {
     public bool isFrozen = false;
-    public bool overridden = false;
 
     private Transform myPlayer;
-    private Vector3 offset;
+    public Vector3 offset;
     Vector3 shakeOffset = Vector3.zero;
     public Vector3 camPos;
 
@@ -57,14 +56,12 @@ public class GameCamera : MonoBehaviour
         { // move forward
             camPos += Vector3.forward * speed * Time.deltaTime;
         }
-      
+
         camPos.x = Mathf.Clamp(camPos.x, minX + offset.x, maxX + offset.x);
         camPos.z = Mathf.Clamp(camPos.z, minZ + offset.z, maxZ + offset.z);
-
-        transform.position += shakeOffset;
-        
-        if(overridden) return;
+       
         transform.position = camPos;
+        transform.position += shakeOffset;
     }
 
     public IEnumerator Shake(float intensity, float time)
