@@ -277,6 +277,7 @@ public class NetworkGameManager : Photon.PunBehaviour
         playingUI.SetActive(true);
         spectatorUI.SetActive(false);
         betweenRoundsUI.SetActive(false);
+        terrainManager.ReloadTerrain();
         terrainManager.StartRound();
         if(PhotonNetwork.isMasterClient)
             SetState(GameState.IN_ROUND);

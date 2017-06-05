@@ -60,10 +60,7 @@ public class TerrainManager : Photon.PunBehaviour
                 StartCoroutine(Camera.main.GetComponent<GameCamera>().Shake(.3f, 2f));
                 soundCrumble.Play();
 
-                if (photonView.isMine) //fixat ovo da teleporta pravilno
-                {
-                    PhotonNetwork.Instantiate("Spells/Teleport", new Vector3(Random.Range(-10f, 10f), 15f, Random.Range(-10f, 10f)), Quaternion.identity, 0);
-                }
+                PhotonNetwork.Instantiate("Spells/Teleport", new Vector3(Random.Range(-10f, 10f), 15f, Random.Range(-10f, 10f)), Quaternion.identity, 0);
             }
 
             currentScalingIndex = index;
@@ -165,7 +162,7 @@ public class TerrainManager : Photon.PunBehaviour
 
 	public void ReloadTerrain()
 	{
-		transform.position = new Vector3(transform.position.x, -28.3f, transform.position.z);
+		transform.position = new Vector3(transform.position.x, 0.013f, transform.position.z);
 		currentScalingIndex = -1;
 		roundTimeElapsed = 0f;
 
