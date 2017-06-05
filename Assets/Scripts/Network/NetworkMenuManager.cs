@@ -238,7 +238,7 @@ public class NetworkMenuManager : Photon.PunBehaviour
                 readyCheckmarks[p].isOn = isReady;
             }
 
-            if (allReady && readyCount >= 1)
+            if (allReady && readyCount >= 2)
                 buttonStartGame.interactable = true;
             else
                 buttonStartGame.interactable = false;
